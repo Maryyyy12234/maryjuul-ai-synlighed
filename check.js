@@ -1,14 +1,14 @@
 // MARY JUUL – AI-synlighedstjek
-// Serverless funktion (Vercel). Tjekker teknisk, om en hjemmeside er læsbar for AI-søgning.
+// Tjekker teknisk, om en hjemmeside er læsbar for søgemaskiner og AI-søgning.
 // Gemmer ingen data. Spørger ikke ChatGPT – ser kun på selve hjemmesiden.
 
 const dns = require("dns").promises;
 const net = require("net");
 
-const TIMEOUT_MS = 8000;
+const TIMEOUT_MS = 9000;
 const MAX_BYTES = 1_500_000;
-const MAX_REDIRECTS = 4;
-const UA = "MaryJuul-AI-Tjek/1.0 (+https://maryjuul.dk)";
+const MAX_REDIRECTS = 5;
+const UA = "Mozilla/5.0 (compatible; MaryJuulTjek/1.1; +https://maryjuul-ai-synlighed.onrender.com)";
 
 const AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "PerplexityBot", "ClaudeBot", "Google-Extended"];
 
@@ -166,7 +166,12 @@ async function analyse(input) {
   const start = new URL(raw);
 
   const page = await safeFetch(start.toString());
+  if ([401, 403, 429, 503].includes(page.status)) {
+    throw new Error("Hjemmesiden afviste vores tjek (den blokerer automatiske besøg). Det kan også betyde, at nogle AI-tjenester bliver afvist. Kontakt mig, så kigger jeg på den manuelt.");
+  }
+  if (page.status === 404) throw new Error("Siden findes ikke (fejl 404). Tjek adressen.");
   if (page.status >= 400) throw new Error(`Hjemmesiden svarede med fejl ${page.status}.`);
+  if (page.type && !/html|xml|text\/plain/i.test(page.type)) throw new Error("Adressen peger ikke på en almindelig hjemmeside. Prøv forsidens adresse.");
   const base = new URL(page.url);
   const html = page.text;
 
@@ -181,7 +186,10 @@ async function analyse(input) {
   const desc = metaContent(html, "description");
   const sd = structuredData(html);
   const hasPhone = /(\+45[\s.]?)?\b\d{2}[\s.]?\d{2}[\s.]?\d{2}[\s.]?\d{2}\b/.test(text);
-  const hasPostal = /\b[1-9]\d{3}\s+[A-ZÆØÅ][a-zæøå]+/.test(text);
+  // Postnummer + by. Årstal (1900–2099) tæller kun, hvis der står en gadeadresse foran ("Ryesgade 28, 2000 Frederiksberg").
+  const postalHits = text.match(/\b[1-9]\d{3}\s+[A-ZÆØÅ][a-zæøå]+/g) || [];
+  const streetBeforePostal = /[A-ZÆØÅa-zæøå]{3,}\s+\d{1,3}[A-Za-z]?(?:,?\s*[\w.]{0,12})?,\s*[1-9]\d{3}\s+[A-ZÆØÅ][a-zæøå]+/.test(text);
+  const hasPostal = streetBeforePostal || postalHits.some((h) => !/^(19|20)\d{2}\b/.test(h));
   const hasHoursText = /åbningstid|åbent|mandag|man\s*[-–]\s*fre|lørdag|søndag/i.test(text);
   const hasFaq = /faq|ofte stillede|spørgsmål/i.test(text) || sd.types.includes("FAQPage");
   const blockedBots = robots && robots.status < 400 && !/<html/i.test(robots.text) ? parseRobots(robots.text) : [];
@@ -217,6 +225,12 @@ async function analyse(input) {
     : check(contactScore === 0 ? "bad" : "warn", "Kontakt, adresse og åbningstider som tekst",
       `Mangler som læsbar tekst: ${[!hasPhone && "telefon", !hasPostal && "adresse med postnummer", !hasHoursText && "åbningstider"].filter(Boolean).join(", ")}.`,
       "Skriv dem som almindelig tekst – ikke kun i et billede eller et kort.", contactScore * 5, 15));
+
+  const hasViewport = /<meta[^>]+name=["']viewport["'][^>]*width=device-width/i.test(html) ||
+    /<meta[^>]+content=["'][^"']*width=device-width[^"']*["'][^>]+name=["']viewport["']/i.test(html);
+  checks.push(hasViewport
+    ? check("ok", "Mobilvenlig opsætning", "Siden er sat op til at tilpasse sig mobilskærme.", "", 5, 5)
+    : check("bad", "Mobilvenlig opsætning", "Siden mangler mobil-opsætningen (viewport). Den kan se lille og svær ud på telefonen.", "Tilføj mobil-opsætning, eller få en mobilvenlig side.", 0, 5));
 
   checks.push(title && desc
     ? check("ok", "Titel og beskrivelse", `Titel: “${title.slice(0, 70)}”.`, "", 10, 10)
