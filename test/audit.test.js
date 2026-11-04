@@ -37,3 +37,30 @@ test('none is recognised as a noindex instruction in metadata and headers',async
   assert.equal(r.checks.find(c=>c.id==='indexing').status,'bad');
  }
 });
+test('GEO plan distinguishes observed signals from manual tasks and never follows source links',async()=>{
+ const calls=[],serve=fixture({html:html+'<link rel="canonical" href="/priser"><a href="https://source.example/report#one">Kilde</a><a href="https://source.example/report#two">Samme kilde</a><a href="javascript:alert(1)">Ugyldigt</a><a href="/kontakt">Internt</a><time datetime="2026-10-20">20. oktober</time>'});
+ const r=await analyse('https://example.com/',{fetchPage:async(url,options)=>{calls.push(url);return serve(url,options);}});
+ assert.equal(r.score,100);
+ assert.equal(r.checks.find(c=>c.id==='references').max,0);
+ assert.match(r.checks.find(c=>c.id==='references').explain,/1 forskellige/);
+ assert.match(r.checks.find(c=>c.id==='canonical').explain,/https:\/\/example.com\/priser/);
+ assert.equal(r.geoPlan.tasks.filter(t=>t.kind==='manual').length,2);
+ assert.match(r.geoPlan.tasks.find(t=>t.title.includes('opdaterede')).observation,/2026-10-20/);
+ assert.match(r.geoPlan.tasks.find(t=>t.title.includes('opdaterede')).observation,/beviser ikke/);
+ assert.ok(r.geoPlan.prompts.some(p=>p.includes('Test')));
+ assert.deepEqual(calls.sort(),['https://example.com/','https://example.com/llms.txt','https://example.com/robots.txt'].sort());
+});
+test('hidden references are ignored and unsupported canonical schemes are not exposed as valid',async()=>{
+ const r=await analyse('example.com',{fetchPage:fixture({html:html+'<script>let s=\'<a href="https://hidden.example">Kilde</a>\';</script><!-- <a href="https://comment.example">Kilde</a> --><link rel="canonical" href="javascript:alert(1)">'})});
+ assert.match(r.checks.find(c=>c.id==='references').explain,/0 forskellige/);
+ assert.match(r.checks.find(c=>c.id==='canonical').explain,/ugyldig/);
+ assert.equal(r.score,100);
+});
+test('a date or citation does not turn the technical score into an AI visibility score',async()=>{
+ const baseline=await analyse('example.com',{fetchPage:fixture()});
+ const enriched=await analyse('example.com',{fetchPage:fixture({html:html+'<time datetime="2026-11-04">I dag</time><a href="https://research.example/paper">Dokumentation</a>'})});
+ assert.equal(enriched.score,baseline.score);
+ assert.equal(enriched.scoreVersion,'2.0');
+ assert.ok(enriched.geoPlan.tasks.some(t=>t.kind==='manual'&&t.observation.includes('har ikke stillet spørgsmål')));
+ assert.match(baseline.geoPlan.tasks.find(t=>t.title.includes('opdaterede')).observation,/betyder ikke/);
+});

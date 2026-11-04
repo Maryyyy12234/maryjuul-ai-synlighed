@@ -29,3 +29,11 @@ Render følger `main` i dette repo. Kontroller at det konkrete commit er `live`;
 Tilladte eksterne frontend-origins er eksplicit angivet i server.js. Flere kan angives kommasepareret i `CORS_ORIGINS`. Browserlokal afprøvning og Render bruger samme origin; Sites kalder Render direkte uden credentials.
 
 Visuelle projekter er markerede koncepter, ikke kundecases. Interiørfoto: Unsplash, photo-1600210492486-724fe5c67fb0.
+
+## GEO-principper i indhold og rapport
+
+Kundespørgsmål følger behov, sammenligning og beslutning. Priser kobles til leverancer og aftalt omfang. Dokumentation og ensartede virksomhedsoplysninger behandles særskilt fra designkoncepter. Synlig FAQ og FAQPage-data indeholder de samme spørgsmål og svar.
+
+Rapportens `geoPlan` indeholder konkrete indholdsopgaver og tydeligt markerede manuelle opgaver. Canonical-adresser, eksterne links og datoer registreres som observationer uden point. Et link beviser ikke troværdighed, og en dato beviser ikke friskhed. Eksterne referencer følges ikke af tjekket.
+
+Faktisk AI-omtale kræver særskilte, gentagne spørgsmål med gemte svar, kilder, tjeneste/model og tidspunkt. Denne API foretager ingen sådanne AI-kald og fremstiller ikke teknisk score som AI-placering. Dokumentation: Google Search Central om AI-funktioner og oprindelig GEO-forskning (KDD 2024).
