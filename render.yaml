@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: maryjuul-ai-synlighed
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: "echo klar"
+    startCommand: "node server.js"
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
