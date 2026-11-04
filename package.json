@@ -2,14 +2,15 @@
   "name": "maryjuul-ai-synlighed",
   "version": "2.0.0",
   "private": true,
-  "description": "MARY JUUL \u2013 AI-synlighedstjek for lokale virksomheder i Aarhus",
+  "description": "MARY JUUL – AI-synlighedstjek for lokale virksomheder i Aarhus",
   "main": "server.js",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "test": "node --test test/*.test.js"
+    "dev": "node dev.js",
+    "test": "node --test test/*.test.js",
+    "build": "node build.js"
   }
 }

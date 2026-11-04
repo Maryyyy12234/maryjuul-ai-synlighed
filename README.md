@@ -6,6 +6,8 @@ Webdesign og digital synlighed for lokale virksomheder. Frontend på Sites og Re
 
 Node.js 22 eller nyere. Ingen eksterne pakker kræves.
 
+- `npm run build`: klargør `dist/` og opdaterer filversioner, så en tidligere cache ikke blander gammel JavaScript med nyt indhold.
+- `npm run dev`: lokal server med mobilvisning på `/__preview?width=390`.
 - `npm start`: webserver på `PORT` eller 10000.
 - `npm test`: regressionstests af analyse, robots-regler, adresser og API.
 - `node worker.js rapport`: afgrænset baggrundsrapport. `SITES` er en kommasepareret liste med offentlige adresser. Resultater skrives som JSON til stdout. Koden opretter ikke af sig selv en betalt Render-tjeneste.
@@ -13,6 +15,8 @@ Node.js 22 eller nyere. Ingen eksterne pakker kræves.
 ## Hvad tjekket måler
 
 Én HTML-side samt robots.txt og den valgfrie llms.txt. En vægtet teknisk tjekliste: HTTPS (10), læsbar tekst (15), titel/beskrivelse (10), H1 (10), viewport (10), noindex (10), søgerobotter (15), virksomhedsdata (10), kontakt (10). Ukendte robots-forhold udelades af nævneren og vises tydeligt. Svar på kundespørgsmål, priser og llms.txt er supplerende oplysninger uden point.
+
+Før/efter-eksemplet er illustrativt og bygger på en fiktiv salon. Projektvinduerne viser de faktiske visuelle koncepter.
 
 Scoren er ikke en måling af omtale, kildeandel, sentiment, faktisk indeksering, mobiloplevelse, Core Web Vitals eller salg. Den kræver ingen OpenAI-nøgle og sender ikke modelkald. Faktisk GEO-måling skal undersøge relevante spørgsmål, bevare de modtagne svar/kilder samt registrere tjeneste, model, tidspunkt og antal gentagelser.
 

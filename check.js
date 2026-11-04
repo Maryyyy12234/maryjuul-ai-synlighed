@@ -43,7 +43,8 @@ async function safeFetch(input,options={}){
  throw Error('Hjemmesiden viderestiller for mange gange.');
 }
 const decode=s=>String(s||'').replace(/&#(x[0-9a-f]+|\d+);/gi,(_,n)=>{const c=n[0].toLowerCase()==='x'?parseInt(n.slice(1),16):Number(n);return c<=0x10ffff?String.fromCodePoint(c):'';}).replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,'<').replace(/&gt;/gi,'>');
-function visibleText(html){return decode(html.replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi,' ').replace(/<!--[\s\S]*?-->/g,' ').replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();}
+function contentHtml(html){return html.replace(/<!--[\s\S]*?-->/g,' ').replace(/<(head|script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi,' ');}
+function visibleText(html){return decode(contentHtml(html).replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi,' ').replace(/<!--[\s\S]*?-->/g,' ').replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();}
 function attrs(tag){const out={};for(const m of tag.matchAll(/([^\s=<>/]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g))out[m[1].toLowerCase()]=decode(m[2]??m[3]??m[4]);return out;}
 function metaContent(html,name){for(const tag of html.match(/<meta\b[^>]*>/gi)||[]){const a=attrs(tag);if((a.name||a.property||'').toLowerCase()===name.toLowerCase())return a.content||'';}return '';}
 function structuredData(html){
@@ -71,7 +72,7 @@ async function analyse(input,options={}){
  if([401,403,429,503].includes(page.status))throw Error('Hjemmesiden afviser automatiske besøg. Derfor kan vi ikke give den en retvisende score. Prøv en anden side, eller kontakt mig.');
  if(page.status>=400)throw Error('Hjemmesiden svarer med fejl '+page.status+'. Tjek adressen.');
  if(!/\btext\/html\b|application\/xhtml\+xml/i.test(page.type||''))throw Error('Adressen skal pege på en HTML-hjemmeside.');
- const base=new URL(page.url),html=page.text,text=visibleText(html),sd=structuredData(html);
+ const base=new URL(page.url),html=page.text,content=contentHtml(html),text=visibleText(content),sd=structuredData(html);
  const aux=async path=>{try{return await fetchPage(new URL(path,base).href,{timeoutMs:4500});}catch{return null;}};
  const [robots,llms]=await Promise.all([aux('/robots.txt'),aux('/llms.txt')]);const checks=[];
  const add=(id,status,title,explain,fix,points,max,group='technical')=>checks.push({id,status,title,explain,fix,points,max,group,evidenceUrl:base.href});
@@ -79,19 +80,19 @@ async function analyse(input,options={}){
  add('https',base.protocol==='https:'?'ok':'bad','Sikker forbindelse',base.protocol==='https:'?'Den undersøgte side bruger HTTPS.':'Den undersøgte side bruger HTTP.','Slå HTTPS til hos din udbyder.',base.protocol==='https:'?10:0,10);
  add('text',wordCount>=100?'ok':wordCount>=30?'warn':'bad','Læsbar tekst',`Vi fandt cirka ${wordCount} ord i den HTML, serveren sendte. JavaScript er ikke kørt.`,'Sørg for, at vigtig information også står i sidens HTML.',wordCount>=100?15:wordCount>=30?7:0,15);
  add('metadata',title&&desc?'ok':'warn','Titel og beskrivelse',`${title?'Titel: “'+title.slice(0,100)+'”.':'Ingen sidetitel fundet.'} ${desc?'Metabeskrivelse fundet.':'Metabeskrivelse mangler.'}`,'Skriv en konkret titel og metabeskrivelse.',(title?5:0)+(desc?5:0),10);
- const h1s=[...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map(m=>visibleText(m[1]));
+ const h1s=[...content.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map(m=>visibleText(m[1]));
  add('headings',h1s.length===1?'ok':'warn','Tydelig hovedoverskrift',`${h1s.length} H1-overskrift${h1s.length===1?'':'er'} fundet${h1s[0]?': “'+h1s[0].slice(0,90)+'”':''}.`,'Brug en tydelig hovedoverskrift, der forklarer tilbuddet.',h1s.length===1?10:h1s.length?5:0,10);
  const viewport=/width\s*=\s*device-width/i.test(metaContent(html,'viewport'));
  add('viewport',viewport?'ok':'warn','Mobilens grundopsætning',viewport?'Viewport er sat til skærmens bredde. Det visuelle layout er ikke testet.':'Viewport med device-width blev ikke fundet.','Tilføj viewport, og gennemgå siden på en telefon.',viewport?10:0,10);
- const noindex=/\bnoindex\b/i.test(metaContent(html,'robots')+' '+metaContent(html,'googlebot')+' '+(page.headers?.['x-robots-tag']||''));
+ const noindex=/\b(?:noindex|none)\b/i.test(metaContent(html,'robots')+' '+metaContent(html,'googlebot')+' '+(page.headers?.['x-robots-tag']||''));
  add('indexing',noindex?'bad':'ok','Indekseringsdirektiver',noindex?'Et noindex-direktiv frabeder indeksering.':'Intet noindex-direktiv fundet i HTML eller HTTP-header. Faktisk indeksering er ikke undersøgt.','Fjern kun noindex, hvis siden skal være offentlig i søgninger.',noindex?0:10,10);
  const isRobotsText=robots&&robots.status===200&&!/html/i.test(robots.type||'')&&!/<(?:html|!doctype)/i.test(robots.text),robotsAbsent=robots&&[404,410].includes(robots.status),blocked=isRobotsText?parseRobots(robots.text,base.pathname+base.search):[],unknownRobots=!isRobotsText&&!robotsAbsent;
  add('robots',unknownRobots?'unknown':blocked.length?'bad':'ok','Søgerobotters adgang',unknownRobots?'robots.txt kunne ikke læses som en gyldig tekstfil. Adgang er uafklaret.':blocked.length?'Reglerne blokerer denne sti for: '+blocked.join(', ')+'.':robotsAbsent?'robots.txt findes ikke. Vi fandt derfor ingen regler her, der blokerer.':'Ingen matchende blokering for de undersøgte søgerobotter på denne sti. Det beviser ikke adgang gennem en firewall.','Gennemgå robots.txt for Googlebot og AI-søgerobotter. Træningsrobotter behøver ikke åbnes.',unknownRobots?null:blocked.length?0:15,15);
  const businesses=sd.items.filter(x=>[].concat(x['@type']||[]).some(t=>/Business$|Organization$|Store$|Salon$|Restaurant$|ProfessionalService$|CafeOrCoffeeShop$|DaySpa$|Bakery$|BarOrPub$/.test(t))),complete=businesses.some(x=>x.name&&(x.url||x.telephone||x.address));
  add('schema',complete?'ok':'warn','Virksomhedens strukturerede data',sd.invalid?`${sd.invalid} JSON-LD-blokke kunne ikke læses.`:complete?'JSON-LD med virksomhedsnavn og mindst én virksomhedsoplysning fundet. Rigtigheden er ikke verificeret.':businesses.length?'Virksomhedsdata fundet, men navn eller kontaktoplysninger mangler.':'Ingen virksomhedsdata genkendt. Det er ikke et krav for at blive vist i AI-svar.','Tilføj relevante virksomhedsdata, som stemmer med synlig tekst.',complete?10:businesses.length?5:0,10);
- const hasContact=/href\s*=\s*["'](?:tel:|mailto:)/i.test(html)||/(?:\+45\s*)?(?:\d{2}[ .-]){3}\d{2}\b/.test(text)||/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i.test(text);
+ const hasContact=/href\s*=\s*["'](?:tel:|mailto:)/i.test(content)||/(?:\+45\s*)?(?:\d{2}[ .-]){3}\d{2}\b/.test(text)||/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i.test(text);
  add('contact',hasContact?'ok':'warn','Let at tage kontakt',hasContact?'Kontaktlink eller kontaktoplysning fundet i sidens kode.':'Ingen telefon eller e-mail genkendt på den undersøgte side.','Vis en opdateret telefon eller e-mail.',hasContact?10:0,10,'content');
- const faq=sd.types.includes('FAQPage')||/<(?:summary|h[2-4])\b[^>]*>[^<]{5,180}\?/i.test(html)||/ofte stillede spørgsmål|spørgsmål\s*(?:og|&|&amp;)\s*svar/i.test(text);
+ const faq=sd.types.includes('FAQPage')||/<(?:summary|h[2-4])\b[^>]*>[^<]{5,180}\?/i.test(content)||/ofte stillede spørgsmål|spørgsmål\s*(?:og|&|&amp;)\s*svar/i.test(text);
  add('answers',faq?'ok':'info','Svar på kundespørgsmål',faq?'Spørgsmålsoverskrifter eller FAQ-data fundet. Svarenes kvalitet er ikke vurderet.':'Ingen tydelige spørgsmål og svar genkendt. De kan stå på en anden underside.','Besvar kundernes reelle spørgsmål om fx pris, behandling og booking.',null,0,'content');
  const price=/\b\d[\d., ]*\s*(?:kr\.?|DKK|EUR)\b|[€$]\s*\d/.test(text);
  add('pricing',price?'ok':'info','Konkrete priser',price?'Prisbeløb fundet i den synlige tekst. Vi har ikke verificeret, om de er aktuelle.':'Ingen prisbeløb genkendt på denne side. Det kan være relevant at forklare pris eller tilbudsproces.','Vis priser eller forklar, hvordan kunden får et tilbud.',null,0,'content');

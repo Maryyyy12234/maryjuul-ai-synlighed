@@ -23,3 +23,17 @@ test('server handles preflight, exact routes, invalid JSON, invalid URLs, size a
  assert.equal((await (await fetch(base+'/healthz')).json()).version,'2.0');
  for(const p of ['/','/styles.css','/app.js','/assets/interior.jpg'])assert.equal((await fetch(base+p)).status,200,p);
 });
+test('scripts, comments, head and templates do not create visible content findings',async()=>{
+ const hidden='<head><title>Test</title><meta name="viewport" content="width=device-width"><meta name="description" content="Test"></head><script>const example=\'<h1>Fake</h1><a href="tel:+4511223344">Kontakt</a><h2>Hvad koster det?</h2>\';</script><!-- <h1>Comment</h1> --><template><h1>Template</h1><p>'+('skjult indhold '.repeat(120))+'</p></template><main><p>Hej.</p></main>';
+ const r=await analyse('example.com',{fetchPage:fixture({html:hidden})});
+ assert.equal(r.checks.find(c=>c.id==='text').status,'bad');
+ assert.equal(r.checks.find(c=>c.id==='headings').points,0);
+ assert.equal(r.checks.find(c=>c.id==='contact').points,0);
+ assert.equal(r.checks.find(c=>c.id==='answers').status,'info');
+});
+test('none is recognised as a noindex instruction in metadata and headers',async()=>{
+ for(const options of [{html:html+'<meta name="robots" content="none">'},{headers:{'x-robots-tag':'none'}}]){
+  const r=await analyse('example.com',{fetchPage:fixture(options)});
+  assert.equal(r.checks.find(c=>c.id==='indexing').status,'bad');
+ }
+});
