@@ -191,7 +191,11 @@ async function analyse(input) {
   const streetBeforePostal = /[A-ZÆØÅa-zæøå]{3,}\s+\d{1,3}[A-Za-z]?(?:,?\s*[\w.]{0,12})?,\s*[1-9]\d{3}\s+[A-ZÆØÅ][a-zæøå]+/.test(text);
   const hasPostal = streetBeforePostal || postalHits.some((h) => !/^(19|20)\d{2}\b/.test(h));
   const hasHoursText = /åbningstid|åbent|mandag|man\s*[-–]\s*fre|lørdag|søndag/i.test(text);
-  const hasFaq = /faq|ofte stillede|spørgsmål/i.test(text) || sd.types.includes("FAQPage");
+  // FAQ: et rigtigt FAQ-afsnit, FAQ-data, eller mindst 3 overskrifter/udfoldninger formuleret som spørgsmål.
+  const questionHeadings = (html.match(/<(h[2-4]|summary|dt|button)[^>]*>([^<]{8,140}\?)\s*<\/\1>/gi) || []).length;
+  const hasFaq = sd.types.includes("FAQPage") ||
+    /\b(faq|ofte stillede spørgsmål|spørgsmål\s*(og|&|&amp;)\s*svar)\b/i.test(text) ||
+    questionHeadings >= 3;
   const blockedBots = robots && robots.status < 400 && !/<html/i.test(robots.text) ? parseRobots(robots.text) : [];
   const hasLlms = !!(llms && llms.status === 200 && llms.text.trim().length > 20 && !/<html/i.test(llms.text));
 
