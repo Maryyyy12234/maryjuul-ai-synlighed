@@ -1,294 +1,105 @@
-// MARY JUUL – AI-synlighedstjek
-// Tjekker teknisk, om en hjemmeside er læsbar for søgemaskiner og AI-søgning.
-// Gemmer ingen data. Spørger ikke ChatGPT – ser kun på selve hjemmesiden.
-
-const dns = require("dns").promises;
-const net = require("net");
-
-const TIMEOUT_MS = 9000;
-const MAX_BYTES = 1_500_000;
-const MAX_REDIRECTS = 5;
-const UA = "Mozilla/5.0 (compatible; MaryJuulTjek/1.1; +https://maryjuul-ai-synlighed.onrender.com)";
-
-const AI_BOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "PerplexityBot", "ClaudeBot", "Google-Extended"];
-
-// ---------- Sikkerhed: tillad kun offentlige adresser ----------
-function isPrivateIp(ip) {
-  if (net.isIPv4(ip)) {
-    const p = ip.split(".").map(Number);
-    return (
-      p[0] === 10 || p[0] === 127 || p[0] === 0 ||
-      (p[0] === 169 && p[1] === 254) ||
-      (p[0] === 172 && p[1] >= 16 && p[1] <= 31) ||
-      (p[0] === 192 && p[1] === 168) ||
-      (p[0] === 100 && p[1] >= 64 && p[1] <= 127) ||
-      p[0] >= 224
-    );
-  }
-  const l = ip.toLowerCase();
-  return l === "::1" || l === "::" || l.startsWith("fc") || l.startsWith("fd") ||
-    l.startsWith("fe80") || l.startsWith("::ffff:127.") || l.startsWith("::ffff:10.") ||
-    l.startsWith("::ffff:192.168.") || l.startsWith("::ffff:169.254.");
+// Evidence-based website audit. No model calls or AI ranking claims.
+const dns=require('node:dns').promises, net=require('node:net'), http=require('node:http'), https=require('node:https'), zlib=require('node:zlib');
+const SEARCH_BOTS=['Googlebot','OAI-SearchBot','PerplexityBot','Claude-SearchBot'];
+const SOURCES=[{title:'Google: AI features and your website',url:'https://developers.google.com/search/docs/appearance/ai-features'},{title:'OpenAI: web crawlers',url:'https://platform.openai.com/docs/bots'},{title:'GEO research (KDD 2024)',url:'https://arxiv.org/abs/2311.09735'}];
+function isPublicIp(address){
+ if(net.isIPv4(address)){const[a,b,c]=address.split('.').map(Number);return !(a===0||a===10||a===127||a>=224||(a===100&&b>=64&&b<=127)||(a===169&&b===254)||(a===172&&b>=16&&b<=31)||(a===192&&(b===168||b===0||(b===88&&c===99)))||(a===198&&(b===18||b===19||(b===51&&c===100)))||(a===203&&b===0&&c===113));}
+ if(!net.isIPv6(address))return false;
+ const s=address.toLowerCase();return /^[23][0-9a-f]{3}:/.test(s)&&!/^2001:(?:0:|db8:|[01]?[0-9a-f]{1,2}:)/.test(s)&&!/^2002:/.test(s)&&!/^3fff:/.test(s);
 }
-
-async function assertPublic(urlObj) {
-  if (!["http:", "https:"].includes(urlObj.protocol)) throw new Error("Kun http og https er tilladt.");
-  if (process.env.ALLOW_PRIVATE === "1") return; // kun til lokal test
-  if (urlObj.port && !["80", "443"].includes(urlObj.port)) throw new Error("Kun almindelige web-porte er tilladt.");
-  const host = urlObj.hostname.replace(/^\[|\]$/g, "");
-  if (host === "localhost" || host.endsWith(".local") || host.endsWith(".internal")) throw new Error("Adressen er ikke offentlig.");
-  const addrs = net.isIP(host) ? [{ address: host }] : await dns.lookup(host, { all: true });
-  if (!addrs.length || addrs.some((a) => isPrivateIp(a.address))) throw new Error("Adressen er ikke offentlig.");
+function normalizeUrl(input){
+ if(typeof input!=='string'||!input.trim()||input.length>500)throw Error('Skriv en gyldig hjemmesideadresse.');
+ let raw=input.trim();if(!/^[a-z][a-z\d+.-]*:\/\//i.test(raw))raw='https://'+raw;
+ let u;try{u=new URL(raw);}catch{throw Error('Skriv en gyldig hjemmesideadresse, fx dinvirksomhed.dk.');}
+ if(!['http:','https:'].includes(u.protocol)||u.username||u.password||(u.port&&!['80','443'].includes(u.port)))throw Error('Brug en offentlig http- eller https-adresse uden login eller særlig port.');
+ const host=u.hostname.replace(/^\[|\]$/g,'').toLowerCase();
+ if((!host.includes('.')&&!net.isIP(host))||/(?:^|\.)(?:localhost|local|internal|test|invalid)$/.test(host)||(net.isIP(host)&&!isPublicIp(host)))throw Error('Adressen skal være en offentlig hjemmeside.');
+ u.hash='';return u;
 }
-
-async function safeFetch(rawUrl) {
-  let url = new URL(rawUrl);
-  for (let i = 0; i <= MAX_REDIRECTS; i++) {
-    await assertPublic(url);
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-    let res;
-    try {
-      res = await fetch(url, { redirect: "manual", signal: ctrl.signal, headers: { "user-agent": UA, accept: "text/html,text/plain,*/*" } });
-    } finally {
-      clearTimeout(t);
-    }
-    if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
-      url = new URL(res.headers.get("location"), url);
-      continue;
-    }
-    const text = await readLimited(res);
-    return { status: res.status, url: url.toString(), text, type: res.headers.get("content-type") || "" };
-  }
-  throw new Error("For mange viderestillinger.");
+async function safeFetch(input,options={}){
+ let url=normalizeUrl(String(input)),deadline=Date.now()+(options.timeoutMs||8000);
+ for(let hop=0;hop<=5;hop++){
+  const remaining=deadline-Date.now();if(remaining<=0)throw Error('Hjemmesiden svarede ikke i tide. Prøv igen om lidt.');
+  const hostname=url.hostname.replace(/^\[|\]$/g,'');let addresses,dnsTimer;
+  try{addresses=await Promise.race([net.isIP(hostname)?Promise.resolve([{address:hostname,family:net.isIP(hostname)}]):(options.lookup||dns.lookup)(hostname,{all:true,verbatim:true}),new Promise((_,reject)=>{dnsTimer=setTimeout(()=>reject(Error('Hjemmesidens adresse svarede ikke i tide.')),remaining);})]);}finally{clearTimeout(dnsTimer);}
+  if(!addresses.length||addresses.some(a=>!isPublicIp(a.address)))throw Error('Adressen skal være en offentlig hjemmeside.');
+  const chosen=addresses.find(a=>a.family===4)||addresses[0];
+  const response=await new Promise((resolve,reject)=>{
+   let settled=false,timer;
+   const finish=(err,data)=>{if(settled)return;settled=true;clearTimeout(timer);err?reject(err):resolve(data);};
+   const req=(url.protocol==='https:'?https:http).request(url,{method:'GET',family:chosen.family,lookup:(_h,opts,cb)=>opts?.all?cb(null,[chosen]):cb(null,chosen.address,chosen.family),headers:{'User-Agent':'Mozilla/5.0 (compatible; MaryJuulTjek/2.0)',Accept:'text/html,text/plain;q=0.9,*/*;q=0.1','Accept-Encoding':'gzip, br, deflate'}},res=>{
+    const status=res.statusCode;if(status>=300&&status<400&&res.headers.location){res.resume();finish(null,{redirect:res.headers.location});return;}
+    let stream=res;const enc=res.headers['content-encoding'],decoder=enc==='gzip'?zlib.createGunzip():enc==='br'?zlib.createBrotliDecompress():enc==='deflate'?zlib.createInflate():null;
+    if(decoder){stream=res.pipe(decoder);decoder.on('error',e=>{req.destroy();finish(e);});}
+    const chunks=[];let size=0;
+    stream.on('data',c=>{size+=c.length;if(size>2000000){req.destroy();stream.destroy();finish(Error('Siden er for stor til det gratis tjek. Prøv en mindre underside.'));}else chunks.push(c);});
+    stream.on('end',()=>finish(null,{status,url:url.href,text:Buffer.concat(chunks).toString('utf8'),type:res.headers['content-type']||'',headers:res.headers}));
+    res.on('aborted',()=>finish(Error('Hjemmesiden afbrød forbindelsen. Prøv igen.')));stream.on('error',e=>finish(e));
+   });
+   timer=setTimeout(()=>{req.destroy();finish(Error('Hjemmesiden svarede ikke i tide. Prøv igen om lidt.'));},Math.max(1,deadline-Date.now()));req.on('error',e=>finish(e));req.end();
+  });
+  if(!response.redirect)return response;url=normalizeUrl(new URL(response.redirect,url).href);
+ }
+ throw Error('Hjemmesiden viderestiller for mange gange.');
 }
-
-async function readLimited(res) {
-  if (!res.body) return "";
-  const reader = res.body.getReader();
-  const chunks = [];
-  let size = 0;
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    size += value.length;
-    if (size > MAX_BYTES) { try { reader.cancel(); } catch (_) {} break; }
-    chunks.push(value);
-  }
-  return Buffer.concat(chunks.map((c) => Buffer.from(c))).toString("utf8");
+const decode=s=>String(s||'').replace(/&#(x[0-9a-f]+|\d+);/gi,(_,n)=>{const c=n[0].toLowerCase()==='x'?parseInt(n.slice(1),16):Number(n);return c<=0x10ffff?String.fromCodePoint(c):'';}).replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,'<').replace(/&gt;/gi,'>');
+function visibleText(html){return decode(html.replace(/<(script|style|noscript|template)\b[^>]*>[\s\S]*?<\/\1>/gi,' ').replace(/<!--[\s\S]*?-->/g,' ').replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();}
+function attrs(tag){const out={};for(const m of tag.matchAll(/([^\s=<>/]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g))out[m[1].toLowerCase()]=decode(m[2]??m[3]??m[4]);return out;}
+function metaContent(html,name){for(const tag of html.match(/<meta\b[^>]*>/gi)||[]){const a=attrs(tag);if((a.name||a.property||'').toLowerCase()===name.toLowerCase())return a.content||'';}return '';}
+function structuredData(html){
+ const items=[];let invalid=0;
+ function visit(x){if(Array.isArray(x))return x.forEach(visit);if(!x||typeof x!=='object')return;if(x['@type'])items.push(x);for(const val of Object.values(x))if(val&&typeof val==='object')visit(val);}
+ for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi))if((attrs(m[1]).type||'').toLowerCase()==='application/ld+json'){try{visit(JSON.parse(m[2]));}catch{invalid++;}}
+ return{items,invalid,types:[...new Set(items.flatMap(x=>[].concat(x['@type']||[])))]};
 }
-
-// ---------- Analyse ----------
-function visibleText(html) {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
-    .replace(/<!--[\s\S]*?-->/g, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/\s+/g, " ")
-    .trim();
+function parseRobots(text,pathname='/'){
+ const groups=[];let current=null,rulesStarted=false;
+ for(const raw of text.split(/\r?\n/)){const line=raw.replace(/#.*/,'').trim(),colon=line.indexOf(':');if(colon<0)continue;const key=line.slice(0,colon).trim().toLowerCase(),value=line.slice(colon+1).trim();if(key==='user-agent'){if(!current||rulesStarted){current={agents:[],rules:[]};groups.push(current);rulesStarted=false;}current.agents.push(value.toLowerCase());}else if(current&&['allow','disallow'].includes(key)){rulesStarted=true;if(value)current.rules.push({allow:key==='allow',path:value});}}
+ return SEARCH_BOTS.filter(bot=>{
+  const matches=groups.map(g=>({...g,specificity:Math.max(-1,...g.agents.map(a=>a==='*'?0:bot.toLowerCase().includes(a)?a.length:-1))})),longest=Math.max(-1,...matches.map(g=>g.specificity));if(longest<0)return false;
+  let winner=null;
+  for(const group of matches.filter(g=>g.specificity===longest))for(const rule of group.rules){
+   const parts=rule.path.split('*').map(p=>p.replace(/[.+?^${}()|[\]\\]/g,'\\$&'));
+   let pattern='^'+parts.join('.*');if(pattern.endsWith('\\$'))pattern=pattern.slice(0,-2)+'$';
+   if(!new RegExp(pattern).test(pathname))continue;const length=rule.path.replace(/[*$]/g,'').length;
+   if(!winner||length>winner.length||(length===winner.length&&rule.allow))winner={...rule,length};
+  }return winner&&!winner.allow;
+ });
 }
-
-function metaContent(html, name) {
-  const re = new RegExp(`<meta[^>]+(?:name|property)=["']${name}["'][^>]*>`, "i");
-  const tag = html.match(re);
-  if (!tag) return "";
-  const c = tag[0].match(/content=["']([^"']*)["']/i);
-  return c ? c[1].trim() : "";
+async function analyse(input,options={}){
+ const start=normalizeUrl(input),fetchPage=options.fetchPage||safeFetch,page=await fetchPage(start.href);
+ if([401,403,429,503].includes(page.status))throw Error('Hjemmesiden afviser automatiske besøg. Derfor kan vi ikke give den en retvisende score. Prøv en anden side, eller kontakt mig.');
+ if(page.status>=400)throw Error('Hjemmesiden svarer med fejl '+page.status+'. Tjek adressen.');
+ if(!/\btext\/html\b|application\/xhtml\+xml/i.test(page.type||''))throw Error('Adressen skal pege på en HTML-hjemmeside.');
+ const base=new URL(page.url),html=page.text,text=visibleText(html),sd=structuredData(html);
+ const aux=async path=>{try{return await fetchPage(new URL(path,base).href,{timeoutMs:4500});}catch{return null;}};
+ const [robots,llms]=await Promise.all([aux('/robots.txt'),aux('/llms.txt')]);const checks=[];
+ const add=(id,status,title,explain,fix,points,max,group='technical')=>checks.push({id,status,title,explain,fix,points,max,group,evidenceUrl:base.href});
+ const title=visibleText((html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)||[])[1]||''),desc=metaContent(html,'description'),wordCount=text.split(/\s+/).filter(Boolean).length;
+ add('https',base.protocol==='https:'?'ok':'bad','Sikker forbindelse',base.protocol==='https:'?'Den undersøgte side bruger HTTPS.':'Den undersøgte side bruger HTTP.','Slå HTTPS til hos din udbyder.',base.protocol==='https:'?10:0,10);
+ add('text',wordCount>=100?'ok':wordCount>=30?'warn':'bad','Læsbar tekst',`Vi fandt cirka ${wordCount} ord i den HTML, serveren sendte. JavaScript er ikke kørt.`,'Sørg for, at vigtig information også står i sidens HTML.',wordCount>=100?15:wordCount>=30?7:0,15);
+ add('metadata',title&&desc?'ok':'warn','Titel og beskrivelse',`${title?'Titel: “'+title.slice(0,100)+'”.':'Ingen sidetitel fundet.'} ${desc?'Metabeskrivelse fundet.':'Metabeskrivelse mangler.'}`,'Skriv en konkret titel og metabeskrivelse.',(title?5:0)+(desc?5:0),10);
+ const h1s=[...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map(m=>visibleText(m[1]));
+ add('headings',h1s.length===1?'ok':'warn','Tydelig hovedoverskrift',`${h1s.length} H1-overskrift${h1s.length===1?'':'er'} fundet${h1s[0]?': “'+h1s[0].slice(0,90)+'”':''}.`,'Brug en tydelig hovedoverskrift, der forklarer tilbuddet.',h1s.length===1?10:h1s.length?5:0,10);
+ const viewport=/width\s*=\s*device-width/i.test(metaContent(html,'viewport'));
+ add('viewport',viewport?'ok':'warn','Mobilens grundopsætning',viewport?'Viewport er sat til skærmens bredde. Det visuelle layout er ikke testet.':'Viewport med device-width blev ikke fundet.','Tilføj viewport, og gennemgå siden på en telefon.',viewport?10:0,10);
+ const noindex=/\bnoindex\b/i.test(metaContent(html,'robots')+' '+metaContent(html,'googlebot')+' '+(page.headers?.['x-robots-tag']||''));
+ add('indexing',noindex?'bad':'ok','Indekseringsdirektiver',noindex?'Et noindex-direktiv frabeder indeksering.':'Intet noindex-direktiv fundet i HTML eller HTTP-header. Faktisk indeksering er ikke undersøgt.','Fjern kun noindex, hvis siden skal være offentlig i søgninger.',noindex?0:10,10);
+ const isRobotsText=robots&&robots.status===200&&!/html/i.test(robots.type||'')&&!/<(?:html|!doctype)/i.test(robots.text),robotsAbsent=robots&&[404,410].includes(robots.status),blocked=isRobotsText?parseRobots(robots.text,base.pathname+base.search):[],unknownRobots=!isRobotsText&&!robotsAbsent;
+ add('robots',unknownRobots?'unknown':blocked.length?'bad':'ok','Søgerobotters adgang',unknownRobots?'robots.txt kunne ikke læses som en gyldig tekstfil. Adgang er uafklaret.':blocked.length?'Reglerne blokerer denne sti for: '+blocked.join(', ')+'.':robotsAbsent?'robots.txt findes ikke. Vi fandt derfor ingen regler her, der blokerer.':'Ingen matchende blokering for de undersøgte søgerobotter på denne sti. Det beviser ikke adgang gennem en firewall.','Gennemgå robots.txt for Googlebot og AI-søgerobotter. Træningsrobotter behøver ikke åbnes.',unknownRobots?null:blocked.length?0:15,15);
+ const businesses=sd.items.filter(x=>[].concat(x['@type']||[]).some(t=>/Business$|Organization$|Store$|Salon$|Restaurant$|ProfessionalService$|CafeOrCoffeeShop$|DaySpa$|Bakery$|BarOrPub$/.test(t))),complete=businesses.some(x=>x.name&&(x.url||x.telephone||x.address));
+ add('schema',complete?'ok':'warn','Virksomhedens strukturerede data',sd.invalid?`${sd.invalid} JSON-LD-blokke kunne ikke læses.`:complete?'JSON-LD med virksomhedsnavn og mindst én virksomhedsoplysning fundet. Rigtigheden er ikke verificeret.':businesses.length?'Virksomhedsdata fundet, men navn eller kontaktoplysninger mangler.':'Ingen virksomhedsdata genkendt. Det er ikke et krav for at blive vist i AI-svar.','Tilføj relevante virksomhedsdata, som stemmer med synlig tekst.',complete?10:businesses.length?5:0,10);
+ const hasContact=/href\s*=\s*["'](?:tel:|mailto:)/i.test(html)||/(?:\+45\s*)?(?:\d{2}[ .-]){3}\d{2}\b/.test(text)||/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i.test(text);
+ add('contact',hasContact?'ok':'warn','Let at tage kontakt',hasContact?'Kontaktlink eller kontaktoplysning fundet i sidens kode.':'Ingen telefon eller e-mail genkendt på den undersøgte side.','Vis en opdateret telefon eller e-mail.',hasContact?10:0,10,'content');
+ const faq=sd.types.includes('FAQPage')||/<(?:summary|h[2-4])\b[^>]*>[^<]{5,180}\?/i.test(html)||/ofte stillede spørgsmål|spørgsmål\s*(?:og|&|&amp;)\s*svar/i.test(text);
+ add('answers',faq?'ok':'info','Svar på kundespørgsmål',faq?'Spørgsmålsoverskrifter eller FAQ-data fundet. Svarenes kvalitet er ikke vurderet.':'Ingen tydelige spørgsmål og svar genkendt. De kan stå på en anden underside.','Besvar kundernes reelle spørgsmål om fx pris, behandling og booking.',null,0,'content');
+ const price=/\b\d[\d., ]*\s*(?:kr\.?|DKK|EUR)\b|[€$]\s*\d/.test(text);
+ add('pricing',price?'ok':'info','Konkrete priser',price?'Prisbeløb fundet i den synlige tekst. Vi har ikke verificeret, om de er aktuelle.':'Ingen prisbeløb genkendt på denne side. Det kan være relevant at forklare pris eller tilbudsproces.','Vis priser eller forklar, hvordan kunden får et tilbud.',null,0,'content');
+ const hasLlms=llms&&llms.status===200&&!/html/i.test(llms.type||'')&&/^#\s+\S/m.test(llms.text);
+ add('llms','info','llms.txt · valgfri',hasLlms?'En llms.txt-fil blev fundet. Den giver ingen point i dette tjek.':'Ingen llms.txt-fil genkendt. Det trækker ikke scoren ned.','Filen er et frivilligt forslag; den er ikke et krav for Google eller en garanti for AI-omtale.',null,0,'context');
+ const scored=checks.filter(c=>c.max>0&&c.points!==null),max=scored.reduce((n,c)=>n+c.max,0),points=scored.reduce((n,c)=>n+c.points,0);
+ return{url:base.href,host:base.hostname.replace(/^www\./,''),score:Math.round(points/max*100),scoreLabel:'Teknisk grundlag',scoreVersion:'2.0',checkedAt:new Date().toISOString(),checks,coverage:{pages:1,renderedJavaScript:false,unknownChecks:checks.filter(c=>c.status==='unknown').length},priorities:checks.filter(c=>['bad','warn'].includes(c.status)).sort((a,b)=>(b.max-(b.points||0))-(a.max-(a.points||0))).slice(0,3).map(c=>({title:c.title,action:c.fix})),limitations:['Kun den indtastede side og robots.txt/llms.txt er undersøgt.','Scoren er vores vægtede tekniske tjekliste. Den måler ikke AI-omtale, placering, hastighed eller salg.','Omtale, kilder og konkurrenter i AI-svar kræver gentagne tests af relevante spørgsmål.'],sources:SOURCES};
 }
-
-const LOCAL_TYPES = ["LocalBusiness", "CafeOrCoffeeShop", "Restaurant", "FoodEstablishment", "Bakery", "BarOrPub",
-  "Store", "ClothingStore", "BeautySalon", "HairSalon", "HealthAndBeautyBusiness", "DaySpa", "Organization", "ProfessionalService"];
-
-function structuredData(html) {
-  const blocks = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
-  const items = [];
-  for (const b of blocks) {
-    try {
-      const data = JSON.parse(b[1].trim());
-      const flat = (x) => (Array.isArray(x) ? x.flatMap(flat) : x && x["@graph"] ? flat(x["@graph"]) : x ? [x] : []);
-      items.push(...flat(data));
-    } catch (_) { /* ugyldig JSON tæller ikke */ }
-  }
-  const types = items.flatMap((i) => [].concat(i["@type"] || []));
-  const local = items.find((i) => [].concat(i["@type"] || []).some((t) => LOCAL_TYPES.includes(t)));
-  return {
-    count: items.length,
-    types: [...new Set(types)].slice(0, 6),
-    hasLocal: !!local,
-    hasAddress: !!(local && local.address),
-    hasPhone: !!(local && local.telephone),
-    hasHours: !!(local && (local.openingHours || local.openingHoursSpecification)),
-  };
-}
-
-function parseRobots(txt) {
-  const groups = [];
-  let cur = null;
-  let lastWasAgent = false;
-  for (const raw of txt.split(/\r?\n/)) {
-    const line = raw.replace(/#.*/, "").trim();
-    if (!line) continue;
-    const [k, ...rest] = line.split(":");
-    const key = k.trim().toLowerCase();
-    const val = rest.join(":").trim();
-    if (key === "user-agent") {
-      if (!lastWasAgent) { cur = { agents: [], disallowAll: false, allowRoot: false }; groups.push(cur); }
-      cur.agents.push(val.toLowerCase());
-      lastWasAgent = true;
-    } else {
-      lastWasAgent = false;
-      if (!cur) continue;
-      if (key === "disallow" && val === "/") cur.disallowAll = true;
-      if (key === "allow" && val === "/") cur.allowRoot = true;
-    }
-  }
-  const blocked = [];
-  for (const bot of AI_BOTS) {
-    const own = groups.find((g) => g.agents.includes(bot.toLowerCase()));
-    const g = own || groups.find((x) => x.agents.includes("*"));
-    if (g && g.disallowAll && !g.allowRoot) blocked.push(bot);
-  }
-  return blocked;
-}
-
-function check(status, title, explain, fix, points, max) {
-  return { status, title, explain, fix, points, max };
-}
-
-async function analyse(input) {
-  let raw = String(input || "").trim();
-  if (!raw) throw new Error("Skriv en hjemmesideadresse.");
-  if (!/^https?:\/\//i.test(raw)) raw = "https://" + raw;
-  const start = new URL(raw);
-
-  const page = await safeFetch(start.toString());
-  if ([401, 403, 429, 503].includes(page.status)) {
-    throw new Error("Hjemmesiden afviste vores tjek (den blokerer automatiske besøg). Det kan også betyde, at nogle AI-tjenester bliver afvist. Kontakt mig, så kigger jeg på den manuelt.");
-  }
-  if (page.status === 404) throw new Error("Siden findes ikke (fejl 404). Tjek adressen.");
-  if (page.status >= 400) throw new Error(`Hjemmesiden svarede med fejl ${page.status}.`);
-  if (page.type && !/html|xml|text\/plain/i.test(page.type)) throw new Error("Adressen peger ikke på en almindelig hjemmeside. Prøv forsidens adresse.");
-  const base = new URL(page.url);
-  const html = page.text;
-
-  const [robots, llms] = await Promise.all([
-    safeFetch(new URL("/robots.txt", base).toString()).catch(() => null),
-    safeFetch(new URL("/llms.txt", base).toString()).catch(() => null),
-  ]);
-
-  const text = visibleText(html);
-  const words = text ? text.split(" ").length : 0;
-  const title = (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1]?.trim() || "";
-  const desc = metaContent(html, "description");
-  const sd = structuredData(html);
-  const hasPhone = /(\+45[\s.]?)?\b\d{2}[\s.]?\d{2}[\s.]?\d{2}[\s.]?\d{2}\b/.test(text);
-  // Postnummer + by. Årstal (1900–2099) tæller kun, hvis der står en gadeadresse foran ("Ryesgade 28, 2000 Frederiksberg").
-  const postalHits = text.match(/\b[1-9]\d{3}\s+[A-ZÆØÅ][a-zæøå]+/g) || [];
-  const streetBeforePostal = /[A-ZÆØÅa-zæøå]{3,}\s+\d{1,3}[A-Za-z]?(?:,?\s*[\w.]{0,12})?,\s*[1-9]\d{3}\s+[A-ZÆØÅ][a-zæøå]+/.test(text);
-  const hasPostal = streetBeforePostal || postalHits.some((h) => !/^(19|20)\d{2}\b/.test(h));
-  const hasHoursText = /åbningstid|åbent|mandag|man\s*[-–]\s*fre|lørdag|søndag/i.test(text);
-  // FAQ: et rigtigt FAQ-afsnit, FAQ-data, eller mindst 3 overskrifter/udfoldninger formuleret som spørgsmål.
-  const questionHeadings = (html.match(/<(h[2-4]|summary|dt|button)[^>]*>([^<]{8,140}\?)\s*<\/\1>/gi) || []).length;
-  const hasFaq = sd.types.includes("FAQPage") ||
-    /\b(faq|ofte stillede spørgsmål|spørgsmål\s*(og|&|&amp;)\s*svar)\b/i.test(text) ||
-    questionHeadings >= 3;
-  const blockedBots = robots && robots.status < 400 && !/<html/i.test(robots.text) ? parseRobots(robots.text) : [];
-  const hasLlms = !!(llms && llms.status === 200 && llms.text.trim().length > 20 && !/<html/i.test(llms.text));
-
-  const checks = [];
-
-  checks.push(base.protocol === "https:"
-    ? check("ok", "Sikker forbindelse (https)", "Siden bruger https.", "", 5, 5)
-    : check("bad", "Sikker forbindelse (https)", "Siden bruger ikke https. Det sænker tilliden hos både kunder og AI.", "Slå SSL/https til hos jeres udbyder.", 0, 5));
-
-  checks.push(words >= 150
-    ? check("ok", "AI kan læse jeres tekst", `Vi fandt ca. ${words} ord direkte i sidens kode.`, "", 25, 25)
-    : words >= 50
-      ? check("warn", "AI kan læse jeres tekst", `Kun ca. ${words} ord kan læses uden JavaScript. Meget tekst kan være skjult for AI.`, "Skriv mere tekst direkte på forsiden: hvem I er, hvad I tilbyder, hvor I ligger.", 12, 25)
-      : check("bad", "AI kan læse jeres tekst", `Næsten ingen tekst kan læses uden JavaScript (ca. ${words} ord). Mange AI-crawlere ser en tom side.`, "Siden skal vise tekst direkte i koden – ofte kræver det en ny eller ombygget side.", 0, 25));
-
-  checks.push(blockedBots.length === 0
-    ? check("ok", "AI-crawlere har adgang", "robots.txt blokerer ikke de kendte AI-crawlere.", "", 15, 15)
-    : check("bad", "AI-crawlere har adgang", `Disse bliver blokeret: ${blockedBots.join(", ")}.`, "Ret robots.txt, så AI-crawlerne må læse siden.", 0, 15));
-
-  if (sd.hasLocal && sd.hasAddress && sd.hasPhone) {
-    checks.push(check("ok", "Strukturerede data (virksomhedskort)", `Fundet: ${sd.types.join(", ")}.${sd.hasHours ? "" : " Åbningstider mangler i data."}`, sd.hasHours ? "" : "Tilføj åbningstider til de strukturerede data.", sd.hasHours ? 20 : 15, 20));
-  } else if (sd.hasLocal) {
-    checks.push(check("warn", "Strukturerede data (virksomhedskort)", "Der er et virksomhedskort, men adresse eller telefon mangler.", "Udfyld adresse, telefon og åbningstider i de strukturerede data.", 8, 20));
-  } else {
-    checks.push(check("bad", "Strukturerede data (virksomhedskort)", sd.count ? `Der er data (${sd.types.join(", ")}), men intet virksomhedskort.` : "Siden har ingen strukturerede data. AI skal selv gætte, hvem I er.", "Tilføj et LocalBusiness-kort med navn, adresse, telefon og åbningstider.", 0, 20));
-  }
-
-  const contactScore = [hasPhone, hasPostal, hasHoursText].filter(Boolean).length;
-  checks.push(contactScore === 3
-    ? check("ok", "Kontakt, adresse og åbningstider som tekst", "Telefon, adresse og åbningstider står som tekst på siden.", "", 15, 15)
-    : check(contactScore === 0 ? "bad" : "warn", "Kontakt, adresse og åbningstider som tekst",
-      `Mangler som læsbar tekst: ${[!hasPhone && "telefon", !hasPostal && "adresse med postnummer", !hasHoursText && "åbningstider"].filter(Boolean).join(", ")}.`,
-      "Skriv dem som almindelig tekst – ikke kun i et billede eller et kort.", contactScore * 5, 15));
-
-  const hasViewport = /<meta[^>]+name=["']viewport["'][^>]*width=device-width/i.test(html) ||
-    /<meta[^>]+content=["'][^"']*width=device-width[^"']*["'][^>]+name=["']viewport["']/i.test(html);
-  checks.push(hasViewport
-    ? check("ok", "Mobilvenlig opsætning", "Siden er sat op til at tilpasse sig mobilskærme.", "", 5, 5)
-    : check("bad", "Mobilvenlig opsætning", "Siden mangler mobil-opsætningen (viewport). Den kan se lille og svær ud på telefonen.", "Tilføj mobil-opsætning, eller få en mobilvenlig side.", 0, 5));
-
-  checks.push(title && desc
-    ? check("ok", "Titel og beskrivelse", `Titel: “${title.slice(0, 70)}”.`, "", 10, 10)
-    : check("warn", "Titel og beskrivelse", !title ? "Siden mangler en titel." : "Siden mangler en kort beskrivelse (meta description).", "Skriv en titel og en beskrivelse med jeres navn, bydel og hvad I er kendt for.", title ? 5 : 0, 10));
-
-  checks.push(hasFaq
-    ? check("ok", "Svar på kundernes spørgsmål", "Siden ser ud til at have spørgsmål og svar.", "", 5, 5)
-    : check("warn", "Svar på kundernes spørgsmål", "Vi fandt ingen FAQ. AI elsker korte, direkte svar.", "Tilføj 4–6 spørgsmål som “Har I veganske retter?”.", 0, 5));
-
-  checks.push(hasLlms
-    ? check("ok", "llms.txt", "Siden har en llms.txt med fakta til AI.", "", 5, 5)
-    : check("warn", "llms.txt", "Ingen llms.txt. Det er en ny standard, som ikke alle bruger endnu.", "Læg en kort fil med jeres vigtigste fakta i roden af domænet.", 0, 5));
-
-  const score = checks.reduce((s, c) => s + c.points, 0);
-  const max = checks.reduce((s, c) => s + c.max, 0);
-
-  return {
-    url: base.toString(),
-    host: base.hostname.replace(/^www\./, ""),
-    score: Math.round((score / max) * 100),
-    checks,
-    checkedAt: new Date().toISOString(),
-  };
-}
-
-module.exports = async function handler(req, res) {
-  res.setHeader("Cache-Control", "no-store");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  if (req.method !== "GET" && req.method !== "POST") {
-    res.statusCode = 405;
-    return res.end(JSON.stringify({ error: "Metode ikke tilladt." }));
-  }
-  let target = "";
-  try {
-    if (req.method === "POST") {
-      const body = typeof req.body === "object" && req.body ? req.body : JSON.parse(req.body || "{}");
-      target = body.url;
-    } else {
-      target = new URL(req.url, "http://x").searchParams.get("url");
-    }
-    if (!target || String(target).length > 300) throw new Error("Skriv en gyldig hjemmesideadresse.");
-    const result = await analyse(target);
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json; charset=utf-8");
-    res.end(JSON.stringify(result));
-  } catch (err) {
-    const msg = err && err.name === "AbortError" ? "Hjemmesiden svarede ikke i tide." :
-      err && /fetch failed|ENOTFOUND|EAI_AGAIN/.test(String(err.message || err.cause)) ? "Vi kunne ikke finde hjemmesiden. Tjek adressen." :
-      (err && err.message) || "Noget gik galt.";
-    res.statusCode = 400;
-    res.setHeader("Content-Type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ error: msg }));
-  }
-};
-
-module.exports.analyse = analyse;
-module.exports.parseRobots = parseRobots;
+function publicError(e){if(/ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ENETUNREACH|EHOSTUNREACH/.test(String(e.code||e.message)))return 'Vi kunne ikke hente hjemmesiden. Tjek adressen, og prøv igen.';if(/certificate|CERT_|TLS|SSL/i.test(String(e.code||e.message)))return 'Der er et problem med hjemmesidens sikre forbindelse. Prøv igen eller kontakt mig.';return e.message||'Tjekket kunne ikke gennemføres. Prøv igen.';}
+async function handler(req,res){res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Cache-Control','no-store');if(!['POST','GET'].includes(req.method)){res.statusCode=405;res.setHeader('Allow','GET, POST');return res.end(JSON.stringify({error:'Metoden er ikke tilladt.'}));}try{const b=req.method==='POST'?(typeof req.body==='object'?req.body:JSON.parse(req.body||'{}')):{url:new URL(req.url,'http://local').searchParams.get('url')};const result=await analyse(b?.url);res.statusCode=200;res.end(JSON.stringify(result));}catch(e){res.statusCode=400;res.end(JSON.stringify({error:e instanceof SyntaxError?'Formularen kunne ikke læses. Prøv igen.':publicError(e)}));}}
+module.exports=handler;Object.assign(module.exports,{analyse,normalizeUrl,isPublicIp,parseRobots,safeFetch,visibleText,metaContent,structuredData});
