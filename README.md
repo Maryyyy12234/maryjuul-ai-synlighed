@@ -29,6 +29,40 @@ Tjekket måler ikke faktisk omtale i ChatGPT, Gemini eller andre AI-tjenester. D
 
 DNS-adresser kontrolleres og fastlåses til hver netværksforbindelse. Private, loopback-, metadata- og reserverede adresser afvises, også efter viderestilling. Testene bruger en lokal testside via indsprøjtede kodeparametre (`fetchOptions`), som aldrig kan sættes fra en forespørgsel.
 
+## Arbejdsforløb med fire roller (etape 1)
+
+Ét Node-program. Rollerne er moduler i `workers/`, hver med sin `PLAYBOOK.md`:
+
+1. `tjekker` – hjemmesidetjekket (check.js v3). Kun kode, ingen AI.
+2. `strateg` – 3-5 prioriterede anbefalinger. Regler altid, AI valgfrit.
+3. `indhold` – tekstforslag som kladder med `[UDFYLD: …]`. Skabeloner altid, AI valgfrit.
+4. `kontrol` – faste regler + valgfri separat AI-gennemgang. Højst 2 rettelsesrunder.
+
+Fælles vidensbase: `knowledge/mary-juul.md`.
+
+### API
+- `POST /api/jobs {"url":"…"}` → 202 `{id, state, stateLabel, steps}`. Samme CORS og IP-grænse som `/api/check`.
+- `GET /api/jobs/:id` → offentlig status: tilstand, rigtige trin, v3-tjek og næste skridt. Kladder og rapport er ikke offentlige.
+- `GET /api/admin/jobs`, `GET /api/admin/jobs/:id`, `GET /api/admin/jobs/:id/report`, `POST /api/admin/jobs/:id/approve` kræver `Authorization: Bearer <ADMIN_TOKEN>`. Uden `ADMIN_TOKEN` (mindst 16 tegn) er admin lukket.
+
+Hent rapporten: `curl -H "Authorization: Bearer $ADMIN_TOKEN" https://maryjuul-ai-synlighed.onrender.com/api/admin/jobs/<id>/report > rapport.html`.
+
+Tilstande: I kø, Under behandling, Klar, Kræver gennemgang, Kunne ikke gennemføres. Ingen procenter. Intet sendes eller udgives automatisk.
+
+### Valg af teknik
+Opgaverne kører som en baggrundskø i samme proces som webserveren. Det er simpelt og nok til få opgaver om dagen. En separat Render Background Worker med Render Key Value som kø giver først mening, når mængden kræver det.
+
+- Samme adresse samme UTC-dag giver samme opgave (id = sha256 af adresse + dato). Gentagne klik og genstarter laver ikke dubletter.
+- Højst `JOB_CONCURRENCY` (standard 2) samtidige opgaver, højst 50 i kø, 90 sekunder pr. opgave.
+- Hver opgave gemmes som JSON i `DATA_DIR/jobs/` efter hvert trin (atomisk skrivning). Ved genstart fortsætter opgaver i kø. En opgave, der var i gang, startes igen én gang og markeres derefter som ikke gennemført.
+- Render free har en midlertidig disk. Opgaver forsvinder ved ny deploy eller genstart af maskinen. For varig lagring: tilføj en Render Disk og sæt `DATA_DIR` til dens sti, eller flyt lageret til Render Postgres/Key Value senere.
+
+### AI
+Kun når `ANTHROPIC_API_KEY` og `AI_MODEL` er sat. Kaldes via fetch fra backend, aldrig fra temaet. Budget: `AI_MAX_CALLS_PER_JOB` (4), `AI_MAX_CALLS_PER_DAY` (50), 20 sekunders tidsgrænse og ét nyt forsøg. Sideindhold sendes som data i `<website_content>`, og svaret valideres som JSON. Fejler AI, bruges regler og skabeloner, og opgaven markeres "Kræver gennemgang".
+
+### Miljøvariabler på Render
+`CORS_ORIGINS`, `ADMIN_TOKEN`, `DATA_DIR` (valgfri), `JOB_CONCURRENCY` (valgfri), `ANTHROPIC_API_KEY` og `AI_MODEL` (valgfri, begge kræves for AI), `AI_MAX_CALLS_PER_JOB`, `AI_MAX_CALLS_PER_DAY` (valgfri).
+
 ## Udgivelse
 
 Render følger `main` i dette repo. Kontroller at det konkrete commit er `live`; en accepteret deploy er ikke nok. `GET /healthz` returnerer version og Render-commit. Sites-publiceringen har sin egen kildehistorik. Kopiér frontendfiler og assets til `dist/` i Sites-kilden og udgiv via Sites.
@@ -41,6 +75,4 @@ Visuelle projekter er markerede koncepter, ikke kundecases. Interiørfoto: Unspl
 
 Kundespørgsmål følger behov, sammenligning og beslutning. Priser kobles til leverancer og aftalt omfang. Dokumentation og ensartede virksomhedsoplysninger behandles særskilt fra designkoncepter. Synlig FAQ og FAQPage-data indeholder de samme spørgsmål og svar.
 
-Rapportens `geoPlan` indeholder konkrete indholdsopgaver og tydeligt markerede manuelle opgaver. Canonical-adresser, eksterne links og datoer registreres som observationer uden point. Et link beviser ikke troværdighed, og en dato beviser ikke friskhed. Eksterne referencer følges ikke af tjekket.
-
-Faktisk AI-omtale kræver særskilte, gentagne spørgsmål med gemte svar, kilder, tjeneste/model og tidspunkt. Denne API foretager ingen sådanne AI-kald og fremstiller ikke teknisk score som AI-placering. Dokumentation: Google Search Central om AI-funktioner og oprindelig GEO-forskning (KDD 2024).
+Faktisk AI-omtale kræver særskilte, gentagne spørgsmål med gemte svar, kilder, tjeneste/model og tidspunkt. Hverken tjekket eller arbejdsforløbet måler AI-omtale. Den valgfrie AI bruges kun til prioritering og tekstforslag. Dokumentation: Google Search Central om AI-funktioner og oprindelig GEO-forskning (KDD 2024).
