@@ -41,3 +41,6 @@ Skriv naturligt, præcist og til virksomhedens kunder. Korte sætninger.
 - Kan siden ikke undersøges, laves ingen tekster (trinnet står som sprunget over).
 - AI-fejl: skabelon-tekster bruges, og opgaven markeres "Kræver gennemgang".
 - Afviser kvalitetskontrollen en tekst, rettes den med AI (hvis slået til) eller med faste regler, der erstatter de forkerte dele med `[UDFYLD: …]`.
+
+## Fælles viden
+Læs `knowledge/mary-juul.md` og `knowledge/GEO-principper.md`. Brug kun principperne under "Det vi bruger". Påstandene under "Det vi IKKE bruger" må aldrig optræde i anbefalinger eller tekster.

@@ -21,7 +21,8 @@ const NOT_CHECKED=[
  'Andre undersider end den indtastede adresse.',
  'Indhold, der først vises, når JavaScript kører.',
  'Hastighed, mobilvisning og design.',
- 'Google-virksomhedsprofil, anmeldelser og omtale på andre hjemmesider.',
+ 'Om Google-virksomhedsprofil, kataloger og sociale profiler siger det samme som hjemmesiden (navn, adresse, telefon, priser, åbningstider).',
+ 'Anmeldelser og omtale på andre hjemmesider.',
  'Om oplysningerne på siden er rigtige og opdaterede.'
 ];
 const METHOD='Tjekket henter den indtastede side én gang, som en almindelig browser uden JavaScript, samt filerne robots.txt, sitemap.xml og llms.txt fra samme domæne. Vi læser kun det, serveren sender: tekst, overskrifter, metadata, strukturerede data og links. Hvert fund viser det, vi faktisk så. Tjekket giver ingen score, fordi en enkelt side ikke er grundlag nok for en samlet karakter. Det måler ikke, om virksomheden bliver nævnt i ChatGPT, Gemini eller andre AI-tjenester, og det vurderer ikke, om oplysningerne er rigtige. Hvis vi ikke får adgang til siden, står forholdet som uafklaret, ikke som en fejl på siden.';
@@ -159,9 +160,11 @@ const CATALOGUE=[
  ['h1','technical','Hovedoverskrift (H1)'],
  ['lang','technical','Sprog angivet'],
  ['text','technical','Tekst uden JavaScript'],
+ ['canonical','technical','Foretrukken adresse (canonical)'],
  ['schema','facts','Virksomhedsdata i koden (strukturerede data)'],
  ['contact','facts','Telefon eller e-mail på siden'],
  ['address','facts','Adresse på siden'],
+ ['sameas','facts','Links til profiler i virksomhedsdata (sameAs)'],
  ['prices','services','Priser på siden'],
  ['booking','services','Vej til booking eller kontakt'],
  ['faq','answers','Svar på typiske spørgsmål'],
@@ -176,6 +179,7 @@ const STEP={
  description:['Skriv en kort beskrivelse af siden','Beskrivelsen bruges ofte under titlen i søgeresultater.'],
  h1:['Tilføj en tydelig hovedoverskrift','Overskriften fortæller hurtigt, hvad siden handler om.'],
  lang:['Angiv sproget i sidens kode','Det hjælper søgetjenester med at forstå, at siden er på dansk.'],
+ canonical:['Ret sidens canonical-adresse','Den peger på et andet domæne. Så kan søgemaskiner vise en anden side end din.'],
  text:['Gør den vigtigste tekst synlig uden JavaScript','Nogle tjenester læser kun den tekst, serveren sender. Ydelser, pris og kontakt bør stå der.'],
  schema:['Tilføj virksomhedsdata i sidens kode','Strukturerede data gør navn, adresse, telefon og åbningstider entydige for maskiner.'],
  contact:['Vis telefon eller e-mail tydeligt','Kunder og søgetjenester skal kunne se, hvordan man får fat i dig.'],
@@ -243,6 +247,15 @@ function checkPage(page,files,requested){
  else if(words<80)set('text','warn','Vi fandt cirka '+words+' ord i sidens HTML. Der er plads til at forklare tilbuddet tydeligere.',words+' ord · '+sample,'Tilføj et par korte afsnit om dine ydelser, dit område og dine priser.',3);
  else set('text','ok','Vi fandt cirka '+words+' ord tekst i sidens HTML. Den kan læses uden JavaScript. Tekstens kvalitet er ikke vurderet.',words+' ord · '+sample);
 
+ // canonical
+ const canonTags=(html.match(/<link\b[^>]*>/gi)||[]).map(attrs).filter(a=>(a.rel||'').toLowerCase().split(/\s+/).includes('canonical'));
+ let canonUrl=null;try{if(canonTags.length===1&&canonTags[0].href)canonUrl=new URL(canonTags[0].href,base);}catch{}
+ const bare=h=>h.replace(/^www\./,'');
+ if(!canonTags.length)set('canonical','info','Siden angiver ingen foretrukken adresse (canonical). Det er ikke en fejl. Det er mest relevant, hvis samme indhold findes på flere adresser.');
+ else if(!canonUrl||!['http:','https:'].includes(canonUrl.protocol))set('canonical','info',canonTags.length>1?'Siden angiver flere canonical-adresser. Det bør gennemgås.':'Canonical-angivelsen kunne ikke læses som en gyldig adresse.',clip(canonTags.map(t=>t.href||'(tom)').join(' · '),160));
+ else if(bare(canonUrl.hostname)!==bare(base.hostname))set('canonical','warn','Sidens canonical peger på et andet domæne. Søgemaskiner kan derfor vise den anden adresse i stedet for denne side.',canonUrl.href,'Lad canonical pege på sidens egen adresse, medmindre det andet domæne er det rigtige.',2);
+ else set('canonical','ok',canonUrl.href.replace(/\/$/,'')===base.href.replace(/\/$/,'')?'Canonical peger på siden selv.':'Canonical peger på en anden side på samme domæne. Det kan være meningen, men bør gennemgås.',canonUrl.href);
+
  // structured data
  const businesses=sd.items.filter(x=>[].concat(x['@type']||[]).some(t=>typeof t==='string'&&t!=='Service'&&/(?:Business|Organization|Organisation|Corporation|Store|Shop|Salon|Restaurant|Service|Clinic|Dentist|Physician|Spa|Bakery|BarOrPub|Hotel)$/.test(t)));
  const fmtAddress=a=>typeof a==='string'?a:a&&typeof a==='object'?[a.streetAddress,[a.postalCode,a.addressLocality].filter(Boolean).join(' ')].filter(Boolean).join(', '):'';
@@ -273,6 +286,12 @@ function checkPage(page,files,requested){
  const addr=street||postal?.[0];
  if(addr)set('address','ok','Vi fandt en adresse eller et postnummer i sidens tekst.',addr);
  else set('address','warn','Vi fandt ingen adresse eller postnummer i sidens tekst. Har du en fysisk adresse eller et fast område, bør det stå tydeligt.',null,'Skriv adresse og by, fx “Ryesgade 1, 8000 Aarhus C”, eller det område, du dækker.',2);
+
+ // sameAs
+ const sameAs=[...new Set(businesses.flatMap(b=>[].concat(b.sameAs||[])).filter(x=>typeof x==='string'&&/^https?:\/\//i.test(x)))];
+ const profileLike=sameAs.filter(u=>/google\.[a-z.]+\/maps|maps\.app\.goo\.gl|g\.page|business\.google|facebook\.com|instagram\.com|linkedin\.com|tiktok\.com|youtube\.com|trustpilot\.|krak\.dk|degulesider\.dk|yelp\./i.test(u));
+ if(sameAs.length)set('sameas','ok','Virksomhedsdata linker til '+sameAs.length+' profil'+(sameAs.length===1?'':'er')+' (sameAs). Om profilerne siger det samme som siden, er ikke undersøgt.',(profileLike.length?profileLike:sameAs).slice(0,3).join(' · '));
+ else set('sameas','info','Vi fandt ingen sameAs-links i virksomhedsdata. Det er ikke en fejl. Links til fx Google-virksomhedsprofil eller sociale profiler kan gøre det tydeligt, at de hører til samme virksomhed.',null,'Tilføj sameAs med links til virksomhedens profiler i LocalBusiness-data.');
 
  // prices
  const priceRe=/(?:(?:fra|kun|pris|à)\s+)?(?<![\d.,])\d{1,3}(?:[.\s]\d{3})*(?:,\d{2}|,-)?\s?(?:kr\.?|DKK)(?![a-zæøå])|(?:kr\.?|DKK)\s?\d{1,3}(?:[.\s]\d{3})*(?:,\d{2}|,-)?|(?<![\d.,])\d{2,5},-/gi;

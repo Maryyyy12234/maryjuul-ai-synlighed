@@ -32,3 +32,9 @@ Når reglerne er bestået, og AI er slået til, laver en separat AI-gennemgang e
 
 ## Output
 `{ passed, issues: [{ target, itemId, rule, reason }], warnings, aiNotes, rounds }`
+
+## Fælles viden
+Læs `knowledge/mary-juul.md` og `knowledge/GEO-principper.md`. Brug kun principperne under "Det vi bruger". Påstandene under "Det vi IKKE bruger" må aldrig optræde i anbefalinger eller tekster.
+
+## Leverandørpåstande
+Kontrollen afviser de udokumenterede påstande fra GEO-principper.md, fx "konverterer 4,4 gange bedre", "80-90 % af købsrejser", "rank #1", procent af "AI-markedet" og "AI-score".

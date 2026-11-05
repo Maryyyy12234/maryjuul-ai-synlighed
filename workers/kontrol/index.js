@@ -4,7 +4,12 @@
 const BANNED=[
  [/garant\w*/gi,'løfte om garanti'],[/\bnr\.?\s?1\b|\bnummer [ée]n\b|\bførsteplads\w*/gi,'løfte om placering'],[/\baltid\b/gi,'absolut påstand (“altid”)'],
  [/\b100\s?%/g,'absolut påstand (100 %)'],[/\bbedste i\b|\bmarkedets bedste\b|\bførende\b/gi,'udokumenteret superlativ'],
- [/\b(?:nævnt|anbefalet|vist|øverst|synlig)\s+i\s+(?:chatgpt|gemini|perplexity|copilot|claude|ai-svar|ai-tjenester)\b/gi,'løfte om AI-omtale'],[/\b(?:øverst|først)\s+(?:i|på)\s+google\b/gi,'løfte om placering']
+ [/\b(?:nævnt|anbefalet|vist|øverst|synlig)\s+i\s+(?:chatgpt|gemini|perplexity|copilot|claude|ai-svar|ai-tjenester)\b/gi,'løfte om AI-omtale'],[/\b(?:øverst|først)\s+(?:i|på)\s+google\b/gi,'løfte om placering'],
+ // Unsupported vendor claims from knowledge/GEO-principper.md ("Det vi IKKE bruger").
+ [/\bkonverterer\s+\d+(?:[.,]\d+)?\s*(?:x|gange)\b|\b\d+(?:[.,]\d+)?\s*(?:x|gange)\s+(?:bedre|højere|flere)\b/gi,'udokumenteret leverandørpåstand om konvertering'],
+ [/\b\d+\s*[-–]\s*\d+\s*%\s*af\s+(?:alle\s+)?købsrejser|\b\d+(?:[.,]\d+)?\s*%\s*af\s+(?:ai|chatgpt)[\w-]*/gi,'udokumenteret leverandørstatistik'],
+ [/\brank(?:e|er)?\s*#?\s*1\b|#1\s+(?:i|across|på)\b/gi,'løfte om placering'],
+ [/\bai-(?:synligheds)?score\b/gi,'udokumenteret AI-score']
 ];
 const KIND_OBSERVED='observeret';
 const strip=t=>String(t||'').replace(/\[UDFYLD:[^\]]*\]/g,' ');

@@ -149,3 +149,12 @@ test('server: end-to-end POST returns a v3 report from a local fixture site',asy
  assert.equal(r.status,200);assert.equal(r.headers.get('access-control-allow-origin'),'https://abc.shopifypreview.com');
  const data=await r.json();assertShape(data);
 });
+test('canonical: other host is warn, self is ok, missing is info; sameAs ok/info; profile consistency is listed as not checked',async()=>{
+ const withCanon=href=>html.replace('</head>','<link rel="canonical" href="'+href+'"></head>');
+ assert.equal(byId(await analyse('example.com',{fetchPage:fixture({html:withCanon('https://andet-domaene.dk/')})}),'canonical').status,'warn');
+ assert.equal(byId(await analyse('example.com',{fetchPage:fixture({html:withCanon('https://www.example.com/')})}),'canonical').status,'ok');
+ const plain=await analyse('example.com',{fetchPage:fixture()});assert.equal(byId(plain,'canonical').status,'info');assert.equal(byId(plain,'sameas').status,'info');
+ assert.ok(plain.scope.notChecked.some(s=>/Google-virksomhedsprofil/.test(s)));
+ const sa=await analyse('example.com',{fetchPage:fixture({html:html.replace('"priceRange":"$$"','"priceRange":"$$","sameAs":["https://www.instagram.com/salontest","https://maps.app.goo.gl/abc"]')})});
+ assert.equal(byId(sa,'sameas').status,'ok');assert.match(byId(sa,'sameas').evidence,/instagram/);
+});

@@ -31,7 +31,8 @@ ${found.length?found.map(c=>`<div class="item"><span class="tag">${STATUS.ok}</s
 ${warns.length?'<h3>Det, der bør forbedres</h3>'+warns.map(c=>`<div class="item"><span class="tag">${STATUS.warn} · prioritet ${esc(c.priority)}</span><h3>${esc(c.title)}</h3><p>${esc(c.explain)}</p>${c.evidence?'<p class="ev">Set på siden: '+esc(c.evidence)+'</p>':''}</div>`).join(''):''}
 
 <h2><span>3</span>Prioriterede forbedringer</h2>
-<ol>${recs.map(r=>`<li class="item"><span class="tag">${esc(KIND[r.kind]||r.kind)}</span><p><strong>${esc(r.change)}</strong></p><p>Hvorfor: ${esc(r.why)}</p><p class="meta">Bygger på: ${esc(r.basedOn.map(id=>check.checks.find(c=>c.id===id)?.title||id).join(', '))} · Kræver fra dig: ${esc(r.needsFromClient)}</p></li>`).join('')}</ol>
+${job.results?.strateg?.rankNote?'<p class="meta">'+esc(job.results.strateg.rankNote)+'</p>':''}
+<ol>${recs.map(r=>`<li class="item"><span class="tag">${esc(KIND[r.kind]||r.kind)}</span><p><strong>${esc(r.change)}</strong></p><p>Hvorfor: ${esc(r.why)}</p><p class="meta">Bygger på: ${esc(r.basedOn.map(id=>check.checks.find(c=>c.id===id)?.title||id).join(', '))} · Kræver fra dig: ${esc(r.needsFromClient)}${r.rank?' · Konsekvens '+r.rank.consequence+' × sikkerhed '+r.rank.certainty+' ÷ indsats '+r.rank.effort:''}</p></li>`).join('')}</ol>
 
 <h2><span>4</span>Tekstforslag (KLADDE)</h2>
 <p class="notice">${esc(draftLabel)} Felter markeret <mark>[UDFYLD: …]</mark> kræver oplysninger fra dig. Vi har ikke opfundet priser, erfaring eller anmeldelser.</p>

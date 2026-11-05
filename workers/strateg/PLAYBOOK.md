@@ -36,3 +36,9 @@ Omsætte fundene til en prioriteret plan med 3-5 anbefalinger.
 - Mangler noget fra kunden, står det i `needsFromClient`.
 - AI-fejl eller ugyldigt AI-svar: regelbaseret plan bruges, og opgaven markeres "Kræver gennemgang".
 - Afviser kvalitetskontrollen en anbefaling, fjernes den eller erstattes af den regelbaserede version.
+
+## Fælles viden
+Læs `knowledge/mary-juul.md` og `knowledge/GEO-principper.md`. Brug kun principperne under "Det vi bruger". Påstandene under "Det vi IKKE bruger" må aldrig optræde i anbefalinger eller tekster.
+
+## Prioritering
+Anbefalingerne sorteres efter kommerciel konsekvens × faktuel sikkerhed ÷ indsats (hver 1-3). Sikkerhed: observeret = 3, vurdering = 2, kræver mere viden = 1. Konsekvens og indsats er faste skøn pr. type fund. Rapporten viser tallene og forklarer metoden. Der er altid én anbefaling om ens oplysninger på Google-virksomhedsprofil, kataloger og sociale profiler. Den er mærket "kræver mere viden", fordi tjekket ikke kan se de profiler.

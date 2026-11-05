@@ -152,3 +152,15 @@ test('server: admin is closed when ADMIN_TOKEN is not set',async t=>{
  const orc=new Orchestrator({dataDir:tmp(t),ai:null});const server=createServer({orchestrator:orc,adminToken:''});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));
  assert.equal((await fetch('http://127.0.0.1:'+server.address().port+'/api/admin/jobs',{headers:{Authorization:'Bearer '}})).status,401);
 });
+test('strateg ranks by consequence × certainty ÷ effort and always adds the off-site consistency recommendation',async t=>{
+ const job=await runJob(make(t,{fetchPage:site({html:TINY})})),recs=job.results.strateg.recommendations;
+ assert.ok(recs.length>=3&&recs.length<=5);assert.match(job.results.strateg.rankNote,/konsekvens × faktuel sikkerhed ÷ indsats/);
+ for(let i=1;i<recs.length;i++)assert.ok(recs[i-1].rank.value>=recs[i].rank.value);
+ const off=recs.find(r=>/Google-virksomhedsprofil/.test(r.change));assert.ok(off);assert.equal(off.kind,'kræver mere viden');
+ assert.match(renderReport(job),/Konsekvens \d × sikkerhed \d ÷ indsats \d/);
+});
+test('kontrol rejects unsupported vendor claims from GEO-principper.md',()=>{
+ const {bannedIn}=require('../workers/kontrol');
+ for(const s of ['ChatGPT-brugere konverterer 4,4 gange bedre','80–90 % af købsrejser involverer en LLM','Ready to rank #1 across AI answer engines','Vi har 30 % af AI-markedet','Få din AI-score'])assert.ok(bannedIn(s).length,s);
+ assert.equal(bannedIn('Dameklip i Aarhus C. Book tid.').length,0);
+});
