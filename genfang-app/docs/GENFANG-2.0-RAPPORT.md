@@ -34,6 +34,7 @@ Dato: 7. november 2026 · Gren: `claude/charming-faraday-z1103s` · Mappe: `genf
 |---|---|
 | TypeScript (`tsc --noEmit`) + produktionsbuild | Grøn |
 | Unit-tests (`npm test`) | **60/60** |
+| Database-tests (`npm run test:db`, ægte Postgres via PGlite) | **12/12** |
 | – heraf sikkerhedslag inkl. kl. 16.42-regression | 16 |
 | – Responder mod sikkerhedslag: hver halve time i 14 dage (>2.000 udkast) | 1 (alle bestået) |
 | – domæne: isolering, roller, akut, tilbud, opfølgning, nødstop, ejerpanel, GDPR | 27 |
@@ -52,7 +53,7 @@ Dato: 7. november 2026 · Gren: `claude/charming-faraday-z1103s` · Mappe: `genf
 
 | Integration | Status |
 |---|---|
-| Rigtig GENFANG-database (Postgres/Supabase) og eksisterende workers | **Ikke tilgængelig i sessionen** – data er syntetiske i hukommelsen |
+| Rigtig database | **Skema + RLS færdigt og testet** (`supabase/migrations`, 12 tests mod ægte Postgres, se `docs/DATABASE.md`). Ikke koblet til appen endnu – mangler valg af Supabase-projekt. Appen kører stadig på syntetiske data i hukommelsen. Ingen separat GENFANG-kodebase blev fundet i GitHub, Supabase eller Vercel. |
 | Sprogmodel (Claude) til svarudkast | Ikke aktiv – Responder er skabelonbaseret. Ingen AI-omkostninger |
 | Mail ind/ud, hjemmesideformular, telefoni | Ikke aktiv – `/api/v1/intake` simulerer |
 | Kalender (Google/Outlook/Ordrestyring) | Testkalender – ikke forbundet |
@@ -61,7 +62,7 @@ Dato: 7. november 2026 · Gren: `claude/charming-faraday-z1103s` · Mappe: `genf
 | Økonomisystem (e-conomic/Dinero) | Ikke forbundet – derfor er intet "Verificeret" |
 | Stripe-abonnementer | Ikke aktiv |
 | Varig auditlog og delt rate limiting | Hukommelse pr. instans |
-| Vercel-testversion | Ikke deployet (adgang til Vercel-projektet "genfang" mangler) |
+| Vercel-testversion | Ikke deployet. Vercel-forbindelsen kan kun liste projekter – oprettelse afvises (403). |
 
 ## 4. Fælles API til web, iOS, Android, Windows og macOS
 
