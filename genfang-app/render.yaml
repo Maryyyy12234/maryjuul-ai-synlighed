@@ -1,0 +1,39 @@
+# Render Blueprint for GENFANG-testversionen. Bruges med stien genfang-app/render.yaml.
+# DATABASE_URL kobles automatisk fra databasen – adgangskoden står aldrig i koden.
+services:
+  - type: web
+    name: genfang-test
+    runtime: node
+    repo: https://github.com/Maryyyy12234/maryjuul-ai-synlighed
+    branch: claude/charming-faraday-z1103s
+    region: frankfurt
+    plan: free
+    rootDir: .
+    buildCommand: cd genfang-app && npm ci && npm run build
+    startCommand: cd genfang-app && npm start
+    autoDeploy: true
+    buildFilter:
+      paths:
+        - genfang-app/**
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: SESSION_SECRET
+        sync: false
+      - key: DEMO_PASSWORD
+        sync: false
+      - key: OWNER_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: genfang-db
+          property: connectionString
+
+databases:
+  - name: genfang-db
+    region: frankfurt
+    plan: free
+    databaseName: genfang_db
+    user: genfang_db_user
+    postgresMajorVersion: "17"
+    ipAllowList: []

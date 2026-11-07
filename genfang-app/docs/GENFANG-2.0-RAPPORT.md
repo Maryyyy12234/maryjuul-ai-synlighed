@@ -61,7 +61,8 @@ Dato: 7. november 2026 · Gren: `claude/charming-faraday-z1103s` · Mappe: `genf
 | Push-afsendelse | Abonnement gemmes, afsendelse slået fra |
 | Økonomisystem (e-conomic/Dinero) | Ikke forbundet – derfor er intet "Verificeret" |
 | Stripe-abonnementer | Ikke aktiv |
-| Varig auditlog og delt rate limiting | Hukommelse pr. instans |
+| Varig lagring | Hele tilstanden (sager, tilbud, auditlog m.m.) gemmes i Render Postgres efter hver handling og indlæses ved start (`src/lib/persist.ts`). Testet: 4 unit-tests mod ægte Postgres + genstart-test lokalt. Én instans. |
+| Delt rate limiting | Hukommelse pr. instans |
 | Vercel-testversion | Ikke deployet. Vercel-forbindelsen kan kun liste projekter – oprettelse afvises (403). |
 
 ## 4. Fælles API til web, iOS, Android, Windows og macOS

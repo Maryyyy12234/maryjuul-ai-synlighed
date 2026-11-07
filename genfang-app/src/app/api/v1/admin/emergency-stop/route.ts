@@ -1,3 +1,4 @@
+import { commit } from "@/lib/persistence-runtime.ts";
 import { authed, fail, readJson, requireSuper, respond } from "@/lib/api.ts";
 import { setEmergencyStop } from "@/lib/store.ts";
 
@@ -8,5 +9,7 @@ export async function POST(req: Request) {
   let b: { on?: unknown; reason?: unknown };
   try { b = (await readJson(req, 1024)) as typeof b; } catch { return fail("invalid", "Ugyldig forespørgsel.", 400); }
   if (typeof b.on !== "boolean") return fail("invalid", "Angiv on: true/false.", 400);
-  return respond(setEmergencyStop(a.session.uid, b.on, String(b.reason ?? "")), (ok) => ({ emergencyStop: ok.emergencyStop }));
+  const result = setEmergencyStop(a.session.uid, b.on, String(b.reason ?? ""));
+  await commit();
+  return respond(result, (ok) => ({ emergencyStop: ok.emergencyStop }));
 }

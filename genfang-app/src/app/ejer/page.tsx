@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { EmergencyStop, PauseTenant } from "@/components/admin-controls";
+import { EmergencyStop, PauseTenant, ResetDemo } from "@/components/admin-controls";
 import { LogoutButton } from "@/components/logout-button";
 import { Prov, ProvLegend } from "@/components/prov";
 import { requireSession } from "@/lib/auth";
@@ -68,6 +68,11 @@ export default async function OwnerPanel() {
             <li><span>Betalingsgebyr</span><span>{(costModel.paymentFeePct * 100).toString().replace(".", ",")} %</span></li>
           </ul>
           <p className="notice">Antagelser – erstattes af faktiske fakturaer fra Vercel, Anthropic, SMS-udbyder og Stripe, når de er forbundet.</p>
+        </section>
+        <section className="section">
+          <div className="section-head"><h2>Data</h2><span>{process.env.DATABASE_URL ? "Gemmes i Postgres" : "Kun i hukommelsen"}</span></div>
+          <p className="notice">{process.env.DATABASE_URL ? "Ændringer gemmes varigt og overlever genstart." : "Uden DATABASE_URL forsvinder ændringer ved genstart."}</p>
+          <ResetDemo />
         </section>
         <div style={{ marginTop: 28, maxWidth: 320 }}><LogoutButton /></div>
       </main>

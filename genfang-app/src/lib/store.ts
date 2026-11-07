@@ -46,7 +46,12 @@ export function db(): Db {
   return g.__genfangDb;
 }
 
-/** Kun til tests. */
+/** Indsæt tilstand indlæst fra Postgres (ved serverstart). */
+export function hydrate(d: Db) {
+  g.__genfangDb = d;
+}
+
+/** Tests og "Nulstil testdata" i ejerpanelet. */
 export function resetDb(now?: number) {
   g.__genfangDb = init(now ?? nowMs());
 }

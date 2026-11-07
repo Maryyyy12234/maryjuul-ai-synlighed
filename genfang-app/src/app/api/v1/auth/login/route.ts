@@ -1,3 +1,4 @@
+import { commit } from "@/lib/persistence-runtime.ts";
 import { cookies } from "next/headers";
 import { fail, json, readJson } from "@/lib/api.ts";
 import { clearKey, rateLimit } from "@/lib/rate-limit.ts";
@@ -49,6 +50,7 @@ export async function POST(req: Request) {
   const token = await signSession({ uid: user.id, tid: user.tenantId, role: user.role });
   audit({ at: new Date().toISOString(), tenantId: user.tenantId, userId: user.id, action: "login" });
 
+  await commit();
   // Native apps (Expo/Tauri) får tokenet i svaret og gemmer det i Keychain/Keystore.
   // Web får det KUN som httpOnly-cookie.
   const native = req.headers.get("x-genfang-client") === "native";

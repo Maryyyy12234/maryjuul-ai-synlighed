@@ -1,3 +1,4 @@
+import { commit } from "@/lib/persistence-runtime.ts";
 import { authed, fail, json, readJson } from "@/lib/api.ts";
 import { savePushSubscription } from "@/lib/store.ts";
 
@@ -29,5 +30,6 @@ export async function POST(req: Request) {
     (ALLOWED_PUSH_HOSTS.includes(url.hostname) || url.hostname.endsWith(".push.apple.com") || url.hostname.endsWith(".notify.windows.com"));
   if (!hostOk) return fail("invalid", "Ukendt push-tjeneste.", 400);
   savePushSubscription(a.session.tid, a.session.uid, url.toString());
+  await commit();
   return json({ ok: true, sending: "slået_fra_i_testversion" });
 }

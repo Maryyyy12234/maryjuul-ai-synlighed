@@ -1,3 +1,4 @@
+import { commit } from "@/lib/persistence-runtime.ts";
 import { authed, fail, readJson, respond } from "@/lib/api.ts";
 import { rateLimit } from "@/lib/rate-limit.ts";
 import { ingest } from "@/lib/store.ts";
@@ -12,8 +13,9 @@ export async function POST(req: Request) {
   let b: Record<string, unknown>;
   try { b = (await readJson(req, 8192)) as Record<string, unknown>; } catch { return fail("invalid", "Ugyldig forespørgsel.", 400); }
   const s = (k: string) => (typeof b[k] === "string" ? (b[k] as string) : undefined);
-  return respond(
-    ingest(a.session.tid, a.session.uid, { name: s("name") ?? "", email: s("email"), phone: s("phone"), address: s("address"), channel: (s("channel") ?? "formular") as "formular", subject: s("subject") ?? "", message: s("message") ?? "" }),
+  const result = ingest(a.session.tid, a.session.uid, { name: s("name") ?? "", email: s("email"), phone: s("phone"), address: s("address"), channel: (s("channel") ?? "formular") as "formular", subject: s("subject") ?? "", message: s("message") ?? "" });
+  await commit();
+  return respond(result,
     (ok) => ({ inquiry: ok.inquiry, duplicate: ok.duplicate }),
   );
 }

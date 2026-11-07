@@ -2,7 +2,7 @@
   "name": "genfang-app",
   "version": "0.1.0",
   "private": true,
-  "description": "GENFANG \u2013 mobil kundeplatform (PWA-testversion med syntetiske data)",
+  "description": "GENFANG – mobil kundeplatform (PWA-testversion med syntetiske data)",
   "engines": {
     "node": ">=20"
   },
@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "next": "^16.4.5",
+    "pg": "^8.23.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "server-only": "^0.0.1"
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.11",
     "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "typescript": "5.9"

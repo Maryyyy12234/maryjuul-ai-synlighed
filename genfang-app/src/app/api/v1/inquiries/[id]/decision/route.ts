@@ -1,3 +1,4 @@
+import { commit } from "@/lib/persistence-runtime.ts";
 import { authed, fail, readJson, respond } from "@/lib/api.ts";
 import { rateLimit } from "@/lib/rate-limit.ts";
 import { decide } from "@/lib/store.ts";
@@ -16,5 +17,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   if (body.editedText !== undefined && typeof body.editedText !== "string") return fail("invalid", "Ugyldig tekst.", 400);
   const { id } = await ctx.params;
   const r = decide(tid, uid, id, { decision: body.decision, expectedVersion: Number(body.expectedVersion), editedText: body.editedText as string | undefined });
-  return respond(r, (ok) => ({ inquiry: ok.inquiry, delivery: "blokeret_testversion" }));
+  const result = r;
+  await commit();
+  return respond(result, (ok) => ({ inquiry: ok.inquiry, delivery: "blokeret_testversion" }));
 }

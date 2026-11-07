@@ -41,3 +41,20 @@ export function PauseTenant({ id, paused }: { id: string; paused: boolean }) {
     }}>{paused ? "Genoptag" : "Pause"}</button>
   );
 }
+
+export function ResetDemo() {
+  const router = useRouter();
+  const [msg, setMsg] = useState("");
+  return (
+    <div style={{ marginTop: 16 }}>
+      <button className="btn btn-sm btn-quiet" onClick={async () => {
+        const c = window.prompt("Nulstil ALLE testdata til udgangspunktet? Skriv NULSTIL.");
+        if (c !== "NULSTIL") return;
+        const r = await fetch("/api/v1/admin/reset", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: c }) }).catch(() => null);
+        setMsg(r?.ok ? "Testdata er nulstillet." : "Mislykkedes.");
+        router.refresh();
+      }}>Nulstil testdata</button>
+      {msg ? <span role="status" style={{ marginLeft: 10, fontSize: 14 }}>{msg}</span> : null}
+    </div>
+  );
+}

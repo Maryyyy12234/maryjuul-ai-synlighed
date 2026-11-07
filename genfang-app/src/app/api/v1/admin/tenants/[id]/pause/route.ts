@@ -1,3 +1,4 @@
+import { commit } from "@/lib/persistence-runtime.ts";
 import { authed, fail, readJson, requireSuper, respond } from "@/lib/api.ts";
 import { setTenantPaused } from "@/lib/store.ts";
 
@@ -9,5 +10,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   try { b = (await readJson(req, 512)) as typeof b; } catch { return fail("invalid", "Ugyldig forespørgsel.", 400); }
   if (typeof b.paused !== "boolean") return fail("invalid", "Angiv paused: true/false.", 400);
   const { id } = await ctx.params;
-  return respond(setTenantPaused(a.session.uid, id, b.paused), (ok) => ({ paused: ok.paused }));
+  const result = setTenantPaused(a.session.uid, id, b.paused);
+  await commit();
+  return respond(result, (ok) => ({ paused: ok.paused }));
 }
