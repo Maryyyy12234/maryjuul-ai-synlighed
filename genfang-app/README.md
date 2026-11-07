@@ -59,7 +59,13 @@ docs/APP-RELEASE-PLAN.md     plan for Vercel-test, push, Expo/React Native og Ta
 docs/SIKKERHED.md            sikkerhedsgennemgang før rigtige kunder
 ```
 
-## Deploy (beskyttet testversion)
+## Testversion online
+
+Render (Frankfurt, gratis plan): https://genfang-test.onrender.com – service `genfang-test`, bygger automatisk fra grenen `claude/charming-faraday-z1103s`.
+Gratis-instansen går i dvale efter inaktivitet (første besøg tager op til ca. et minut), og testdata nulstilles ved hver genstart.
+Røgtest mod den online version (ændrer ingen data): `BASE_URL=https://genfang-test.onrender.com DEMO_PASSWORD=… OWNER_PASSWORD=… node test/e2e/live-smoke.mjs`.
+
+## Deploy på Vercel (alternativ)
 
 Vercel-projekt med **Root Directory = `genfang-app`**, framework Next.js. Miljøvariabler:
 `SESSION_SECRET` (≥ 32 tegn), `DEMO_PASSWORD` (≥ 8 tegn) og `OWNER_PASSWORD` (≥ 12 tegn). Sæt **aldrig** `GENFANG_ENV`/`GENFANG_TEST_NOW` på Vercel (testuret er desuden spærret, når `VERCEL=1`). Slå **Deployment Protection → Vercel Authentication** til for alle deployments.

@@ -376,3 +376,7 @@ table.data td.num, table.data th.num { text-align: right; }
 .stop-box { margin-top: 20px; border: 2px solid var(--ink); border-radius: 8px; padding: 16px; display: grid; gap: 10px; }
 .stop-box[data-on="true"] { background: var(--ink); color: var(--paper); }
 .stop-box[data-on="true"] b { color: var(--lime); }
+
+/* Handlingsbjælken skal være uigennemsigtig, og en deaktiveret primærknap må ikke lade indhold skinne igennem. */
+.actionbar { background: var(--paper); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.btn-primary[disabled] { opacity: 1; background: #c9c5ba; border-color: #c9c5ba; color: #f6f4ee; }
