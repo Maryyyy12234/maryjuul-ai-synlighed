@@ -1,33 +1,68 @@
+import { Prov } from "@/components/prov";
+import { FollowUpCard, QuoteApproval } from "@/components/quote-actions";
 import { QuoteRows } from "@/components/rows";
 import { TopBar } from "@/components/topbar";
 import { requireSession } from "@/lib/auth";
-import { dkk } from "@/lib/format";
-import { getOverview, listQuotes } from "@/lib/store";
+import { nowMs } from "@/lib/clock";
+import { QUOTE_STATUS, dkk } from "@/lib/format";
+import { can } from "@/lib/permissions";
+import { getTenant, listFollowUps, listQuotes, quoteTotals } from "@/lib/store";
+import type { QuoteStatus } from "@/lib/types";
 
 export const metadata = { title: "Tilbud" };
 
+const GROUPS: { title: string; statuses: QuoteStatus[]; note?: string }[] = [
+  { title: "Afventer din godkendelse", statuses: ["afventer_godkendelse"] },
+  { title: "Sendt – venter på kunden", statuses: ["sendt"], note: "Potentielle indtægter – ikke vundet endnu." },
+  { title: "Kladder", statuses: ["kladde"] },
+  { title: "Vundet", statuses: ["accepteret", "faktureret"], note: "Accepteret er ikke betalt. Kun betalte fakturaer er realiseret omsætning." },
+  { title: "Tabt", statuses: ["afvist", "udloebet"] },
+];
+
 export default async function QuotesPage() {
   const s = await requireSession();
-  const quotes = listQuotes(s.tid);
-  const o = getOverview(s.tid, s.uid)!;
-  const outstanding = quotes.filter((q) => q.status === "sendt").reduce((a, q) => a + q.amountDkk, 0);
-  const won = quotes.filter((q) => q.status === "accepteret").reduce((a, q) => a + q.amountDkk, 0);
-  const now = Date.now();
+  const now = nowMs();
+  const quotes = listQuotes(s.tid, now);
+  const t = quoteTotals(quotes);
+  const owner = can(s.role, "approve_quote");
+  const followUps = can(s.role, "approve_followup") ? listFollowUps(s.tid, now) : [];
+  const FU = followUps.length ? (
+          <section className="section" id="opfoelgning">
+            <div className="section-head"><h2>Foreslåede opfølgninger</h2><span>{followUps.length}</span></div>
+            <ul className="rows">{followUps.map((f) => <FollowUpCard key={f.id} {...f} />)}</ul>
+            <p className="notice">Worker 03 sender intet selv. Kun opfølgning på konkrete tilbud og sager – aldrig reklame uden samtykke. Højst {2} opfølgninger pr. tilbud.</p>
+          </section>
+        ) : null;
+
   return (
     <>
-      <TopBar tenant={o.tenant.name} />
+      <TopBar tenant={getTenant(s.tid)!.name} />
       <main className="main">
-        <p className="eyebrow">Opfølgning via Worker 03</p>
+        <p className="eyebrow">Tilbud · opfølgning via Worker 03</p>
         <h1 className="title">Tilbud</h1>
-        <div className="stats" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <div className="stat"><b style={{ fontSize: "clamp(28px, 8vw, 40px)" }}>{dkk(outstanding)}</b><span>Udestående<br />(sendt, ikke svaret)</span></div>
-          <div className="stat"><b style={{ fontSize: "clamp(28px, 8vw, 40px)" }}>{dkk(won)}</b><span>Accepteret<br />(testdata)</span></div>
-        </div>
-        <section className="section">
-          <div className="section-head"><h2>Alle tilbud</h2><span>{quotes.length}</span></div>
-          <QuoteRows items={quotes} now={now} empty="Ingen tilbud endnu." />
-        </section>
-        <p className="notice">Automatiske opfølgningsmails er slået fra i testversionen. Worker 03 planlægger kun.</p>
+        <ul className="money">
+          <li data-real="false"><span>Potentiel – ikke vundet endnu</span><b>{dkk(t.potential)}</b></li>
+          <li data-real="false"><span>Accepteret – ikke faktureret</span><b>{dkk(t.acceptedNotInvoiced)}</b></li>
+          <li data-real="false"><span>Faktureret – ikke betalt</span><b>{dkk(t.invoicedUnpaid)}</b></li>
+          <li data-real="true"><span>Betalt</span><b>{dkk(t.paid)}</b><small><Prov p="testdata" /> · bliver først verificeret med forbindelse til økonomisystemet.</small></li>
+        </ul>
+
+        {GROUPS.map((g, gi) => {
+          const items = quotes.filter((q) => g.statuses.includes(q.status));
+          const fuSection = gi === 0 ? FU : null;
+          if (!items.length) return <div key={g.title}>{fuSection}</div>;
+          return (
+            <div key={g.title}>
+            <section className="section" data-group={g.statuses[0]}>
+              <div className="section-head"><h2>{g.title}</h2><span>{items.length} · {dkk(items.reduce((a, q) => a + q.amountDkk, 0))}</span></div>
+              <QuoteRows items={items} now={now} empty="" actions={owner ? (q) => (q.status === "afventer_godkendelse" ? <QuoteApproval id={q.id} version={q.version} /> : null) : undefined} />
+              {g.note ? <p className="notice">{g.note}</p> : null}
+            </section>
+            {fuSection}
+            </div>
+          );
+        })}
+        <p className="notice" style={{ marginTop: 24 }}>Statusser: {Object.values(QUOTE_STATUS).join(" · ")}. Sendte tilbud udløber automatisk efter gyldighedsperioden.</p>
       </main>
     </>
   );

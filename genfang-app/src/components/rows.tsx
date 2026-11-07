@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { InquirySummary, Quote } from "@/lib/types";
-import { CATEGORY, QUOTE_STATUS, STATUS, dayLabel, dkk, relTime } from "@/lib/format";
+import { CATEGORY, EMERGENCY, QUOTE_STATUS, STATUS, dayLabel, dkk, relTime } from "@/lib/format";
 import { IconChevron } from "./icons";
 
 export function InquiryRows({ items, empty, now }: { items: InquirySummary[]; empty: string; now: number }) {
@@ -14,12 +14,13 @@ export function InquiryRows({ items, empty, now }: { items: InquirySummary[]; em
             <span style={{ minWidth: 0 }}>
               <span className="who">
                 <span>{i.customerName}</span>
-                {i.urgency === "akut" ? <span className="tag" data-kind="akut">Akut</span> : null}
+                {i.urgency === "akut" ? <span className="tag" data-kind="akut">{i.emergencyKind ? EMERGENCY[i.emergencyKind].replace("Mulig ", "") : "Akut"}</span> : null}
               </span>
               <span className="what" style={{ display: "block" }}>{i.subject}</span>
             </span>
             <span className="aside">
-              {i.status === "udkast_klar" ? <span className="tag">Godkend</span>
+              {i.status === "udkast_klar" && i.guardOk === false ? <span className="tag" data-kind="warn">Ret svar</span>
+                : i.status === "udkast_klar" ? <span className="tag">Godkend</span>
                 : i.status === "godkendt" ? <span className="tag" data-kind="ok">{STATUS[i.status]}</span>
                 : i.status === "ny" ? <span className="tag" data-kind="muted">{CATEGORY[i.category]}</span>
                 : <span className="tag" data-kind="muted">{STATUS[i.status]}</span>}
@@ -32,21 +33,26 @@ export function InquiryRows({ items, empty, now }: { items: InquirySummary[]; em
   );
 }
 
-export function QuoteRows({ items, empty, now }: { items: Quote[]; empty: string; now: number }) {
+const POTENTIAL = new Set(["kladde", "afventer_godkendelse", "sendt"]);
+
+export function QuoteRows({ items, empty, now, actions }: { items: Quote[]; empty: string; now: number; actions?: (q: Quote) => React.ReactNode }) {
   if (!items.length) return <p className="empty">{empty}</p>;
   return (
     <ul className="rows">
       {items.map((q) => (
         <li className="row" key={q.id}>
           <div>
-            <span className="when">{q.followUpAt ? <>Følg op<br />{dayLabel(q.followUpAt, now)}</> : ({ kladde: "Kladde", sendt: "Sendt", accepteret: "Vundet", afslaaet: "Tabt" } as const)[q.status]}</span>
+            <span className="when">{q.sentAt ? <>Sendt<br />{dayLabel(q.sentAt, now)}</> : "Ikke sendt"}</span>
             <span style={{ minWidth: 0 }}>
               <span className="who"><span>{q.customerName}</span></span>
               <span className="what" style={{ display: "block" }}>{q.title}</span>
+              {actions ? actions(q) : null}
             </span>
             <span className="aside" style={{ flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
-              <span className="amount">{dkk(q.amountDkk)}</span>
-              <span className="tag" data-kind={q.status === "accepteret" ? "ok" : "muted"}>{QUOTE_STATUS[q.status]}</span>
+              <span className="amount" style={POTENTIAL.has(q.status) ? { color: "var(--ink-2)", fontWeight: 500 } : undefined} title={POTENTIAL.has(q.status) ? "Potentiel – ikke vundet endnu" : undefined}>{dkk(q.amountDkk)}</span>
+              <span className="tag" data-kind={q.paidAt ? "ok" : q.status === "afvist" || q.status === "udloebet" ? "muted" : q.status === "afventer_godkendelse" ? undefined : "muted"}>
+                {q.paidAt ? "Betalt" : QUOTE_STATUS[q.status]}
+              </span>
             </span>
           </div>
         </li>

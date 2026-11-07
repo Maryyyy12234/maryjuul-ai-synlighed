@@ -6,3 +6,4 @@ export const IconQuote = () => (<svg viewBox="0 0 24 24" {...base}><path d="M6 3
 export const IconMore = () => (<svg viewBox="0 0 24 24" {...base}><path d="M4 7h16M4 12h16M4 17h10" /></svg>);
 export const IconChevron = () => (<svg className="chev" viewBox="0 0 24 24" {...base}><path d="m9 5 7 7-7 7" /></svg>);
 export const IconBack = () => (<svg viewBox="0 0 24 24" {...base} strokeWidth={2}><path d="m15 5-7 7 7 7" /></svg>);
+export const IconChart = () => (<svg viewBox="0 0 24 24" {...base}><path d="M4 20V10M10 20V4M16 20v-7M22 20H2" /></svg>);

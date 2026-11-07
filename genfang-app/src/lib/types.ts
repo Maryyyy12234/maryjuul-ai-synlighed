@@ -1,91 +1,199 @@
-// Delte typer for GENFANG. Holdes fri for Next.js/React-afhængigheder,
-// så de senere kan flyttes til packages/types og bruges af Expo-appen.
+// Delte typer for GENFANG. Fri for Next.js/React, så de kan flyttes til packages/types
+// og genbruges af Expo (iOS/Android) og Tauri (Windows/macOS).
 
 export type TenantId = string;
 export type UserId = string;
 
-export type Role = "owner" | "staff";
+/** owner = virksomhedsejer, staff = medarbejder, superadmin = GENFANG-platformens ejer (ingen adgang til kundedata). */
+export type Role = "owner" | "staff" | "superadmin";
+
+/** Datagrundlag – vises ved hvert tal, så testdata, estimater og verificerede resultater aldrig blandes. */
+export type Provenance = "testdata" | "estimat" | "verificeret";
+
+export interface OpeningDay { open: string; close: string }
+
+export interface Employee {
+  id: string;
+  name: string;
+  title: string;
+  phone: string; // syntetisk
+  onCall: boolean; // vagtordning denne uge
+  userId?: UserId;
+}
+
+export interface PriceItem {
+  id: string;
+  label: string;
+  amountDkk: number; // inkl. moms
+  unit: "fast" | "pr_time" | "fra";
+}
+
+export interface CalendarSlot {
+  id: string;
+  employeeId: string;
+  start: string; // ISO UTC
+  end: string;
+  state: "ledig" | "reserveret";
+  source: "testkalender"; // senere: "google" | "outlook" | "ordrestyring"
+}
+
+export interface Plan { id: "pilot" | "business"; name: string; priceDkk: number } // ekskl. moms
 
 export interface Tenant {
   id: TenantId;
   name: string;
   trade: string;
+  timezone: string;
+  locale: string;
+  openingHours: Record<number, OpeningDay | null>; // 1=man … 7=søn
+  employees: Employee[];
+  priceList: PriceItem[];
+  plan: Plan;
+  paused: boolean; // nødstop for denne virksomhed (sat af superadmin)
+  dpaSigned: boolean; // databehandleraftale med GENFANG
+  retentionDays: number;
 }
 
 export interface User {
   id: UserId;
-  tenantId: TenantId;
+  tenantId: TenantId; // superadmin: "__platform__"
   email: string;
   name: string;
   role: Role;
 }
 
-/** Worker 01 (klassificering) sætter category og urgency. */
+export interface Customer {
+  id: string;
+  tenantId: TenantId;
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  marketingConsent: boolean; // kun relevant for reklame – ikke for svar på egne henvendelser
+  anonymized?: boolean;
+}
+
 export type InquiryCategory = "akut" | "tilbud" | "service" | "andet";
 export type Urgency = "akut" | "normal" | "lav";
+export type EmergencyKind = "vandskade" | "gaslugt" | "intet_varmt_vand" | "varmesvigt" | "tilstoppet_afloeb";
 
-export type InquiryStatus =
-  | "ny" //            modtaget, endnu ikke klassificeret/udkast
-  | "udkast_klar" //   Worker 02 har lavet svarudkast – afventer menneske
-  | "godkendt" //      godkendt af menneske, klar til udsendelse
-  | "afvist"; //       udkast afvist – skal håndteres manuelt
+export type InquiryStatus = "ny" | "udkast_klar" | "godkendt" | "afvist";
 
 export interface Draft {
   text: string;
-  generatedBy: "worker-02";
+  generatedBy: "worker-02" | "legacy";
   createdAt: string;
-  /** Sat hvis brugeren har redigeret udkastet før godkendelse. */
   editedBy?: UserId;
+  /** Hvilket grundlag Responder brugte – vises for brugeren. */
+  basis?: { slotIds: string[]; priceIds: string[]; note?: string };
+}
+
+export interface Escalation {
+  to: string; // employeeId
+  toName: string;
+  reason: string;
+  at: string;
+  by: "worker-01" | UserId;
+  state: "afventer_kvittering" | "kvitteret";
+  ackAt?: string;
+  ackBy?: UserId;
+  /** I testversionen sendes ingen SMS/opkald. */
+  delivery: "blokeret_testversion";
 }
 
 export interface Inquiry {
   id: string;
   tenantId: TenantId;
+  customerId: string;
   customerName: string;
   channel: "mail" | "formular" | "telefon";
   subject: string;
   message: string;
   address?: string;
   receivedAt: string;
+  firstResponseAt?: string;
   category: InquiryCategory;
   urgency: Urgency;
+  emergency?: { kind: EmergencyKind; signals: string[]; guidance: string };
+  escalation?: Escalation;
+  missingInfo: string[];
+  knownCustomer: boolean;
   status: InquiryStatus;
   draft?: Draft;
-  /** Optimistisk låsning: stiger ved hver ændring. Forhindrer dobbelt-godkendelse. */
   version: number;
   decidedBy?: UserId;
   decidedAt?: string;
 }
 
-export type QuoteStatus = "kladde" | "sendt" | "accepteret" | "afslaaet";
+export type QuoteStatus = "kladde" | "afventer_godkendelse" | "sendt" | "accepteret" | "afvist" | "udloebet" | "faktureret";
 
 export interface Quote {
   id: string;
   tenantId: TenantId;
   inquiryId?: string;
+  customerId: string;
   customerName: string;
   title: string;
   amountDkk: number; // inkl. moms
   status: QuoteStatus;
+  createdAt: string;
   sentAt?: string;
-  /** Worker 03 planlægger opfølgning. */
-  followUpAt?: string;
+  validDays: number;
+  respondedAt?: string;
+  invoicedAt?: string;
+  paidAt?: string; // betalt faktura = eneste "realiserede" omsætning
+  followUps: number;
+  version: number;
 }
 
-export interface WorkerStatus {
-  id: "worker-01" | "worker-02" | "worker-03" | "worker-04";
-  name: string;
-  job: string;
-  state: "aktiv" | "venter" | "fejl" | "slukket";
-  lastRunAt: string;
-  note?: string;
+export interface FollowUpSuggestion {
+  id: string;
+  tenantId: TenantId;
+  kind: "tilbud_ubesvaret" | "mangler_oplysninger";
+  quoteId?: string;
+  inquiryId?: string;
+  customerName: string;
+  reason: string;
+  draft: string;
+  /** Hvorfor beskeden lovligt må sendes – eller hvorfor ikke. */
+  legalBasis: string;
+  allowed: boolean;
+  state: "forslag" | "godkendt" | "afvist";
+  createdAt: string;
+  version: number;
+}
+
+export type WorkerId = "worker-01" | "worker-02" | "worker-03" | "worker-04";
+
+export interface WorkerDef { id: WorkerId; name: string; role: string; does: string[]; needsApproval: string }
+
+export interface WorkerRun {
+  id: string;
+  tenantId: TenantId;
+  worker: WorkerId;
+  at: string;
+  status: "ok" | "fejl" | "blokeret" | "stoppet";
+  summary: string;
+  error?: string;
+  aiTokens: number; // 0 i testversionen – ingen modelkald
+}
+
+export interface WorkerStatus extends WorkerDef {
+  state: "aktiv" | "fejl" | "stoppet";
+  lastRunAt?: string;
+  lastError?: string;
+  runs24h: number;
 }
 
 export interface AuditEntry {
   at: string;
   tenantId: TenantId;
   userId: UserId;
-  action: "approve" | "reject" | "login" | "push_subscribe";
+  action:
+    | "approve" | "reject" | "login" | "push_subscribe" | "escalate" | "escalation_ack"
+    | "regenerate" | "quote_approve" | "quote_reject" | "followup_approve" | "followup_reject"
+    | "anonymize" | "emergency_stop" | "emergency_resume" | "tenant_pause" | "tenant_resume" | "intake_simulated"
+    | "guard_block";
   target?: string;
   detail?: string;
 }
@@ -93,28 +201,37 @@ export interface AuditEntry {
 export interface OutboxJob {
   id: string;
   tenantId: TenantId;
-  inquiryId: string;
+  kind: "svar" | "tilbud" | "opfoelgning" | "eskalering";
+  ref: string;
   createdAt: string;
-  /** I testversionen sendes intet: jobbet registreres kun. */
   state: "blokeret_testversion";
 }
 
-export interface Overview {
-  tenant: Tenant;
-  user: Pick<User, "name" | "role">;
-  counts: { newInquiries: number; pendingApprovals: number; openQuotes: number; urgent: number };
-  pendingApprovals: InquirySummary[];
-  newInquiries: InquirySummary[];
-  quotes: Quote[];
-  workers: WorkerStatus[];
+export interface GuardIssue {
+  code: "tid_i_fortiden" | "tid_ikke_i_kalender" | "uden_for_aabningstid" | "uklar_tid" | "ankomstloefte" | "pris_uden_grundlag" | "akut_loefte" | "tom_tekst";
+  message: string;
+  excerpt: string;
 }
+
+export interface GuardResult { ok: boolean; issues: GuardIssue[]; checkedAt: string }
 
 export type InquirySummary = Pick<
   Inquiry,
   "id" | "customerName" | "subject" | "receivedAt" | "category" | "urgency" | "status" | "channel"
->;
+> & { escalated: boolean; emergencyKind?: EmergencyKind; guardOk?: boolean };
+
+export interface Metric {
+  value: number | null;
+  unit: "kr" | "pct" | "min" | "timer" | "antal";
+  provenance: Provenance;
+  basis: string; // datagrundlag i klar tekst
+  previous?: number | null;
+}
 
 /** Ensartet fejlform for API'et – samme kontrakt for web, iOS, Android og desktop. */
 export interface ApiError {
-  error: { code: "unauthorized" | "forbidden" | "not_found" | "conflict" | "invalid" | "rate_limited"; message: string };
+  error: {
+    code: "unauthorized" | "forbidden" | "not_found" | "conflict" | "invalid" | "rate_limited" | "blocked" | "stopped";
+    message: string;
+  };
 }

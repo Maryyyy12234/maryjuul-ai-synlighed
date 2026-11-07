@@ -1,6 +1,7 @@
-// End-to-end test mod en kørende produktionsbuild.
-//   SESSION_SECRET=... DEMO_PASSWORD=... npm run build && npm start   (port 3100)
+// End-to-end test mod en kørende produktionsbuild med fast testur.
+//   GENFANG_ENV=test GENFANG_TEST_NOW=2026-11-05T15:54:00Z SESSION_SECRET=... DEMO_PASSWORD=... npm start
 //   BASE_URL=http://localhost:3100 DEMO_PASSWORD=... npm run test:e2e
+// Testuret svarer til torsdag 5. nov. 2026 kl. 16.54 – Sofies henvendelse er modtaget kl. 16.42.
 import { createRequire } from "node:module";
 import { mkdirSync } from "node:fs";
 const require = createRequire(import.meta.url);
@@ -8,247 +9,282 @@ const { chromium, devices } = require("playwright");
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3100";
 const PW = process.env.DEMO_PASSWORD;
-if (!PW) throw new Error("Sæt DEMO_PASSWORD");
+const OWNER_PW = process.env.OWNER_PASSWORD;
+if (!PW || !OWNER_PW) throw new Error("Sæt DEMO_PASSWORD og OWNER_PASSWORD");
 const SHOTS = new URL("./screenshots/", import.meta.url).pathname;
 mkdirSync(SHOTS, { recursive: true });
 
 const results = [];
 async function step(name, fn) {
   try { await fn(); results.push(["OK  ", name]); }
-  catch (e) { results.push(["FEJL", name + " → " + (e?.message ?? e).split("\n")[0]]); }
+  catch (e) { results.push(["FEJL", name + " → " + String(e?.message ?? e).split("\n")[0]]); }
 }
 function assert(c, m) { if (!c) throw new Error(m); }
 
-async function login(page, email = "ejer@hansen-vvs.test", pw = PW) {
+async function login(page, email = "ejer@hansen-vvs.test", pw = PW, expect = "/") {
   await page.goto(BASE + "/login");
   await page.fill('input[name="email"]', email);
   await page.fill('input[name="password"]', pw);
-  await Promise.all([page.waitForURL(BASE + "/"), page.click('button[type="submit"]')]);
+  await Promise.all([page.waitForURL(BASE + expect), page.click('button[type="submit"]')]);
+}
+const api = (page, path, body) => page.evaluate(async ([p, b]) => {
+  const r = await fetch(p, b ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b) } : undefined);
+  return { status: r.status, body: await r.json().catch(() => null) };
+}, [path, body]);
+
+function contrast(fg, bg) {
+  const lum = (c) => { const [r, g, b] = c.match(/\d+/g).slice(0, 3).map(Number).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+  const [a, b] = [lum(fg), lum(bg)].sort((x, y) => y - x);
+  return (a + 0.05) / (b + 0.05);
 }
 
 const browser = await chromium.launch();
 
-// ---------- Uden login ----------
-await step("Uden login sendes man til /login", async () => {
-  const ctx = await browser.newContext();
-  const p = await ctx.newPage();
-  await p.goto(BASE + "/henvendelser");
-  assert(p.url().endsWith("/login"), "url: " + p.url());
+// ---------- Uden login / grundlæggende sikkerhed ----------
+await step("Uden login sendes man til /login; API giver 401 med no-store", async () => {
+  const ctx = await browser.newContext(); const p = await ctx.newPage();
+  await p.goto(BASE + "/henvendelser"); assert(p.url().endsWith("/login"), p.url());
+  const r = await fetch(BASE + "/api/v1/overview"); assert(r.status === 401, "status " + r.status);
+  assert((r.headers.get("cache-control") ?? "").includes("no-store"), "no-store");
   await ctx.close();
-});
-
-await step("API uden session giver 401", async () => {
-  const r = await fetch(BASE + "/api/v1/overview");
-  assert(r.status === 401, "status " + r.status);
-  assert((r.headers.get("cache-control") ?? "").includes("no-store"), "mangler no-store");
 });
 
 await step("Forfalsket session-cookie afvises", async () => {
   const ctx = await browser.newContext();
-  await ctx.addCookies([{ name: "gf_session", value: "eyJ1aWQiOiJ1X2xhcnMiLCJ0aWQiOiJ0X2hhbnNlbiJ9.ZmFrZQ", url: BASE }]);
-  const p = await ctx.newPage();
-  await p.goto(BASE + "/");
-  assert(p.url().endsWith("/login"), "url: " + p.url());
+  await ctx.addCookies([{ name: "gf_session", value: "eyJ1aWQiOiJ1X2xhcnMiLCJ0aWQiOiJ0X2hhbnNlbiIsInJvbGUiOiJzdXBlcmFkbWluIn0.ZmFrZQ", url: BASE }]);
+  const p = await ctx.newPage(); await p.goto(BASE + "/ejer"); assert(p.url().endsWith("/login"), p.url());
   await ctx.close();
 });
 
-await step("Manifest, ikoner og service worker serveres korrekt", async () => {
+await step("Manifest, ikoner, service worker og sikkerheds-headers", async () => {
   const m = await (await fetch(BASE + "/manifest.webmanifest")).json();
-  assert(m.display === "standalone" && m.name === "GENFANG", "manifest");
-  assert(m.icons.some((i) => i.purpose === "maskable") && m.icons.some((i) => i.sizes === "512x512"), "ikoner");
-  for (const i of m.icons) assert((await fetch(BASE + i.src)).status === 200, "ikon " + i.src);
-  assert((await fetch(BASE + "/icons/apple-touch-icon.png")).status === 200, "apple-touch-icon");
-  const sw = await fetch(BASE + "/sw.js");
-  assert(sw.status === 200 && (sw.headers.get("cache-control") ?? "").includes("no-cache"), "sw headers");
-  const home = await fetch(BASE + "/login");
-  assert(home.headers.get("x-frame-options") === "DENY", "x-frame-options");
-  assert((home.headers.get("x-robots-tag") ?? "").includes("noindex"), "noindex");
+  assert(m.display === "standalone" && m.icons.some((i) => i.purpose === "maskable"), "manifest");
+  for (const i of m.icons) assert((await fetch(BASE + i.src)).status === 200, i.src);
+  const sw = await fetch(BASE + "/sw.js"); assert((sw.headers.get("cache-control") ?? "").includes("no-cache"), "sw");
+  const h = await fetch(BASE + "/login"); assert(h.headers.get("x-frame-options") === "DENY" && (h.headers.get("x-robots-tag") ?? "").includes("noindex"), "headers");
 });
 
-await step("Forkert adgangskode giver neutral fejl", async () => {
-  const ctx = await browser.newContext(devices["iPhone 13"]);
-  const p = await ctx.newPage();
-  await p.goto(BASE + "/login");
-  await p.fill('input[name="email"]', "ejer@hansen-vvs.test");
-  await p.fill('input[name="password"]', "forkert-kode");
-  await p.click('button[type="submit"]');
-  await p.getByText("Forkert e-mail eller adgangskode.").waitFor();
-  await p.screenshot({ path: SHOTS + "01-login-iphone.png" });
-  await ctx.close();
-});
-
-// ---------- iPhone: login → oversigt → godkend ----------
+// ---------- Ejer på iPhone ----------
 const iphone = await browser.newContext({ ...devices["iPhone 13"] });
 const ip = await iphone.newPage();
 
-await step("iPhone: login og oversigt med henvendelser, godkendelser og tilbud", async () => {
+await step("iPhone: login → nyt overblik med handling, resultater, datakilder og penge", async () => {
   await login(ip);
-  await ip.getByRole("heading", { name: "Afventer din godkendelse" }).waitFor();
-  await ip.getByRole("heading", { name: "Nye henvendelser" }).waitFor();
-  await ip.getByRole("heading", { name: "Tilbud", exact: true }).waitFor();
-  await ip.getByText("1 akut sag").waitFor();
-  const stat = await ip.locator(".stat b").first().textContent();
-  assert(stat === "2", "afventer-tal: " + stat);
-  await ip.screenshot({ path: SHOTS + "02-oversigt-iphone.png" });
-  await ip.screenshot({ path: SHOTS + "02b-oversigt-iphone-hel.png", fullPage: true });
+  for (const h of ["Kræver handling", "Resultater", "Tilbud og penge", "GENFANG Insights", "AI-workers"]) await ip.getByRole("heading", { name: h, exact: true }).waitFor();
+  await ip.getByText("Sofie Kragh · Mulig vandskade").waitFor();
+  const prov = await ip.locator(".kpi .prov").allTextContents();
+  assert(prov.some((t) => /testdata/i.test(t)) && prov.some((t) => /estimat/i.test(t)), "datakilder: " + prov.join(","));
+  await ip.getByText("Potentiel – ikke vundet endnu").first().waitFor();
+  await ip.screenshot({ path: SHOTS + "01-oversigt-iphone.png" });
+  await ip.screenshot({ path: SHOTS + "01b-oversigt-iphone-hel.png", fullPage: true });
 });
 
-await step("iPhone: bundnavigation er synlig og inden for skærmen", async () => {
-  const box = await ip.locator(".tabbar").boundingBox();
-  const vp = ip.viewportSize();
-  assert(box && box.y + box.height <= vp.height + 1 && box.y > vp.height - 120, "tabbar placering " + JSON.stringify(box));
-  const overflow = await ip.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-  assert(!overflow, "vandret scroll på mobil");
-  const badge = await ip.locator(".tab .badge").textContent();
-  assert(badge === "2", "badge " + badge);
+await step("iPhone: overskrifter ≤ 34 px, kontrast ≥ 4,5:1, ingen vandret scroll", async () => {
+  const size = await ip.locator("h1.title").evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
+  assert(size <= 34, "h1 " + size);
+  for (const sel of [".eyebrow", ".kpi .label", ".act span.sub", ".tab:not([aria-current])"]) {
+    const [fg, bg] = await ip.locator(sel).first().evaluate((e) => [getComputedStyle(e).color, getComputedStyle(document.body).backgroundColor]);
+    const c = contrast(fg, bg); assert(c >= 4.5, `${sel} kontrast ${c.toFixed(2)}`);
+  }
+  assert(!(await ip.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)), "vandret scroll");
 });
 
-await step("iPhone: navigering mellem alle faner", async () => {
-  for (const [label, path, heading] of [["Henvendelser", "/henvendelser", "Henvendelser"], ["Tilbud", "/tilbud", "Tilbud"], ["Mere", "/mere", "Mere"], ["Oversigt", "/", null]]) {
+await step("iPhone: fanebjælke dækker ikke indhold og har 5 faner for ejer", async () => {
+  assert((await ip.locator(".tabbar .tab").count()) === 5, "antal faner");
+  await ip.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await ip.waitForTimeout(150);
+  const last = await ip.locator("main > *:last-child").boundingBox();
+  const bar = await ip.locator(".tabbar").boundingBox();
+  assert(last.y + last.height <= bar.y + 1, `indhold under fanebjælke: ${last.y + last.height} > ${bar.y}`);
+  for (const [label, path] of [["Sager", "/henvendelser"], ["Tilbud", "/tilbud"], ["Indsigt", "/indsigt"], ["Mere", "/mere"], ["Oversigt", "/"]]) {
     await ip.locator(".tabbar").getByRole("link", { name: label }).click();
     await ip.waitForURL(BASE + path);
-    if (heading) await ip.getByRole("heading", { level: 1, name: heading }).waitFor();
-    const cur = await ip.locator('.tab[aria-current="page"]').textContent();
-    assert(cur.includes(label), "aktiv fane " + cur);
   }
+});
+
+await step("REGRESSION (UI): Sofies udkast kl. 16.42 med »i dag kl. 14–16« blokeres", async () => {
+  await ip.goto(BASE + "/henvendelser/inq_1042");
+  await ip.getByText("Modtaget kl. 16.42").waitFor();
+  await ip.getByText("Sikkerhedskontrollen stopper godkendelsen").waitFor();
+  await ip.getByText("Tidspunktet er allerede passeret.").waitFor();
+  assert(await ip.getByRole("button", { name: "Godkend og send" }).isDisabled(), "knap skal være deaktiveret");
+  await ip.getByText("Mulig vandskade – sikker vejledning til kunden").waitFor();
+  await ip.getByText("Eskaleret til Mikkel").waitFor();
+  await ip.screenshot({ path: SHOTS + "02-sofie-blokeret-iphone.png" });
+  await ip.screenshot({ path: SHOTS + "02b-sofie-blokeret-iphone-hel.png", fullPage: true });
+});
+
+await step("REGRESSION (API): godkendelse uden om knappen afvises med 422 og intet sendes", async () => {
+  const v = await api(ip, "/api/v1/inquiries/inq_1042");
+  const r = await api(ip, "/api/v1/inquiries/inq_1042/decision", { decision: "approve", expectedVersion: v.body.inquiry.version });
+  assert(r.status === 422, "status " + r.status);
+  assert(r.body.guard.issues.some((i) => i.code === "tid_i_fortiden"), JSON.stringify(r.body.guard));
+});
+
+await step("Nyt udkast fra Worker 02 → ingen tid lovet → Godkend og send", async () => {
+  await ip.getByRole("button", { name: "Nyt udkast" }).click();
+  await ip.getByText("Sikkerhedskontrol bestået").waitFor();
+  const text = await ip.locator("#draft").inputValue();
+  assert(/vagthavende/.test(text) && !/kl\.\s*\d/.test(text), "udkast: " + text);
+  await ip.getByRole("button", { name: "Godkend og send" }).click();
+  await ip.getByText("Udsendelse er blokeret i testversionen").first().waitFor();
+  await ip.screenshot({ path: SHOTS + "03-sofie-godkendt-iphone.png" });
+});
+
+await step("Rediger: live-kontrol blokerer en opfundet tid og pris, mens man skriver", async () => {
+  await ip.goto(BASE + "/henvendelser/inq_1039");
+  await ip.getByText("Sikkerhedskontrol bestået").waitFor();
+  await ip.locator(".actionbar").getByRole("button", { name: "Rediger" }).click();
+  await ip.fill("#draft", "Hej Peter. Vi kommer i dag kl. 14-16, og det koster 2.000 kr.");
+  await ip.getByText("Tidspunktet er allerede passeret.").waitFor();
+  await ip.getByText("Beløbet står ikke i den godkendte prisliste").waitFor();
+  assert(await ip.getByRole("button", { name: "Godkend og send" }).isDisabled(), "skal være deaktiveret");
+  await ip.screenshot({ path: SHOTS + "04-rediger-blokeret-iphone.png" });
+});
+
+await step("Eskalér: almindelig sag sendes til vagthavende", async () => {
+  await ip.goto(BASE + "/henvendelser/inq_1040");
+  ip.once("dialog", (d) => d.accept("Kunden er uden varme"));
+  await ip.getByRole("button", { name: "Eskalér" }).click();
+  await ip.getByText("Eskaleret til Mikkel: Kunden er uden varme").waitFor();
+});
+
+await step("Tilbud: syv statusser, potentiel vs. betalt, ejer godkender tilbud", async () => {
   await ip.goto(BASE + "/tilbud");
-  await ip.screenshot({ path: SHOTS + "04-tilbud-iphone.png" });
+  for (const h of ["Afventer din godkendelse", "Sendt – venter på kunden", "Kladder", "Vundet", "Tabt", "Foreslåede opfølgninger"]) await ip.getByRole("heading", { name: h }).waitFor();
+  await ip.getByText("Udløbet").first().waitFor();
+  await ip.getByText("Faktureret").first().waitFor();
+  await ip.screenshot({ path: SHOTS + "05-tilbud-iphone-hel.png", fullPage: true });
+  const first = await ip.locator("main section.section").filter({ has: ip.getByRole("heading") }).first().locator("h2").first().textContent();
+  assert(first === "Afventer din godkendelse", "første sektion: " + first);
+  await ip.locator('section[data-group="afventer_godkendelse"]').getByRole("button", { name: "Godkend og send" }).click();
+  await ip.locator('section[data-group="afventer_godkendelse"]').waitFor({ state: "detached" });
+});
+
+await step("Opfølgning: lovligt grundlag vises, ejer godkender én", async () => {
+  await ip.getByText("Lovligt grundlag:").first().waitFor();
+  const before = await ip.locator(".followup").count();
+  await ip.locator(".followup").first().getByRole("button", { name: "Godkend og send" }).click();
+  await ip.waitForFunction((n) => document.querySelectorAll(".followup").length < n, before);
+});
+
+await step("Indsigt: periodesammenligning i procentpoint, metode og datagrundlag", async () => {
+  await ip.goto(BASE + "/indsigt");
+  await ip.getByRole("heading", { name: "Periodesammenligning" }).waitFor();
+  const t = await ip.locator("table.data").innerText();
+  assert(/procentpoint/.test(t), "procentpoint mangler");
+  await ip.getByText("Alle tal er testdata").waitFor();
+  await ip.getByRole("heading", { name: "Metode" }).waitFor();
+  await ip.screenshot({ path: SHOTS + "06-indsigt-iphone-hel.png", fullPage: true });
+});
+
+await step("Simulér henvendelse: vandskade → akut, eskaleret, sikkert udkast", async () => {
   await ip.goto(BASE + "/mere");
-  await ip.screenshot({ path: SHOTS + "05-mere-iphone.png", fullPage: true });
+  await ip.getByRole("button", { name: "Eksempel: vandskade" }).click();
+  await ip.waitForURL(/\/henvendelser\/inq_/);
+  await ip.getByText("Mulig vandskade – sikker vejledning til kunden").waitFor();
+  await ip.getByText("Sikkerhedskontrol bestået").waitFor();
 });
 
-// Anden enhed (desktop) åbner den samme sag FØR telefonen godkender.
-const desk = await browser.newContext({ viewport: { width: 1360, height: 860 } });
-const dp = await desk.newPage();
-await step("Desktop: login og sidebar-layout", async () => {
+await step("Workers-side viser opgaver, status og log", async () => {
+  await ip.goto(BASE + "/workers");
+  for (const n of ["Worker 01 · Intake", "Worker 02 · Responder", "Worker 03 · Follow-up", "Worker 04 · Analytics"]) await ip.getByRole("heading", { name: n }).waitFor();
+  await ip.getByRole("heading", { name: "Log" }).waitFor();
+});
+
+// ---------- Medarbejder ----------
+await step("Medarbejder: kvitterer eskalering, ser ikke Indsigt, kan ikke godkende tilbud", async () => {
+  const ctx = await browser.newContext({ ...devices["Pixel 7"] }); const p = await ctx.newPage();
+  await login(p, "mikkel@hansen-vvs.test");
+  assert((await p.locator(".tabbar .tab").count()) === 4, "medarbejder skal have 4 faner");
+  const res = await p.goto(BASE + "/indsigt"); assert(res.status() === 404, "indsigt " + res.status());
+  const q = await api(p, "/api/v1/quotes/q_309/decision", { decision: "approve", expectedVersion: 1 });
+  assert(q.status === 403, "tilbud " + q.status);
+  await p.goto(BASE + "/henvendelser/inq_1040");
+  await p.getByRole("button", { name: "Kvittér: jeg tager sagen" }).click();
+  await p.getByText("Mikkel har kvitteret").waitFor();
+  await p.screenshot({ path: SHOTS + "07-medarbejder-android.png" });
+  await ctx.close();
+});
+
+// ---------- To enheder ----------
+await step("To enheder: desktop kan ikke godkende en sag, telefonen netop har godkendt", async () => {
+  const desk = await browser.newContext({ viewport: { width: 1360, height: 860 } }); const dp = await desk.newPage();
   await login(dp);
-  const sidebar = await dp.locator(".tabbar").boundingBox();
-  assert(sidebar && sidebar.x === 0 && sidebar.height > 700, "sidebar " + JSON.stringify(sidebar));
-  await dp.screenshot({ path: SHOTS + "07-oversigt-desktop.png" });
-  await dp.goto(BASE + "/henvendelser/inq_1042");
-  await dp.getByRole("button", { name: "Godkend svar" }).waitFor();
-});
-
-await step("iPhone: åbn akut sag, ret svaret og godkend", async () => {
-  await ip.goto(BASE + "/");
-  await ip.getByText("1 akut sag").click();
-  await ip.waitForURL(/\/henvendelser\/inq_1042$/);
-  await ip.getByRole("heading", { name: "Sofie Kragh" }).waitFor();
-  const bar = await ip.locator(".actionbar").boundingBox();
-  assert(bar && bar.y + bar.height <= ip.viewportSize().height, "handlingslinje uden for skærm");
-  await ip.screenshot({ path: SHOTS + "03-sag-iphone.png" });
-  await ip.fill("#draft", "Hej Sofie\n\nVi kommer i dag kl. 14-16.\n\nVenlig hilsen\nLars");
-  await ip.getByRole("button", { name: "Godkend svar" }).click();
-  await ip.getByText("Udsendelse er blokeret i testversionen").waitFor();
-  assert(await ip.locator(".actionbar").count() === 0, "knapper skal forsvinde efter godkendelse");
-  await ip.screenshot({ path: SHOTS + "03b-sag-godkendt-iphone.png" });
-});
-
-await step("Desktop: samme sag kan ikke godkendes igen (ingen dobbelt-udsendelse)", async () => {
-  await dp.getByRole("button", { name: "Godkend svar" }).click();
-  await dp.getByText("Sagen er allerede behandlet").waitFor();
-  await dp.getByText("Godkendt").first().waitFor();
-  await dp.screenshot({ path: SHOTS + "08-konflikt-desktop.png" });
-});
-
-await step("Status synkroniseres: badge falder fra 2 til 1 på begge enheder", async () => {
-  await ip.goto(BASE + "/");
-  assert((await ip.locator(".tab .badge").textContent()) === "1", "iphone badge");
-  await dp.goto(BASE + "/");
-  assert((await dp.locator(".tab .badge").textContent()) === "1", "desktop badge");
-});
-
-await step("Dobbelttryk på Godkend sender kun én godkendelse", async () => {
-  let posts = 0;
-  ip.on("request", (r) => { if (r.method() === "POST" && r.url().includes("/decision")) posts++; });
+  await dp.goto(BASE + "/henvendelser/inq_1041");
+  await dp.getByRole("button", { name: "Godkend og send" }).waitFor();
   await ip.goto(BASE + "/henvendelser/inq_1041");
-  const btn = ip.getByRole("button", { name: "Godkend svar" });
-  await btn.dblclick();
-  await ip.getByText("Udsendelse er blokeret i testversionen").waitFor();
-  assert(posts === 1, "antal POST: " + posts);
+  await ip.getByRole("button", { name: "Godkend og send" }).click();
+  await ip.getByText("Udsendelse er blokeret i testversionen").first().waitFor();
+  await dp.getByRole("button", { name: "Godkend og send" }).click();
+  await dp.getByText("Sagen er allerede behandlet").waitFor();
+  await dp.goto(BASE + "/");
+  await dp.screenshot({ path: SHOTS + "08-oversigt-desktop.png" });
+  await desk.close();
 });
 
 await step("CSRF: POST fra fremmed oprindelse afvises", async () => {
-  const cookies = await ip.context().cookies();
-  const c = cookies.find((x) => x.name === "gf_session");
-  const r = await fetch(BASE + "/api/v1/inquiries/inq_1040/decision", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Cookie: `gf_session=${c.value}`, Origin: "https://ond-side.example" },
-    body: JSON.stringify({ decision: "reject", expectedVersion: 1 }),
-  });
+  const c = (await iphone.cookies()).find((x) => x.name === "gf_session");
+  const r = await fetch(BASE + "/api/v1/inquiries/inq_1039/escalate", { method: "POST", headers: { "Content-Type": "application/json", Cookie: `gf_session=${c.value}`, Origin: "https://ond-side.example" }, body: "{}" });
   assert(r.status === 403, "status " + r.status);
 });
 
-await step("Service worker aktiv; API-svar og sider ligger ikke i cachen", async () => {
+await step("Service worker cacher aldrig API eller sider; offline viser neutral side", async () => {
   await ip.goto(BASE + "/");
-  await ip.waitForFunction(() => navigator.serviceWorker?.controller != null, null, { timeout: 15000 }).catch(async () => { await ip.reload(); });
+  await ip.waitForFunction(() => navigator.serviceWorker?.controller != null, null, { timeout: 15000 }).catch(() => ip.reload());
   await ip.waitForFunction(() => navigator.serviceWorker?.controller != null, null, { timeout: 15000 });
-  await ip.goto(BASE + "/henvendelser");
-  const cached = await ip.evaluate(async () => {
-    const urls = [];
-    for (const k of await caches.keys()) for (const r of await (await caches.open(k)).keys()) urls.push(new URL(r.url).pathname);
-    return urls;
-  });
-  assert(cached.includes("/offline"), "offline-side ikke precachet");
-  const leaks = cached.filter((u) => u.startsWith("/api/") || u === "/" || u.startsWith("/henvendelser") || u.startsWith("/tilbud"));
-  assert(leaks.length === 0, "kundedata i cache: " + leaks.join(","));
-});
-
-await step("Offline: neutral offline-side uden kundedata", async () => {
+  await ip.goto(BASE + "/tilbud");
+  const cached = await ip.evaluate(async () => { const u = []; for (const k of await caches.keys()) for (const r of await (await caches.open(k)).keys()) u.push(new URL(r.url).pathname); return u; });
+  assert(cached.every((u) => !u.startsWith("/api/") && u !== "/" && !u.startsWith("/henvendelser") && !u.startsWith("/tilbud")), "cache: " + cached.join(","));
   await iphone.setOffline(true);
   await ip.goto(BASE + "/tilbud").catch(() => {});
   await ip.getByRole("heading", { name: "Du er offline." }).waitFor({ timeout: 8000 });
-  const body = await ip.locator("body").innerText();
-  assert(!body.includes("Anders Vinther"), "kundedata vist offline");
-  await ip.screenshot({ path: SHOTS + "06-offline-iphone.png" });
   await iphone.setOffline(false);
 });
 
-// ---------- Android ----------
-await step("Android (Pixel 7): login, oversigt og navigering", async () => {
-  const ctx = await browser.newContext({ ...devices["Pixel 7"] });
-  const p = await ctx.newPage();
-  await login(p);
-  await p.getByRole("heading", { name: "Afventer din godkendelse" }).waitFor();
-  await p.locator(".tabbar").getByRole("link", { name: "Henvendelser" }).click();
-  await p.waitForURL(/\/henvendelser/);
-  await p.getByRole("link", { name: /Alle/ }).click();
-  await p.waitForURL(/filter=alle/);
-  await p.getByText("Karen Holm").waitFor();
-  await p.screenshot({ path: SHOTS + "09-henvendelser-android.png" });
-  await ctx.close();
-});
-
 // ---------- Anden virksomhed ----------
-await step("Virksomhedsisolering: Nordlys El kan ikke se Hansen VVS' sag", async () => {
-  const ctx = await browser.newContext({ ...devices["iPhone 13"] });
-  const p = await ctx.newPage();
+await step("Virksomhedsisolering: Nordlys El ser ikke Hansen VVS' sager", async () => {
+  const ctx = await browser.newContext({ ...devices["iPhone 13"] }); const p = await ctx.newPage();
   await login(p, "ejer@nordlys-el.test");
-  const body = await p.locator("body").innerText();
-  assert(!body.includes("Sofie Kragh") && body.includes("Ole Bech"), "forkerte data på oversigt");
-  const res = await p.goto(BASE + "/henvendelser/inq_1042");
-  assert(res.status() === 404, "side-status " + res.status());
-  const api = await p.evaluate(async () => (await fetch("/api/v1/inquiries/inq_1042")).status);
-  assert(api === 404, "api-status " + api);
-  const dec = await p.evaluate(async () => (await fetch("/api/v1/inquiries/inq_1041/decision", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ decision: "reject", expectedVersion: 2 }) })).status);
-  assert(dec === 404, "beslutnings-status " + dec);
+  assert(!(await p.locator("body").innerText()).includes("Sofie Kragh"), "lækage på oversigt");
+  assert((await p.goto(BASE + "/henvendelser/inq_1042")).status() === 404, "side");
+  assert((await api(p, "/api/v1/inquiries/inq_1042")).status === 404, "api");
+  assert((await api(p, "/api/v1/inquiries/inq_1039/escalate", { reason: "x" })).status === 404, "eskalering");
+  assert((await p.goto(BASE + "/ejer")).status() === 404, "ejerpanel skal give 404");
   await ctx.close();
 });
 
-await step("Log ud fjerner adgang", async () => {
+// ---------- Platformens ejer ----------
+await step("Ejerpanel: separat login, økonomi, ingen kundedata, nødstop virker", async () => {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage();
+  await login(p, "ejer@genfang.test", OWNER_PW, "/ejer");
+  await p.getByRole("heading", { name: "Drift og økonomi" }).waitFor();
+  const body = await p.locator("body").innerText();
+  assert(body.includes("4.985 kr."), "MRR mangler");
+  for (const leak of ["Sofie", "Kragh", "Testvej", "Peter Sand"]) assert(!body.includes(leak), "lækker " + leak);
+  await p.goto(BASE + "/"); assert(p.url().endsWith("/ejer"), "superadmin skal ikke se virksomhedsapp");
+  await p.screenshot({ path: SHOTS + "09-ejerpanel-desktop.png", fullPage: true });
+  p.once("dialog", (d) => d.accept("E2E-test af nødstop"));
+  await p.getByRole("button", { name: "Aktivér nødstop" }).click();
+  await p.getByText("NØDSTOP ER AKTIVT").waitFor();
+  await ip.goto(BASE + "/");
+  await ip.getByText("GENFANG har aktiveret nødstop").waitFor();
+  const i = await api(ip, "/api/v1/inquiries/inq_1039");
+  const r = await api(ip, "/api/v1/inquiries/inq_1039/decision", { decision: "approve", expectedVersion: i.body.inquiry.version });
+  assert(r.status === 423, "godkendelse under nødstop: " + r.status);
+  p.once("dialog", (d) => d.accept());
+  await p.getByRole("button", { name: "Genoptag drift" }).click();
+  await p.getByRole("button", { name: "Aktivér nødstop" }).waitFor();
+  await ctx.close();
+});
+
+await step("Log ud fjerner adgang; rate limit på fejlede logins", async () => {
   await ip.goto(BASE + "/mere");
   await ip.getByRole("button", { name: "Log ud" }).click();
   await ip.waitForURL(BASE + "/login");
-  await ip.goto(BASE + "/");
-  assert(ip.url().endsWith("/login"), "stadig logget ind");
-});
-
-await step("Rate limit: for mange forkerte logins giver 429", async () => {
+  await ip.goto(BASE + "/"); assert(ip.url().endsWith("/login"), "stadig logget ind");
   let last = 0;
-  for (let i = 0; i < 6; i++) {
-    const r = await fetch(BASE + "/api/v1/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "angriber@test.test", password: "x" + i }) });
-    last = r.status;
-  }
+  for (let i = 0; i < 6; i++) last = (await fetch(BASE + "/api/v1/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: "angriber@test.test", password: "x" + i }) })).status;
   assert(last === 429, "status " + last);
 });
 

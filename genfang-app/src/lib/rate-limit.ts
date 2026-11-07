@@ -19,6 +19,10 @@ export function rateLimit(key: string, limit: number, windowMs: number, now = Da
   return { ok, remaining: Math.max(0, limit - b.count), retryAfterSec: ok ? 0 : Math.ceil((b.resetAt - now) / 1000) };
 }
 
+export function clearKey(key: string) {
+  buckets.delete(key);
+}
+
 export function resetRateLimits() {
   buckets.clear();
 }

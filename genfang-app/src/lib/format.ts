@@ -44,5 +44,30 @@ export function dkk(n: number): string {
 
 export const CHANNEL: Record<string, string> = { mail: "Mail", formular: "Formular", telefon: "Telefon" };
 export const CATEGORY: Record<string, string> = { akut: "Akut", tilbud: "Tilbud", service: "Service", andet: "Andet" };
-export const STATUS: Record<string, string> = { ny: "Ny", udkast_klar: "Afventer dig", godkendt: "Godkendt", afvist: "Afvist" };
-export const QUOTE_STATUS: Record<string, string> = { kladde: "Kladde", sendt: "Sendt", accepteret: "Accepteret", afslaaet: "Afslået" };
+export const STATUS: Record<string, string> = { ny: "Ny", udkast_klar: "Afventer godkendelse", godkendt: "Godkendt", afvist: "Afvist" };
+export const QUOTE_STATUS: Record<string, string> = {
+  kladde: "Kladde", afventer_godkendelse: "Afventer godkendelse", sendt: "Sendt", accepteret: "Accepteret",
+  afvist: "Afvist", udloebet: "Udløbet", faktureret: "Faktureret",
+};
+export const PROVENANCE: Record<string, string> = { testdata: "Testdata", estimat: "Beregnet estimat", verificeret: "Verificeret" };
+export const EMERGENCY: Record<string, string> = { vandskade: "Mulig vandskade", gaslugt: "Mulig gaslugt", tilstoppet_afloeb: "Afløb løber over", intet_varmt_vand: "Intet varmt vand", varmesvigt: "Varmesvigt" };
+
+export function pctStr(r: number | null | undefined): string {
+  return r === null || r === undefined ? "–" : `${(Math.round(r * 1000) / 10).toString().replace(".", ",")} %`;
+}
+export function ppStr(pp: number | null | undefined): string {
+  if (pp === null || pp === undefined) return "";
+  const v = Math.abs(pp).toString().replace(".", ",");
+  return `${pp > 0 ? "+" : pp < 0 ? "−" : "±"}${v} procentpoint`;
+}
+export function relStr(rel: number | null | undefined): string {
+  if (rel === null || rel === undefined) return "";
+  const v = Math.round(Math.abs(rel) * 100);
+  return `${rel > 0 ? "+" : rel < 0 ? "−" : "±"}${v} %`;
+}
+export function minStr(m: number | null | undefined): string {
+  if (m === null || m === undefined) return "–";
+  if (m < 60) return `${Math.round(m)} min`;
+  const h = m / 60;
+  return `${(Math.round(h * 10) / 10).toString().replace(".", ",")} t`;
+}

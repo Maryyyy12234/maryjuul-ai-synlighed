@@ -17,7 +17,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: f.get("email"), password: f.get("password") }),
       });
-      if (res.ok) { window.location.replace("/"); return; }
+      if (res.ok) { const d = await res.json().catch(() => ({})); window.location.replace(d.role === "superadmin" ? "/ejer" : "/"); return; }
       const data = await res.json().catch(() => ({}));
       setError(data?.error?.message ?? "Login mislykkedes.");
     } catch {

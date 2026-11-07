@@ -8,8 +8,10 @@
   --paper-3: #dfdacd;
   --ink: #121211;
   --ink-2: #54524c;
-  --ink-3: #8a877e;
-  --rule: #d6d1c3;
+  --ink-3: #66635b; /* skærpet fra #8a877e for WCAG AA-kontrast (≈5:1 på papir) */
+  --rule: #d3cdbf;
+  --warn: #b3261e;
+  --warn-bg: #fbe9e6;
   --lime: #c6f432;
   --lime-deep: #9ccc0f;
   --alert: #e0482c;
@@ -72,7 +74,7 @@ button { font: inherit; color: inherit; }
 /* ---------- Typografi ---------- */
 
 .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
-.title { font-size: clamp(30px, 8.4vw, 44px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 600; margin: 10px 0 0; }
+.title { font-size: clamp(25px, 6.6vw, 34px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 600; margin: 10px 0 0; }
 .title em { font-style: normal; color: var(--ink-3); }
 .lede { color: var(--ink-2); margin: 10px 0 0; max-width: 34ch; }
 .num { font-variant-numeric: tabular-nums; }
@@ -128,6 +130,7 @@ button { font: inherit; color: inherit; }
 .tag[data-kind="akut"] { background: var(--ink); color: var(--lime); }
 .tag[data-kind="ok"] { background: var(--lime); border-color: var(--lime-deep); }
 .tag[data-kind="muted"] { border-color: var(--rule); color: var(--ink-2); }
+.tag[data-kind="warn"] { background: var(--warn); border-color: var(--warn); color: #fff; }
 
 /* ---------- Segmenteret valg ---------- */
 
@@ -182,7 +185,7 @@ button { font: inherit; color: inherit; }
 .tabbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
   height: calc(var(--tabbar-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom);
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(var(--tabs, 4), 1fr);
   background: color-mix(in srgb, var(--paper) 94%, transparent);
   backdrop-filter: saturate(1.4) blur(16px); -webkit-backdrop-filter: saturate(1.4) blur(16px);
   border-top: 1px solid var(--rule);
@@ -258,3 +261,118 @@ button { font: inherit; color: inherit; }
 .hint code { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
 
 .offline { min-height: 100dvh; display: grid; place-content: center; padding: var(--gutter); text-align: left; max-width: 420px; margin: 0 auto; }
+
+/* ================= GENFANG 2.0 ================= */
+
+.lede-sm { color: var(--ink-2); margin: 8px 0 0; font-size: 15px; max-width: 46ch; }
+
+.prov { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); white-space: nowrap; }
+.prov::before { content: ""; width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor; }
+.prov[data-p="estimat"]::before { border-style: dashed; }
+.prov[data-p="verificeret"] { color: #2f5d00; }
+.prov[data-p="verificeret"]::before { background: var(--lime-deep); border-color: var(--lime-deep); }
+.prov-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; }
+
+.banner { margin-top: 14px; padding: 12px 14px; border-radius: 6px; font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
+.banner[data-tone="stop"] { background: var(--ink); color: var(--paper); }
+.banner[data-tone="stop"] b { color: var(--lime); }
+.banner[data-tone="info"] { background: var(--paper-2); color: var(--ink-2); }
+
+/* Kræver handling */
+.actions-list { list-style: none; margin: 0; padding: 0; }
+.act { border-bottom: 1px solid var(--rule); }
+.act > a { display: grid; grid-template-columns: 10px 1fr auto; gap: 12px; align-items: center; padding: 13px 0; min-height: 60px; }
+.act > a:active { background: var(--paper-2); }
+.act .mark { width: 10px; height: 10px; border-radius: 2px; background: var(--ink-3); }
+.act[data-kind="akut"] .mark { background: var(--warn); border-radius: 50%; }
+.act[data-kind="godkend"] .mark { background: var(--ink); }
+.act[data-kind="tilbud"] .mark { background: var(--lime-deep); }
+.act[data-kind="opfoelg"] .mark { background: transparent; border: 1.5px solid var(--ink); }
+.act b { font-size: 15px; display: block; }
+.act span.sub { font-size: 13px; color: var(--ink-2); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Nøgletal */
+.kpis { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--rule); margin-top: 14px; }
+.kpi { padding: 14px 12px 14px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.kpi:nth-child(2n) { padding-left: 14px; border-left: 1px solid var(--rule); }
+.kpi .label { font-size: 12px; color: var(--ink-2); line-height: 1.3; }
+.kpi .value { font-size: clamp(24px, 7vw, 32px); letter-spacing: -0.04em; font-weight: 600; line-height: 1.05; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.kpi .delta { font-size: 12.5px; margin-top: 4px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.kpi .delta[data-dir="up"] { color: #2f5d00; }
+.kpi .delta[data-dir="down"] { color: var(--warn); }
+.kpi .prov { margin-top: 8px; }
+@media (min-width: 720px) {
+  .kpis { grid-template-columns: repeat(3, 1fr); }
+  .kpi:nth-child(2n) { padding-left: 0; border-left: 0; }
+  .kpi:not(:nth-child(3n+1)) { padding-left: 14px; border-left: 1px solid var(--rule); }
+}
+
+/* Indtægts-trappe: potentiel → realiseret */
+.money { list-style: none; margin: 14px 0 0; padding: 0; }
+.money li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.money li b { font-variant-numeric: tabular-nums; font-size: 17px; }
+.money li small { grid-column: 1 / -1; color: var(--ink-2); font-size: 12.5px; }
+.money li[data-real="false"] b { color: var(--ink-2); font-weight: 500; }
+.money li[data-real="true"] b { color: var(--ink); }
+
+/* Indsigt */
+.insight { padding: 16px; background: var(--paper-2); border-radius: 6px; margin-top: 12px; }
+.insight h3 { margin: 0; font-size: 15px; }
+.insight p { margin: 6px 0 0; font-size: 14px; color: var(--ink-2); }
+.insight .meta-row { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+
+.funnel { list-style: none; margin: 14px 0 0; padding: 0; }
+.funnel li { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 10px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+.funnel .bar { grid-column: 1 / -1; height: 8px; background: var(--paper-2); border-radius: 4px; overflow: hidden; }
+.funnel .bar i { display: block; height: 100%; background: var(--ink); border-radius: 4px; }
+.funnel li:last-child .bar i { background: var(--lime-deep); }
+.method { font-size: 13px; color: var(--ink-2); padding-left: 18px; margin: 10px 0 0; }
+.method li { margin: 4px 0; }
+
+/* Sag: akut, sikkerhedskontrol, handlinger */
+.emergency { margin-top: 18px; border: 1.5px solid var(--warn); border-radius: 6px; padding: 14px 16px; background: var(--warn-bg); }
+.emergency h2 { margin: 0; font-size: 14px; color: var(--warn); display: flex; gap: 8px; align-items: center; }
+.emergency p { margin: 8px 0 0; font-size: 14.5px; }
+.esc-state { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(179,38,30,.25); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 14px; }
+
+.facts { list-style: none; margin: 18px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.facts li { font-size: 12.5px; padding: 4px 8px; border-radius: 4px; background: var(--paper-2); color: var(--ink-2); }
+.facts li[data-missing="true"] { background: transparent; border: 1px dashed var(--ink-3); }
+
+.guard { margin-top: 12px; border-radius: 6px; padding: 12px 14px; font-size: 14px; }
+.guard[data-ok="true"] { background: var(--paper-2); color: var(--ink-2); }
+.guard[data-ok="true"]::before { content: "✓ "; color: #2f5d00; font-weight: 700; }
+.guard[data-ok="false"] { border: 1.5px solid var(--warn); background: var(--warn-bg); }
+.guard[data-ok="false"] strong { color: var(--warn); display: block; }
+.guard ul { margin: 8px 0 0; padding-left: 18px; }
+.guard li { margin: 4px 0; }
+.guard li q { color: var(--ink-2); font-size: 13px; display: block; quotes: "»" "«"; }
+
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.btn-sm { min-height: 40px; padding: 0 14px; font-size: 14px; }
+.btn-warn { border-color: var(--warn); color: var(--warn); }
+.actionbar.three { grid-template-columns: auto 1fr; }
+
+.basis { font-size: 13px; color: var(--ink-2); margin-top: 10px; }
+.basis b { color: var(--ink); font-weight: 600; }
+
+details.danger { margin-top: 36px; border-top: 1px solid var(--rule); padding-top: 14px; font-size: 14px; color: var(--ink-2); }
+details.danger summary { cursor: pointer; min-height: 40px; display: flex; align-items: center; }
+
+/* Formular */
+.form-grid { display: grid; gap: 10px; margin-top: 12px; }
+.form-grid label { font-size: 12px; font-weight: 600; color: var(--ink-2); display: grid; gap: 4px; }
+.form-grid input, .form-grid textarea, .form-grid select { font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; background: #fbfaf6; color: var(--ink); }
+.form-grid textarea { min-height: 96px; resize: vertical; }
+
+/* Ejerpanel */
+.admin-shell { min-height: 100dvh; }
+.admin-shell .main { max-width: 1100px; padding-bottom: 60px; }
+.table-wrap { overflow-x: auto; margin-top: 12px; -webkit-overflow-scrolling: touch; }
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
+table.data th { text-align: left; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; padding: 8px 10px 8px 0; border-bottom: 1.5px solid var(--ink); }
+table.data td { padding: 12px 10px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; font-variant-numeric: tabular-nums; }
+table.data td.num, table.data th.num { text-align: right; }
+.stop-box { margin-top: 20px; border: 2px solid var(--ink); border-radius: 8px; padding: 16px; display: grid; gap: 10px; }
+.stop-box[data-on="true"] { background: var(--ink); color: var(--paper); }
+.stop-box[data-on="true"] b { color: var(--lime); }

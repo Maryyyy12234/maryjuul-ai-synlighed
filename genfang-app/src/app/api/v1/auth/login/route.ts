@@ -1,10 +1,16 @@
 import { cookies } from "next/headers";
 import { fail, json, readJson } from "@/lib/api.ts";
-import { rateLimit } from "@/lib/rate-limit.ts";
+import { clearKey, rateLimit } from "@/lib/rate-limit.ts";
 import { SESSION_COOKIE, SESSION_TTL_SECONDS, safeEqual, signSession } from "@/lib/session.ts";
 import { audit, findUserByEmail } from "@/lib/store.ts";
 
 export const runtime = "nodejs";
+
+function ownerPassword(): string | null {
+  const p = process.env.OWNER_PASSWORD;
+  if (p && p.length >= 12) return p;
+  return process.env.NODE_ENV === "production" ? null : "genfang-ejer-demo";
+}
 
 function demoPassword(): string | null {
   const p = process.env.DEMO_PASSWORD;
@@ -23,21 +29,23 @@ export async function POST(req: Request) {
   const password = typeof body.password === "string" ? body.password.slice(0, 200) : "";
 
   const ip = (req.headers.get("x-forwarded-for") ?? "local").split(",")[0].trim();
-  const byIp = rateLimit(`login-ip:${ip}`, 20, 15 * 60_000);
+  const byIp = rateLimit(`login-ip:${ip}`, 30, 15 * 60_000);
   const byEmail = rateLimit(`login-email:${email}`, 5, 15 * 60_000);
   if (!byIp.ok || !byEmail.ok) {
     const retry = String(Math.max(byIp.retryAfterSec, byEmail.retryAfterSec));
     return fail("rate_limited", "For mange forsøg. Prøv igen om lidt.", 429, { "Retry-After": retry });
   }
 
-  const expected = demoPassword();
+  const user = email ? findUserByEmail(email) : undefined;
+  // Platformens ejer har en separat, længere adgangskode.
+  const expected = user?.role === "superadmin" ? ownerPassword() : demoPassword();
   if (!expected) return fail("forbidden", "Login er ikke konfigureret på denne server.", 503);
 
-  const user = email ? findUserByEmail(email) : undefined;
   // Sammenlign altid, så svartiden ikke afslører om e-mailen findes.
   const pwOk = await safeEqual(password, expected);
   if (!user || !pwOk) return fail("unauthorized", "Forkert e-mail eller adgangskode.", 401);
 
+  clearKey(`login-email:${email}`); // kun fejlede forsøg tæller mod e-mail-grænsen
   const token = await signSession({ uid: user.id, tid: user.tenantId, role: user.role });
   audit({ at: new Date().toISOString(), tenantId: user.tenantId, userId: user.id, action: "login" });
 
@@ -51,5 +59,5 @@ export async function POST(req: Request) {
     path: "/",
     maxAge: SESSION_TTL_SECONDS,
   });
-  return json(native ? { ok: true, token, expiresIn: SESSION_TTL_SECONDS } : { ok: true });
+  return json(native ? { ok: true, token, expiresIn: SESSION_TTL_SECONDS, role: user.role } : { ok: true, role: user.role });
 }

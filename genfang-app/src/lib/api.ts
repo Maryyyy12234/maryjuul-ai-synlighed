@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { ApiError } from "./types.ts";
 import { getSession } from "./auth.ts";
 import type { SessionPayload } from "./session.ts";
+import type { Fail } from "./store.ts";
 
 const NO_STORE = { "Cache-Control": "no-store, private", Vary: "Cookie, Authorization" };
 
@@ -41,4 +42,17 @@ export async function readJson(req: Request, maxBytes = 16_384): Promise<unknown
   const text = await req.text();
   if (text.length > maxBytes) throw new Error("too_large");
   return text ? JSON.parse(text) : {};
+}
+
+const FAIL_STATUS: Record<Fail["code"], number> = { not_found: 404, conflict: 409, invalid: 400, forbidden: 403, blocked: 422, stopped: 423 };
+
+/** Oversætter et domæneresultat til HTTP – samme kontrakt for alle klienter. */
+export function respond<T extends { ok: true }>(r: T | Fail, pick: (ok: T) => unknown) {
+  if (r.ok) return json(pick(r as T));
+  const f = r as Fail;
+  return json({ error: { code: f.code, message: f.message }, current: f.current ?? null, guard: f.guard ?? null }, FAIL_STATUS[f.code]);
+}
+
+export function requireSuper(session: SessionPayload) {
+  return session.role === "superadmin" && session.tid === "__platform__";
 }
