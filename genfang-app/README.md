@@ -7,7 +7,7 @@ Installérbar mobil-app til håndværksvirksomheder: nye henvendelser, AI-svarud
 > **Status: testversion med syntetiske data.**
 > Den rigtige GENFANG-kodebase (Supabase, de fire AI-workers, billing) var ikke tilgængelig, da appen blev bygget.
 > Al dataadgang går derfor gennem ét lag – `src/lib/store.ts` – som erstattes, når appen kobles på den rigtige backend.
-> Der sendes ingen mails, SMS, push-beskeder eller betalinger.
+> Der sendes ingen mails, SMS, push-beskeder eller betalinger. Data gemmes varigt i Postgres, når `DATABASE_URL` er sat.
 
 ## Kør lokalt
 
@@ -62,7 +62,7 @@ docs/SIKKERHED.md            sikkerhedsgennemgang før rigtige kunder
 ## Testversion online
 
 Render (Frankfurt, gratis plan): https://genfang-test.onrender.com – service `genfang-test`, bygger automatisk fra grenen `claude/charming-faraday-z1103s`.
-Gratis-instansen går i dvale efter inaktivitet (første besøg tager op til ca. et minut), og testdata nulstilles ved hver genstart.
+Gratis-instansen går i dvale efter inaktivitet (første besøg tager op til ca. et minut). Data gemmes i Render Postgres (`genfang-db`, gratis plan – **udløber 7. december 2026** medmindre den opgraderes) og overlever genstart. Testdata kan nulstilles fra ejerpanelet. Opsætningen styres af `genfang-app/render.yaml` (Render Blueprint `genfang`).
 Røgtest mod den online version (ændrer ingen data): `BASE_URL=https://genfang-test.onrender.com DEMO_PASSWORD=… OWNER_PASSWORD=… node test/e2e/live-smoke.mjs`.
 
 ## Deploy på Vercel (alternativ)
