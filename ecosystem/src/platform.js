@@ -75,6 +75,13 @@ function createPlatform({ now = () => new Date() } = {}) {
     return { type: 'ai_worker', id: workerName, label: `worker:${workerName}`, organization_id: orgId, role: 'worker', modules: [module], actions };
   }
 
+  // Systemaktør til synkronisering fra integrationer. Kan læse og skrive i ét
+  // modul, men aldrig godkende eller administrere.
+  function systemActor(orgId, name, module) {
+    if (!db.organizations.has(orgId)) throw new NotFoundError('Ukendt virksomhed');
+    return { type: 'system', id: name, label: `system:${name}`, organization_id: orgId, role: 'system', modules: [module], actions: ['read', 'write', 'draft'] };
+  }
+
   function isModuleActive(orgId, module) {
     const m = db.modules.get(`${orgId}:${module}`);
     return !!m && m.status === 'active';
@@ -83,7 +90,7 @@ function createPlatform({ now = () => new Date() } = {}) {
   function can(actor, module, action) {
     if (!isModuleActive(actor.organization_id, module)) return false;
     if (!actor.modules.includes(module)) return false;
-    if (actor.type === 'ai_worker') return action !== 'approve' && action !== 'admin' && actor.actions.includes(action);
+    if (actor.type === 'ai_worker' || actor.type === 'system') return action !== 'approve' && action !== 'admin' && actor.actions.includes(action);
     return ROLES[actor.role].actions.includes(action);
   }
 
@@ -185,12 +192,28 @@ function createPlatform({ now = () => new Date() } = {}) {
     };
   }
 
+  // Fælles notifikationer. Vises kun for brugere med adgang til modulet.
+  const notifications = [];
+  function notify(orgId, { module = null, title, body = '', link = null, source }) {
+    const n = { id: id('ntf'), organization_id: orgId, module, title, body, link, source, created_at: now().toISOString(), read: false };
+    notifications.push(n);
+    return { ...n };
+  }
+  function listNotifications(actor) {
+    return notifications.filter((n) => n.organization_id === actor.organization_id && (!n.module || can(actor, n.module, 'read'))).map((n) => ({ ...n }));
+  }
+  function owners(orgId) {
+    return [...db.memberships.values()].filter((m) => m.organization_id === orgId && m.role === 'owner').map((m) => m.user_id);
+  }
+  function isOwner(actor) { return actor.type === 'user' && actor.role === 'owner'; }
+
   function auditLog(actor) {
     return db.audit.filter((a) => a.organization_id === actor.organization_id);
   }
 
   return {
-    MODULES, createUser, createOrganization, recommendModules, userActor, workerActor,
+    MODULES, createUser, createOrganization, recommendModules, userActor, workerActor, systemActor,
+    notify, listNotifications, owners, isOwner,
     activateModule, deactivateModule, activeModules, isModuleActive, inviteMember, removeMember,
     can, require, sharingConsentText, grantSharing, revokeSharing, isShared, requireSharing,
     repo, audit, auditLog, now,

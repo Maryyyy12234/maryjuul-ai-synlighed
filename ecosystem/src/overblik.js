@@ -16,6 +16,7 @@ function createOverblik(platform) {
       // AI-oprettede opgaver er kladder, indtil et menneske accepterer dem.
       draft: isWorker || !!t.draft, origin: t.origin || (isWorker ? actor.label : 'manual'),
       approval_id: t.approval_id || null, customer_id: t.customer_id || null,
+      suggestion_status: isWorker || t.draft ? 'proposed' : null, dedupe_key: t.dedupe_key || null,
     });
   }
 
@@ -23,7 +24,19 @@ function createOverblik(platform) {
     if (!TASK_STATUSES.includes(status)) throw new Error(`Ukendt status: ${status}`);
     return repo(actor).update('tasks', taskId, { status, ...(status === 'done' ? { completed_at: platform.now().toISOString() } : {}) });
   }
-  function acceptDraft(actor, taskId) { return repo(actor).update('tasks', taskId, { draft: false }); }
+  function acceptDraft(actor, taskId) { return repo(actor).update('tasks', taskId, { draft: false, suggestion_status: 'accepted' }); }
+  function rejectDraft(actor, taskId, reason = '') {
+    const t = repo(actor).get('tasks', taskId);
+    if (!t.draft) throw new Error('Kun forslag kan afvises');
+    return repo(actor).update('tasks', taskId, { status: 'cancelled', suggestion_status: 'rejected', rejected_reason: reason });
+  }
+  function editDraft(actor, taskId, patch) {
+    const t = repo(actor).get('tasks', taskId);
+    if (!t.draft) throw new Error('Kun forslag kan redigeres her');
+    const allowed = ['title', 'description', 'assignee_id', 'due_on', 'priority'];
+    const safe = Object.fromEntries(Object.entries(patch).filter(([k]) => allowed.includes(k)));
+    return repo(actor).update('tasks', taskId, { ...safe, edited: true });
+  }
   function assign(actor, taskId, userId) { return repo(actor).update('tasks', taskId, { assignee_id: userId }); }
 
   function listTasks(actor, { status, assignee_id, includeDrafts = true } = {}) {
@@ -45,7 +58,7 @@ function createOverblik(platform) {
       headline: items.length ? `Der er ${items.length} ting, du bør tage stilling til i dag.` : 'Intet kræver din handling i dag.' };
   }
 
-  return { TASK_STATUSES, STATUS_LABELS, createTask, setStatus, acceptDraft, assign, listTasks, today };
+  return { TASK_STATUSES, STATUS_LABELS, createTask, setStatus, acceptDraft, rejectDraft, editDraft, assign, listTasks, today };
 }
 
 module.exports = { createOverblik, TASK_STATUSES, STATUS_LABELS };

@@ -68,4 +68,17 @@ function splitVat(grossOre, ratePct = 25) {
   return { gross: grossOre, net, vat: grossOre - net };
 }
 
-module.exports = { MoneyError, parseDKK, formatDKK, sum, percentChange, splitVat, assertOre };
+// Beløb fra API'er ("499.00", "12.345"): punktum er altid decimaltegn.
+// Rundes til hele øre (halvt væk fra nul).
+function parseApiAmount(input) {
+  const s = String(input ?? '').trim();
+  const m = /^(-)?(\d+)(?:\.(\d+))?$/.exec(s);
+  if (!m) throw new MoneyError(`Ugyldigt API-beløb: ${input}`);
+  const frac = (m[3] || '').padEnd(3, '0');
+  let ore = BigInt(m[2]) * 100n + BigInt(frac.slice(0, 2));
+  if (Number(frac[2]) >= 5) ore += 1n;
+  const n = Number(m[1] ? -ore : ore);
+  return assertOre(n);
+}
+
+module.exports = { MoneyError, parseDKK, parseApiAmount, formatDKK, sum, percentChange, splitVat, assertOre };

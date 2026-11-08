@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kassesystemer · Integrationer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/ui/app.css">
+  <script src="/ui/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Gå til indhold</a>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Hovedmenu">
+      <div class="org"><span class="org-mark" aria-hidden="true"></span><span class="org-name" data-bind="org">…</span></div>
+      <nav>
+        <p class="nav-label">Indstillinger</p>
+        <ul>
+          <li><span class="nav-item is-disabled" aria-disabled="true">Virksomhed <small>Ikke bygget</small></span></li>
+          <li><span class="nav-item is-disabled" aria-disabled="true">Medarbejdere <small>Ikke bygget</small></span></li>
+          <li><a class="nav-item is-active" href="/integrationer/kassesystemer" aria-current="page">Integrationer</a>
+            <ul class="sub"><li><a class="nav-sub is-active" href="/integrationer/kassesystemer">Kassesystemer</a></li></ul></li>
+          <li><span class="nav-item is-disabled" aria-disabled="true">Abonnement <small>Ikke bygget</small></span></li>
+        </ul>
+      </nav>
+      <p class="dev-note">Udviklingsversion uden login. Må ikke bruges med rigtige kundedata.</p>
+    </aside>
+
+    <div class="main-col">
+      <header class="topbar">
+        <ol class="crumbs" aria-label="Brødkrumme"><li>Indstillinger</li><li>Integrationer</li><li aria-current="page">Kassesystemer</li></ol>
+        <span class="badge-demo" data-bind="demo" hidden>DEMO-data</span>
+      </header>
+
+      <main id="main" class="content" tabindex="-1">
+        <div class="page-head">
+          <h1>Kassesystemer</h1>
+          <p class="lead">Forbind din kasse. Salg og lager kommer automatisk ind i dine apps, og du beholder dit nuværende kassesystem.</p>
+        </div>
+
+        <div class="flash" role="status" aria-live="polite" hidden></div>
+
+        <section aria-labelledby="h-conn" class="block">
+          <h2 id="h-conn" class="section-title">Forbundne systemer</h2>
+          <div id="connections"><div class="skeleton" aria-hidden="true"></div></div>
+        </section>
+
+        <section aria-labelledby="h-use" class="block" id="usage-block" hidden>
+          <div class="section-row"><h2 id="h-use" class="section-title">Sådan bruger dine apps dataene</h2><span class="hint" data-bind="period"></span></div>
+          <div class="usage" id="usage"></div>
+        </section>
+
+        <section aria-labelledby="h-demo" class="block" id="demo-block" hidden>
+          <h2 id="h-demo" class="section-title">Prøv et kassesalg <span class="tag">DEMO</span></h2>
+          <form class="demo-sale" id="demo-sale">
+            <label class="field"><span>Vare</span><select name="variantId" id="demo-variant"></select></label>
+            <label class="field field-sm"><span>Antal</span><input name="qty" type="number" min="1" max="5" value="1" inputmode="numeric"></label>
+            <button class="btn btn-primary" type="submit">Sælg i kassen</button>
+          </form>
+          <p class="hint">Simulerer en medarbejder, der scanner varen i Shopify POS. Kassen sender en besked, og appsene opdateres.</p>
+          <ol class="flow" id="demo-flow" aria-live="polite"></ol>
+        </section>
+
+        <section aria-labelledby="h-workers" class="block" id="workers-block" hidden>
+          <h2 id="h-workers" class="section-title">AI-workers, der bruger kassedata</h2>
+          <p class="hint">Fase 1: regler i kode. Ingen sprogmodel og ingen AI-omkostning. Workerne laver kun forslag.</p>
+          <div class="table-wrap"><table class="table" id="workers"><thead><tr><th scope="col">Worker</th><th scope="col">App</th><th scope="col">Må</th><th scope="col">Seneste kørsel</th><th scope="col"><span class="sr">Handling</span></th></tr></thead><tbody></tbody></table></div>
+        </section>
+
+        <section aria-labelledby="h-avail" class="block">
+          <h2 id="h-avail" class="section-title">Tilgængelige kassesystemer</h2>
+          <ul class="providers" id="providers"></ul>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="dlg-disconnect" aria-labelledby="dlg-title">
+    <form method="dialog" class="dlg">
+      <h2 id="dlg-title">Afbryd forbindelsen?</h2>
+      <p class="dlg-sub" data-bind="dlg-account"></p>
+      <ul class="consequences" id="dlg-consequences"></ul>
+      <label class="check"><input type="checkbox" id="dlg-delete"> <span>Slet også de hentede kassedata</span></label>
+      <div class="dlg-actions">
+        <button class="btn btn-quiet" value="cancel">Annullér</button>
+        <button class="btn btn-danger" value="confirm" id="dlg-confirm">Afbryd forbindelse</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

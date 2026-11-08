@@ -22,6 +22,10 @@ const MIN_SALES_EVENTS = 3;
 
 function createLager(platform) {
   const idempotency = new Map(); // org:key -> movement
+  // Når et kassesystem er master for lageret, trækkes salg IKKE fra lageret
+  // her. Salgshistorikken kommer i stedet fra kassedata via en provider.
+  let salesProvider = null;
+  function setSalesProvider(fn) { salesProvider = fn; }
 
   function repo(actor) { return platform.repo(actor, 'lager'); }
 
@@ -32,6 +36,7 @@ function createLager(platform) {
       supplier_id: p.supplier_id || null, cost_ore: p.cost_ore ?? null, price_ore: p.price_ore ?? null,
       min_stock: p.min_stock ?? 0, lead_time_days: p.lead_time_days ?? null, status: 'active',
       source_of_truth: p.source_of_truth || 'lager', // 'shopify' = Shopify er master; LAGER må ikke overskrive
+      external_ref: p.external_ref || null, variant_title: p.variant_title || null, options: p.options || [],
     });
   }
 
@@ -80,7 +85,10 @@ function createLager(platform) {
   // "insufficient" i stedet for at gætte, hvis historikken er for kort.
   function salesVelocity(actor, productId, { days = 28 } = {}) {
     const end = platform.now().getTime();
-    const sales = repo(actor).list('stock_movements', (m) => m.product_id === productId && m.type === 'sale');
+    const external = salesProvider ? salesProvider(actor, productId) : null;
+    const sales = external
+      ? external.map((e) => ({ occurred_at: e.at, change: -e.qty }))
+      : repo(actor).list('stock_movements', (m) => m.product_id === productId && m.type === 'sale');
     if (!sales.length) return { sufficient: false, reason: 'Ingen registrerede salg endnu.' };
     const first = Math.min(...sales.map((s) => Date.parse(s.occurred_at)));
     const historyDays = Math.floor((end - first) / DAY);
@@ -91,7 +99,7 @@ function createLager(platform) {
         reason: `For lidt historik: ${historyDays} dage og ${inWindow.length} salg. Kræver mindst ${MIN_HISTORY_DAYS} dage og ${MIN_SALES_EVENTS} salg.` };
     }
     const units = inWindow.reduce((a, s) => a - s.change, 0);
-    return { sufficient: true, windowDays, units, perDayMilli: Math.round((units * 1000) / windowDays),
+    return { sufficient: true, windowDays, units, source: external ? 'kassesystem' : 'lagerbevægelser', perDayMilli: Math.round((units * 1000) / windowDays),
       period: { from: new Date(end - windowDays * DAY).toISOString().slice(0, 10), to: new Date(end).toISOString().slice(0, 10) } };
   }
 
@@ -131,7 +139,7 @@ function createLager(platform) {
     return repo(actor).insert('purchase_orders', { status: 'draft', supplier_id, lines, approval_id: approvalId, sent: false });
   }
 
-  return { MOVEMENT_TYPES, createProduct, createLocation, onHand, recordMovement, salesVelocity, reorderSuggestion, createPurchaseDraft };
+  return { MOVEMENT_TYPES, setSalesProvider, createProduct, createLocation, onHand, recordMovement, salesVelocity, reorderSuggestion, createPurchaseDraft };
 }
 
 module.exports = { createLager, MOVEMENT_TYPES };

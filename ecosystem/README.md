@@ -1,7 +1,9 @@
 # Økosystem: OVERBLIK · PULS · LAGER · INDSIGT
 
 Fælles kerne til fire forretningsapps for små danske virksomheder.
-Status: **domænekerne og database er bygget og testet. Der er ingen brugerflade, intet login, ingen betaling og ingen rigtige integrationer endnu.**
+Status: **domænekerne, database og kasseintegration (Shopify POS) er bygget og testet mod en simuleret Shopify. Der er intet login, ingen betaling, og data gemmes endnu kun i hukommelsen.**
+
+Nyt: **Kassesystemer (POS).** Se [docs/POS_INTEGRATION.md](docs/POS_INTEGRATION.md). Prøv det med `npm run demo:ui` og åbn http://127.0.0.1:4100/integrationer/kassesystemer
 
 Mappen er adskilt fra MARY JUUL-siden. Intet her påvirker den side, der kører på Render.
 
@@ -60,10 +62,13 @@ Det går også imod dine egne principper: *"Én god forretning før ti ufærdige
 | INDSIGT: omsætningsændring via godkendt datadeling | ✅ Bygget (meget lille) |
 | Workflow: lav beholdning → forslag → opgave → godkendelse → indkøbs**kladde** | ✅ Bygget + testet |
 | Postgres-skema med Row Level Security | ✅ Testet i lokal Postgres 16 |
-| Brugerflade / design | ❌ Ikke bygget |
+| Kassesystemer: Shopify POS-forbindelse, synk, webhooks, fordeling til 4 apps, 4 workers | ✅ Bygget + testet mod simuleret Shopify (se docs/POS_INTEGRATION.md) |
+| Integrationscenter (Kassesystemer) | ✅ Bygget (udviklingsserver uden login) |
+| Øvrig brugerflade (app-center, OVERBLIK m.fl.) | ❌ Ikke bygget |
+| Data gemt i Postgres | ❌ Ikke koblet på endnu (tabeller + RLS er testet) |
 | Login (Supabase Auth) | ❌ Ikke bygget |
 | Stripe-abonnementer | ❌ Ikke bygget |
-| Shopify-integration (OAuth, webhooks) | ❌ Ikke bygget |
+| Shopify-integration testet mod rigtig butik | ❌ Kræver Partner-app og nøgler |
 | Dinero / e-conomic | ❌ Ikke bygget. Kræver adgang fra leverandøren |
 | Sprogmodel (LLM) i workers | ❌ Ikke bygget. Workers er regler i kode |
 | PDF-rapporter, budget, gentagne opgaver, kunderegister | ❌ Ikke bygget (tabeller findes) |
@@ -79,7 +84,8 @@ Kræver Node.js 22. Ingen pakker skal installeres.
 
 ```bash
 cd ecosystem
-npm test       # 26 tests
+npm test       # 48 tests
+npm run demo:ui  # Integrationscenter med DEMO-tøjbutik
 npm run demo   # viser workflowet i terminalen
 ```
 
@@ -89,7 +95,9 @@ Databasetest (kræver Postgres):
 createdb eco
 psql -d eco -f db/local_auth_stub.sql   # kun lokalt; Supabase har auth.uid()
 psql -d eco -f db/schema.sql
+psql -d eco -f db/pos_schema.sql
 psql -d eco -f db/rls_test.sql          # skal slutte med "RLS-TEST OK"
+psql -d eco -f db/pos_rls_test.sql      # skal slutte med "POS-RLS-TEST OK"
 ```
 
 ### Filer
