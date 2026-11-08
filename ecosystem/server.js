@@ -14,6 +14,8 @@ const { newKey } = require('./src/pos/crypto');
 const { createFakeShopify } = require('./src/pos/demo/fake-shopify');
 const { seedClothingStore } = require('./src/pos/demo/seed');
 const { WORKER_REGISTRY } = require('./src/pos/workers');
+const { PAYMENT_WORKERS } = require('./src/payments/workers');
+const { createFakeSumUp } = require('./src/payments/demo/fake-sumup');
 
 if (process.env.NODE_ENV === 'production') {
   console.error('Stop: serveren har endnu ikke login og må ikke køre i produktion.');
@@ -41,9 +43,13 @@ if (DEMO) {
   shopifyConfig = { clientId: 'demo-client-id', clientSecret: 'demo-secret', fetch: fake.fetch };
 }
 
-const eco = createEcosystem({ now: clock.now, pos: { vaultKey, webhookUri: APP_URL.startsWith('https://') ? `${APP_URL}/webhooks/shopify` : null, shopify: shopifyConfig } });
+let sumupConfig = { clientId: process.env.SUMUP_CLIENT_ID, clientSecret: process.env.SUMUP_CLIENT_SECRET };
+let fakeSumUp = null;
+if (DEMO) { fakeSumUp = createFakeSumUp({ now: () => new Date() }); sumupConfig = { clientId: 'demo', clientSecret: 'demo', fetch: fakeSumUp.fetch }; }
+
+const eco = createEcosystem({ now: clock.now, payments: { sumup: sumupConfig }, pos: { vaultKey, webhookUri: APP_URL.startsWith('https://') ? `${APP_URL}/webhooks/shopify` : null, shopify: shopifyConfig } });
 eco.pos.setRedirectUri('shopify', `${APP_URL}/integrations/shopify/callback`);
-const { platform, pos, posViews, posWorkers, overblik, approvals } = eco;
+const { platform, pos, posViews, posWorkers, overblik, approvals, payments, paymentViews, paymentWorkers } = eco;
 const user = platform.createUser(DEMO ? 'Mikkel (DEMO)' : 'Udvikler', 'dev@example.dk');
 const org = platform.createOrganization(DEMO ? 'Demo Tøjbutik ApS (DEMO)' : 'Udviklingsvirksomhed', 'detail', user);
 const owner = platform.userActor(org.id, user.id);
@@ -92,6 +98,83 @@ function state() {
   };
 }
 
+function paymentsState() {
+  const conns = payments.listConnections(owner).map((c) => ({ ...c, imports: c.kind === 'file' ? payments.importHistory(owner, c.id).slice(0, 5).map(({ errors, ...i }) => i) : [], history: c.kind === 'api' ? payments.syncHistory(owner, c.id).slice(-5).reverse() : [] }));
+  const posLocations = [...pos.dataFor(org.id, 'puls').locations.values()].map((l) => ({ id: l.external_id, name: l.name }));
+  return { session: { organization: org.name, demo: DEMO }, modules: platform.activeModules(org.id), providers: payments.providers(), connections: conns, posLocations,
+    workers: PAYMENT_WORKERS.map((w) => ({ ...w, lastRun: paymentWorkers.runs(org.id).filter((r) => r.worker === w.id).pop() || null })) };
+}
+
+// DEMO: SumUp-transaktioner, der svarer til de seneste kortbetalinger i demo-kassen.
+async function seedDemoSumUp() {
+  const data = pos.dataFor(org.id, 'puls');
+  const pays = data.orders.flatMap((o) => (o.payments || []).filter((p) => p.kind === 'SALE' && p.method !== 'cash').map((p) => ({ o, p })))
+    .filter(({ p }) => Date.parse(p.processedAt) > Date.now() - 9 * 86400000).sort((a, b) => a.p.processedAt.localeCompare(b.p.processedAt));
+  pays.forEach(({ o, p }, i) => {
+    const t = fakeSumUp.pay({ amountOre: p.amountOre, at: new Date(Date.parse(p.processedAt) + 35000).toISOString(), card: ['VISA', 'MASTERCARD', 'VISA', 'MAESTRO'][i % 4] });
+    if (i < pays.length - 3) { const fo = fake.state.orders.get(o.external_id); const ft = fo._tx.find((x) => x.id === p.externalId); ft.paymentId = t.transaction_code; }
+  });
+  const codes = fakeSumUp.state.tx.filter((t) => Date.parse(t.timestamp) < Date.now() - 4 * 86400000).map((t) => t.transaction_code);
+  const byDay = new Map();
+  for (const c of codes) { const d = fakeSumUp.state.tx.find((t) => t.transaction_code === c).timestamp.slice(0, 10); byDay.set(d, [...(byDay.get(d) || []), c]); }
+  for (const [d, cs] of byDay) fakeSumUp.payout({ date: new Date(Date.parse(d) + 2 * 86400000).toISOString().slice(0, 10), reference: `PO-${d.replace(/-/g, '')}`, codes: cs });
+  fakeSumUp.pay({ amountOre: 34900, at: new Date(Date.now() - 26 * 3600000).toISOString(), card: 'MASTERCARD' });
+  fakeSumUp.pay({ amountOre: 49900, at: new Date(Date.now() - 50 * 3600000).toISOString(), type: 'CHARGE_BACK' });
+  for (const c of pos.listConnections(owner)) await pos.runSync(owner, c.id, { mode: 'reconcile' });
+}
+
+const NETS_SAMPLE = ['Transaktions-ID;Dato;Tid;Beløb;Valuta;Korttype;Terminal;Forretningsnr;Type;Gebyr;Udbetalingsdato;Kortnummer',
+  'N-DEMO-1001;06-11-2026;10:12;899,00;DKK;Visa/Dankort;T-AARHUS-1;5551234;Køb;1,80;09-11-2026;',
+  'N-DEMO-1002;06-11-2026;11:40;249,00;DKK;Dankort;T-AARHUS-1;5551234;Køb;0,50;09-11-2026;',
+  'N-DEMO-1003;06-11-2026;12:05;-249,00;DKK;Dankort;T-AARHUS-1;5551234;Retur;;;',
+  'N-DEMO-1004;31-11-2026;13:00;100,00;DKK;Visa;T-AARHUS-2;5551234;Køb;;;',
+  'N-DEMO-1005;06-11-2026;14:20;1.299,00;DKK;Mastercard;T-AARHUS-2;5551234;Køb;3,25;;4571 9999 9999 9999'].join('\n');
+
+async function paymentsApi(req, res, url, body) {
+  const m = url.pathname.match(/^\/api\/payments\/connections\/([\w-]+)\/(sync|targets|disconnect|lag)$/);
+  if (req.method === 'GET' && url.pathname === '/api/payments/state') return send(res, 200, paymentsState());
+  if (req.method === 'POST' && url.pathname === '/api/payments/connect') {
+    if (body.provider === 'nets') return send(res, 200, payments.createFileConnection(owner, 'nets', { label: body.label || 'Nets / MyNets', targets: body.targets }));
+    const { authUrl, state: st } = payments.startConnect(owner, body.provider, { targets: body.targets, redirectUri: `${APP_URL}/integrations/${body.provider}/callback` });
+    if (DEMO && body.provider === 'sumup') {
+      await seedDemoSumUp();
+      const c = await payments.completeConnect('sumup', fakeSumUp.approve(st), { demo: true });
+      await payments.runSync(owner, c.id, { mode: 'initial' });
+      return send(res, 200, { connected: true, demo: true });
+    }
+    return send(res, 200, { authUrl });
+  }
+  if (m && req.method === 'POST') {
+    const [, id, action] = m;
+    if (action === 'sync') return send(res, 200, await payments.runSync(owner, id, { mode: body.mode || 'incremental' }));
+    if (action === 'targets') return send(res, 200, payments.setTargets(owner, id, body.targets || {}));
+    if (action === 'lag') return send(res, 200, payments.setPayoutLag(owner, id, Number(body.days)));
+    if (action === 'disconnect') return send(res, 200, payments.disconnect(owner, id, { deleteData: !!body.deleteData }));
+  }
+  if (req.method === 'POST' && url.pathname === '/api/payments/imports/preview') {
+    if (body.previousId) { try { payments.cancelImport(owner, body.previousId); } catch { /* allerede afsluttet */ } }
+    return send(res, 200, payments.previewImport(owner, body.connectionId, String(body.text || ''), { mapping: body.mapping || null, fileName: body.fileName }));
+  }
+  const im = url.pathname.match(/^\/api\/payments\/imports\/([\w-]+)\/(confirm|cancel)$/);
+  if (im && req.method === 'POST') return send(res, 200, im[2] === 'confirm' ? payments.confirmImport(owner, im[1]) : payments.cancelImport(owner, im[1]));
+  const tm = url.pathname.match(/^\/api\/payments\/terminals\/([\w-]+)\/map$/);
+  if (tm && req.method === 'POST') return send(res, 200, payments.mapTerminal(owner, tm[1], body.location || null));
+  if (req.method === 'GET' && url.pathname === '/api/puls/payments') {
+    return send(res, 200, { session: { organization: org.name, demo: DEMO }, dashboard: paymentViews.dashboard(owner, { today: today(), period: { from: daysAgo(29), to: today() } }), worklist: paymentViews.worklist(owner),
+      workers: PAYMENT_WORKERS.map((w) => ({ ...w, lastRun: paymentWorkers.runs(org.id).filter((r) => r.worker === w.id).pop() || null })) });
+  }
+  if (req.method === 'POST' && url.pathname === '/api/payments/decide') return send(res, 200, payments.decide(owner, body.key, body.decision, { txKey: body.txKey, note: body.note || '' }) || {});
+  const wm = url.pathname.match(/^\/api\/payments\/workers\/([\w-]+)\/run$/);
+  if (wm && req.method === 'POST') {
+    const fn = { 'payment-reconciliation': () => paymentWorkers.reconciliation(org.id), 'settlement-monitor': () => paymentWorkers.settlementMonitor(org.id),
+      'payment-insights': () => paymentWorkers.insights(org.id, { current: { from: daysAgo(13), to: today() }, previous: { from: daysAgo(27), to: daysAgo(14) } }) }[wm[1]];
+    if (!fn) return send(res, 404, { error: 'Ukendt worker' });
+    return send(res, 200, await fn());
+  }
+  if (DEMO && req.method === 'GET' && url.pathname === '/api/payments/demo-file') return send(res, 200, { text: NETS_SAMPLE, fileName: 'mynets-demo.csv' });
+  return null;
+}
+
 async function api(req, res, url) {
   // Simpel CSRF-beskyttelse: kun JSON fra samme oprindelse.
   if (req.method === 'POST') {
@@ -99,9 +182,10 @@ async function api(req, res, url) {
     if (origin && origin !== `http://${req.headers.host}` && origin !== APP_URL) return send(res, 403, { error: 'Ugyldig oprindelse' });
     if (!String(req.headers['content-type'] || '').startsWith('application/json')) return send(res, 415, { error: 'Brug JSON' });
   }
-  const body = req.method === 'POST' ? JSON.parse((await readBody(req)).toString('utf8') || '{}') : {};
+  const body = req.method === 'POST' ? JSON.parse((await readBody(req, 12_000_000)).toString('utf8') || '{}') : {};
   const m = url.pathname.match(/^\/api\/connections\/([\w-]+)\/(sync|targets|defaults|disconnect)$/);
   try {
+    if (url.pathname.startsWith('/api/payments') || url.pathname.startsWith('/api/puls')) { const r = await paymentsApi(req, res, url, body); if (r !== null) return; }
     if (req.method === 'GET' && url.pathname === '/api/state') return send(res, 200, state());
     if (req.method === 'POST' && url.pathname === '/api/connect') {
       const { authUrl, state: st } = pos.startConnect(owner, body.provider, { account: body.shop, targets: body.targets });
@@ -172,6 +256,15 @@ const server = http.createServer(async (req, res) => {
       } catch (e) { res.writeHead(302, { location: `/integrationer/kassesystemer?fejl=${encodeURIComponent(e.message)}` }); return res.end(); }
     }
     if (url.pathname.startsWith('/api/')) return api(req, res, url);
+    if (url.pathname === '/integrations/sumup/callback') {
+      try {
+        const c = await payments.completeConnect('sumup', Object.fromEntries(url.searchParams));
+        payments.runSync(owner, c.id, { mode: 'initial' }).catch((e) => console.error('Første betalingssynk fejlede:', e.message));
+        res.writeHead(302, { location: '/integrationer/betalinger?forbundet=1' }); return res.end();
+      } catch (e) { res.writeHead(302, { location: `/integrationer/betalinger?fejl=${encodeURIComponent(e.message)}` }); return res.end(); }
+    }
+    const PAGES = { '/integrationer/betalinger': 'payments-integrations.html', '/puls/betalinger': 'puls-payments.html' };
+    if (PAGES[url.pathname]) return send(res, 200, fs.readFileSync(path.join(UI, PAGES[url.pathname]), 'utf8'), { 'content-type': TYPES['.html'], ...SECURITY_HEADERS });
     if (url.pathname === '/' || url.pathname === '/integrationer' || url.pathname === '/integrationer/kassesystemer') {
       return send(res, 200, fs.readFileSync(path.join(UI, 'integrations.html'), 'utf8'), { 'content-type': TYPES['.html'], ...SECURITY_HEADERS });
     }
@@ -187,6 +280,8 @@ const server = http.createServer(async (req, res) => {
 // (I produktion: et rigtigt jobsystem med kø, overvågning og stop-mulighed.)
 setInterval(() => { for (const c of pos.listConnections(owner)) if (c.status === 'connected') pos.runSync(null, c.id, { mode: 'incremental' }).catch(() => {}); }, 15 * 60000).unref();
 setInterval(() => pos.processQueue().catch(() => {}), 30000).unref();
+// Betalinger: SumUp har ingen webhooks for terminalbetalinger, så vi henter hvert 15. minut.
+setInterval(() => { for (const c of payments.listConnections(owner)) if (c.kind === 'api' && c.status === 'connected') payments.runSync(null, c.id).catch(() => {}); }, 15 * 60000).unref();
 
 server.listen(PORT, HOST, () => console.log(`Integrationscenter: http://${HOST}:${PORT}/integrationer/kassesystemer${DEMO ? '  (DEMO-tilstand)' : ''}`));
 module.exports = { server };

@@ -3,7 +3,9 @@
 Fælles kerne til fire forretningsapps for små danske virksomheder.
 Status: **domænekerne, database og kasseintegration (Shopify POS) er bygget og testet mod en simuleret Shopify. Der er intet login, ingen betaling, og data gemmes endnu kun i hukommelsen.**
 
-Nyt: **Kassesystemer (POS).** Se [docs/POS_INTEGRATION.md](docs/POS_INTEGRATION.md). Prøv det med `npm run demo:ui` og åbn http://127.0.0.1:4100/integrationer/kassesystemer
+Nyt: **Betalinger og kortterminaler** (Nets/MyNets-import, SumUp, afstemning i PULS). Se [docs/PAYMENTS.md](docs/PAYMENTS.md). Demo: http://127.0.0.1:4100/puls/betalinger
+
+**Kassesystemer (POS).** Se [docs/POS_INTEGRATION.md](docs/POS_INTEGRATION.md). Prøv det med `npm run demo:ui` og åbn http://127.0.0.1:4100/integrationer/kassesystemer
 
 Mappen er adskilt fra MARY JUUL-siden. Intet her påvirker den side, der kører på Render.
 
@@ -64,6 +66,8 @@ Det går også imod dine egne principper: *"Én god forretning før ti ufærdige
 | Postgres-skema med Row Level Security | ✅ Testet i lokal Postgres 16 |
 | Kassesystemer: Shopify POS-forbindelse, synk, webhooks, fordeling til 4 apps, 4 workers | ✅ Bygget + testet mod simuleret Shopify (se docs/POS_INTEGRATION.md) |
 | Integrationscenter (Kassesystemer) | ✅ Bygget (udviklingsserver uden login) |
+| Betalinger: Nets/MyNets CSV-import, SumUp API, afstemning, PULS → Betalinger, 3 workers | ✅ Bygget + testet mod simulerede udbydere (se docs/PAYMENTS.md) |
+| MyNets' rigtige filformat og SumUp mod rigtig konto | ❌ Ikke bekræftet |
 | Øvrig brugerflade (app-center, OVERBLIK m.fl.) | ❌ Ikke bygget |
 | Data gemt i Postgres | ❌ Ikke koblet på endnu (tabeller + RLS er testet) |
 | Login (Supabase Auth) | ❌ Ikke bygget |
@@ -84,7 +88,7 @@ Kræver Node.js 22. Ingen pakker skal installeres.
 
 ```bash
 cd ecosystem
-npm test       # 48 tests
+npm test       # 65 tests
 npm run demo:ui  # Integrationscenter med DEMO-tøjbutik
 npm run demo   # viser workflowet i terminalen
 ```
@@ -96,8 +100,10 @@ createdb eco
 psql -d eco -f db/local_auth_stub.sql   # kun lokalt; Supabase har auth.uid()
 psql -d eco -f db/schema.sql
 psql -d eco -f db/pos_schema.sql
+psql -d eco -f db/payments_schema.sql
 psql -d eco -f db/rls_test.sql          # skal slutte med "RLS-TEST OK"
 psql -d eco -f db/pos_rls_test.sql      # skal slutte med "POS-RLS-TEST OK"
+psql -d eco -f db/payments_rls_test.sql # skal slutte med "BETALINGS-RLS-TEST OK"
 ```
 
 ### Filer

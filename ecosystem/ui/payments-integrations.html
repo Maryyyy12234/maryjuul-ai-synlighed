@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Betalinger og terminaler · Integrationer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/ui/app.css">
+  <script src="/ui/shell.js" defer></script>
+  <script src="/ui/pay.js" defer></script>
+</head>
+<body data-page="integrations">
+  <a class="skip" href="#main">Gå til indhold</a>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Hovedmenu" data-shell></aside>
+    <div class="main-col">
+      <header class="topbar">
+        <ol class="crumbs" aria-label="Brødkrumme"><li>Indstillinger</li><li>Integrationer</li><li aria-current="page">Betalinger og terminaler</li></ol>
+        <span class="badge-demo" data-bind="demo" hidden>DEMO-data</span>
+      </header>
+      <main id="main" class="content" tabindex="-1">
+        <div class="page-head">
+          <h1>Betalinger og kortterminaler</h1>
+          <p class="lead">Hent kortbetalinger, gebyrer og udbetalinger fra din betalingsudbyder. Vi læser kun data – vi behandler aldrig betalinger og gemmer aldrig kortnumre.</p>
+        </div>
+        <div class="flash" role="status" aria-live="polite" hidden></div>
+        <section class="block" aria-labelledby="h-c"><h2 id="h-c" class="section-title">Forbundne udbydere</h2><div id="connections"><div class="skeleton" aria-hidden="true"></div></div></section>
+        <section class="block" aria-labelledby="h-a"><h2 id="h-a" class="section-title">Udbydere</h2><ul class="providers" id="providers"></ul>
+          <p class="hint">Dankort er en betalingsordning, ikke et system man forbinder direkte. Dankort-betalinger indløses typisk af Nets/Nexi og findes i deres rapporter. En kortterminal alene fortæller kun beløbet – ikke hvilke varer der er solgt.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+  <dialog id="dlg-import" aria-labelledby="imp-title" class="dlg-wide">
+    <div class="dlg">
+      <div class="dlg-head"><h2 id="imp-title">Importér betalingsrapport</h2><button class="btn btn-quiet" type="button" data-close>Luk</button></div>
+      <div id="imp-body"></div>
+    </div>
+  </dialog>
+  <dialog id="dlg-disconnect" aria-labelledby="dlg-title">
+    <form method="dialog" class="dlg">
+      <h2 id="dlg-title">Afbryd forbindelsen?</h2>
+      <p class="dlg-sub" data-bind="dlg-account"></p>
+      <ul class="consequences" id="dlg-consequences"></ul>
+      <label class="check"><input type="checkbox" id="dlg-delete"> <span>Slet også de hentede betalingsdata</span></label>
+      <div class="dlg-actions"><button class="btn btn-quiet" value="cancel">Annullér</button><button class="btn btn-danger" value="confirm">Afbryd forbindelse</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

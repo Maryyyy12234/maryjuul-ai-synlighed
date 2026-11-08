@@ -144,6 +144,7 @@ const ORDER_FIELDS = `
     originalUnitPriceSet { ${MONEY} } discountedUnitPriceAfterAllDiscountsSet { ${MONEY} } totalDiscountSet { ${MONEY} }
     taxLines { ratePercentage priceSet { ${MONEY} } }
   } }
+  transactions { id kind status gateway formattedGateway paymentId processedAt test amountSet { ${MONEY} } location { id } }
   refunds { id createdAt processedAt note totalRefundedSet { ${MONEY} }
     refundLineItems(first: 100) { nodes { id quantity restockType lineItem { id } subtotalSet { ${MONEY} } totalTaxSet { ${MONEY} } } } }`;
 
@@ -210,6 +211,13 @@ function normalizeOrder(o) {
       discountOre: amt(l.totalDiscountSet),
       taxOre: (l.taxLines || []).reduce((a, t) => a + amt(t.priceSet), 0),
       taxRatePct: l.taxLines?.[0]?.ratePercentage ?? null,
+    })),
+    // Betalinger på ordren. Bevidst UDEN accountNumber, paymentDetails og receiptJson (kan indeholde kortdata).
+    payments: (o.transactions || []).filter((x) => !x.test).map((x) => ({
+      externalId: x.id, kind: x.kind, status: x.status, gateway: x.formattedGateway || x.gateway || null,
+      method: /cash|kontant/i.test(`${x.gateway} ${x.formattedGateway}`) ? 'cash' : 'card_or_other',
+      reference: x.paymentId || null, amountOre: amt(x.amountSet), currency: x.amountSet?.shopMoney?.currencyCode || o.currencyCode,
+      processedAt: x.processedAt, locationExternalId: x.location?.id || o.retailLocation?.id || null,
     })),
     refunds: (o.refunds || []).map((r) => ({
       externalId: r.id, processedAt: r.processedAt || r.createdAt, note: r.note || null, totalOre: amt(r.totalRefundedSet),

@@ -50,7 +50,8 @@ function createFakeShopify({ shop = 'demo-toejbutik.myshopify.com', clientSecret
   const invWebhook = (l) => webhook('inventory_levels/update', { inventory_item_id: num(l.itemId), location_id: num(l.locationId), available: l.available, updated_at: l.updatedAt });
 
   // ---------- Salg, retur, annullering (Shopify trækker selv lageret) ----------
-  function sell({ lines, locationId = null, channel = 'pos', discountOre = 0 }) {
+  // payments: [{ method: 'card'|'cash', amountOre?, reference? }]. Standard: ét kortbeløb for hele ordren.
+  function sell({ lines, locationId = null, channel = 'pos', discountOre = 0, payments = null }) {
     const id = next('Order');
     const items = lines.map((ln, i) => {
       const { p, v } = variantById(ln.variantId);
@@ -62,7 +63,15 @@ function createFakeShopify({ shop = 'demo-toejbutik.myshopify.com', clientSecret
     });
     const o = { id, name: `#${num(id)}`, createdAt: iso(), processedAt: iso(), updatedAt: iso(), cancelledAt: null, sourceName: channel === 'pos' ? 'pos' : 'web',
       test: false, currencyCode: 'DKK', taxesIncluded: true, displayFinancialStatus: 'PAID', retailLocation: channel === 'pos' ? { id: locationId } : null,
-      _lines: items, _refunds: [], _locationId: locationId || s.locations[s.locations.length - 1].id };
+      _lines: items, _refunds: [], _locationId: locationId || s.locations[s.locations.length - 1].id, _tx: [] };
+    const total = items.reduce((a, it) => a + it._net, 0);
+    const pays = payments || [{ method: 'card' }];
+    let rest = total;
+    pays.forEach((p, i) => {
+      const amount = i === pays.length - 1 ? rest : p.amountOre; rest -= amount;
+      o._tx.push({ id: next('OrderTransaction'), kind: 'SALE', status: 'SUCCESS', gateway: p.method === 'cash' ? 'cash' : 'manual',
+        formattedGateway: p.method === 'cash' ? 'Cash' : 'Ekstern kortterminal', paymentId: p.reference || null, processedAt: iso(), test: false, _amount: amount });
+    });
     s.orders.set(id, o);
     const inv = items.map((it) => adjust(it._itemId, o._locationId, -it.quantity));
     return { order: o, webhooks: [webhook('orders/create', { id: num(id), admin_graphql_api_id: id }), ...inv.map(invWebhook)] };
@@ -76,6 +85,8 @@ function createFakeShopify({ shop = 'demo-toejbutik.myshopify.com', clientSecret
     const r = { id: next('Refund'), createdAt: iso(), processedAt: iso(), note: 'DEMO retur', _amount: amount,
       lines: [{ id: next('RefundLineItem'), quantity: qty, restockType: restock ? 'RETURN' : 'NO_RESTOCK', lineItem: { id: it.id }, _sub: amount, _tax: tax }] };
     o._refunds.push(r); o.updatedAt = iso();
+    const cardTx = o._tx.find((x) => x.kind === 'SALE' && x.gateway !== 'cash') || o._tx[0];
+    o._tx.push({ id: next('OrderTransaction'), kind: 'REFUND', status: 'SUCCESS', gateway: cardTx.gateway, formattedGateway: cardTx.formattedGateway, paymentId: null, processedAt: iso(), test: false, _amount: amount });
     const hooks = [webhook('refunds/create', { id: num(r.id), order_id: num(orderId) }), webhook('orders/updated', { id: num(orderId), admin_graphql_api_id: orderId })];
     if (restock) hooks.push(invWebhook(adjust(it._itemId, o._locationId, qty)));
     return { refund: r, webhooks: hooks };
@@ -83,6 +94,7 @@ function createFakeShopify({ shop = 'demo-toejbutik.myshopify.com', clientSecret
   function cancel(orderId) {
     const o = s.orders.get(orderId);
     o.cancelledAt = iso(); o.updatedAt = iso();
+    for (const x of o._tx.filter((y) => y.kind === 'SALE')) o._tx.push({ id: next('OrderTransaction'), kind: 'REFUND', status: 'SUCCESS', gateway: x.gateway, formattedGateway: x.formattedGateway, paymentId: null, processedAt: iso(), test: false, _amount: x._amount });
     const hooks = [webhook('orders/cancelled', { id: num(orderId), admin_graphql_api_id: orderId })];
     for (const it of o._lines) { if (it.currentQuantity) hooks.push(invWebhook(adjust(it._itemId, o._locationId, it.currentQuantity))); it.currentQuantity = 0; }
     return { webhooks: hooks };
@@ -104,6 +116,8 @@ function createFakeShopify({ shop = 'demo-toejbutik.myshopify.com', clientSecret
       subtotalPriceSet: money(origSub), totalDiscountsSet: money(disc), totalTaxSet: money(origTax), totalPriceSet: money(origSub),
       currentSubtotalPriceSet: money(cancelled ? 0 : sub), currentTotalDiscountsSet: money(cancelled ? 0 : disc), currentTotalTaxSet: money(cancelled ? 0 : curTax), currentTotalPriceSet: money(cancelled ? 0 : sub),
       totalRefundedSet: money(refundedTotal),
+      transactions: o._tx.map((x) => ({ id: x.id, kind: x.kind, status: x.status, gateway: x.gateway, formattedGateway: x.formattedGateway, paymentId: x.paymentId,
+        processedAt: x.processedAt, test: x.test, amountSet: money(x._amount), location: o.retailLocation })),
       lineItems: { nodes: o._lines.map((it) => ({ id: it.id, quantity: it.quantity, currentQuantity: it.currentQuantity, sku: it.sku, title: it.title, variantTitle: it.variantTitle,
         variant: it.variant, product: it.product, originalUnitPriceSet: money(it._unit), discountedUnitPriceAfterAllDiscountsSet: money(Math.round(it._net / it.quantity)),
         totalDiscountSet: money(it._disc), taxLines: [{ ratePercentage: 25, priceSet: money(it._tax) }] })) },

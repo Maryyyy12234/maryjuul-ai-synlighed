@@ -8,25 +8,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/ui/app.css">
+  <script src="/ui/shell.js" defer></script>
   <script src="/ui/app.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">Gå til indhold</a>
   <div class="shell">
-    <aside class="sidebar" aria-label="Hovedmenu">
-      <div class="org"><span class="org-mark" aria-hidden="true"></span><span class="org-name" data-bind="org">…</span></div>
-      <nav>
-        <p class="nav-label">Indstillinger</p>
-        <ul>
-          <li><span class="nav-item is-disabled" aria-disabled="true">Virksomhed <small>Ikke bygget</small></span></li>
-          <li><span class="nav-item is-disabled" aria-disabled="true">Medarbejdere <small>Ikke bygget</small></span></li>
-          <li><a class="nav-item is-active" href="/integrationer/kassesystemer" aria-current="page">Integrationer</a>
-            <ul class="sub"><li><a class="nav-sub is-active" href="/integrationer/kassesystemer">Kassesystemer</a></li></ul></li>
-          <li><span class="nav-item is-disabled" aria-disabled="true">Abonnement <small>Ikke bygget</small></span></li>
-        </ul>
-      </nav>
-      <p class="dev-note">Udviklingsversion uden login. Må ikke bruges med rigtige kundedata.</p>
-    </aside>
+    <aside class="sidebar" aria-label="Hovedmenu" data-shell></aside>
 
     <div class="main-col">
       <header class="topbar">

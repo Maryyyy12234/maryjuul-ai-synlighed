@@ -3,6 +3,7 @@ const { createEcosystem } = require('../src');
 const { createFakeShopify } = require('../src/pos/demo/fake-shopify');
 const { seedClothingStore } = require('../src/pos/demo/seed');
 const { newKey } = require('../src/pos/crypto');
+const { createFakeSumUp } = require('../src/payments/demo/fake-sumup');
 
 const SECRET = 'demo-client-secret';
 
@@ -12,7 +13,8 @@ async function setupShop({ modules = ['overblik', 'puls', 'lager', 'indsigt'], t
   const fake = createFakeShopify({ clientSecret: SECRET, now: clock.now });
   const seed = seedClothingStore(fake, clock);
   clock.set('2026-11-05T09:00:00Z');
-  const eco = createEcosystem({ now: clock.now, pos: {
+  const sumup = createFakeSumUp({ now: clock.now });
+  const eco = createEcosystem({ now: clock.now, payments: { sumup: { clientId: 'sumup-demo-id', clientSecret: 'sumup-demo-secret', fetch: sumup.fetch, sleep: async () => {} } }, pos: {
     vaultKey: newKey(), webhookUri: 'https://app.example.dk/webhooks/shopify',
     shopify: { clientId: 'demo-client-id', clientSecret: SECRET, fetch: fake.fetch, sleep: async () => {} },
   } });
@@ -39,7 +41,11 @@ async function setupShop({ modules = ['overblik', 'puls', 'lager', 'indsigt'], t
     const loc = eco.platform.repo(owner, 'lager').list('locations', (l) => l.name === locationName)[0];
     return eco.lager.onHand(owner, p.id, loc.id);
   }
-  return { ...eco, clock, fake, seed, org, owner, user, connection, deliver, lagerActor, lagerProduct, onHand };
+  async function connectSumUp(targets) {
+    const { state } = eco.payments.startConnect(owner, 'sumup', { targets, redirectUri: 'https://app.example.dk/integrations/sumup/callback' });
+    return eco.payments.completeConnect('sumup', sumup.approve(state));
+  }
+  return { ...eco, sumup, connectSumUp, clock, fake, seed, org, owner, user, connection, deliver, lagerActor, lagerProduct, onHand };
 }
 
 module.exports = { setupShop, SECRET };

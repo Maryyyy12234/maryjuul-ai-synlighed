@@ -134,4 +134,5 @@ src/pos/demo/                   DEMO: simuleret Shopify + tøjbutik
 server.js, ui/                  Integrationscenter (udvikling, uden login)
 db/pos_schema.sql               tabeller + RLS
 test/pos.test.js                end-to-end-tests (22 stk.)
+src/payments/                   betalinger: se docs/PAYMENTS.md
 ```

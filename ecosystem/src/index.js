@@ -11,6 +11,10 @@ const { createPosEngine } = require('./pos/engine');
 const { createPosViews } = require('./pos/views');
 const { createPosWorkers } = require('./pos/workers');
 const { createVault } = require('./pos/crypto');
+const { createPaymentRegistry } = require('./payments/connectors');
+const { createPaymentEngine } = require('./payments/engine');
+const { createPaymentViews } = require('./payments/views');
+const { createPaymentWorkers } = require('./payments/workers');
 
 function createEcosystem(opts = {}) {
   const platform = createPlatform(opts);
@@ -35,6 +39,15 @@ function createEcosystem(opts = {}) {
     const posViews = createPosViews(platform, pos);
     const posWorkers = createPosWorkers({ platform, engine: pos, views: posViews, lager, overblik, approvals });
     Object.assign(eco, { pos, posViews, posWorkers, registry });
+  }
+
+  // Betalinger og kortterminaler. Læser kun – behandler aldrig betalinger.
+  if (opts.payments) {
+    const payRegistry = createPaymentRegistry({ sumup: { ...opts.payments.sumup, now: platform.now } });
+    const payments = createPaymentEngine({ platform, registry: payRegistry, vault: createVault(opts.payments.vaultKey || opts.pos?.vaultKey), pos: eco.pos || null, now: platform.now });
+    const paymentViews = createPaymentViews(platform, payments);
+    const paymentWorkers = createPaymentWorkers({ platform, engine: payments, views: paymentViews, overblik });
+    Object.assign(eco, { payments, paymentViews, paymentWorkers, payRegistry });
   }
   return eco;
 }

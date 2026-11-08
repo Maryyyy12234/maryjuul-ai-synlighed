@@ -152,7 +152,7 @@ function createPosEngine({ platform, lager, registry, vault, webhookUri = null, 
       channel: n.channel, source_name: n.sourceName, location_external_id: n.locationExternalId, test: n.test,
       created_at: n.createdAt, processed_at: n.processedAt, updated_at: n.updatedAt, cancelled_at: n.cancelledAt,
       currency: n.currency, taxes_included: n.taxesIncluded, payment: n.payment, totals: n.totals,
-      lines: n.lines, refunds: n.refunds, demo: !!c.demo, first_seen_at: prev?.first_seen_at || iso(), hash };
+      lines: n.lines, refunds: n.refunds, payments: n.payments || [], demo: !!c.demo, first_seen_at: prev?.first_seen_at || iso(), hash };
     orders.set(key, row);
     return { order: row, created: !prev };
   }
