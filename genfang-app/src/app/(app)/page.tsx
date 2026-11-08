@@ -4,7 +4,7 @@ import { Prov } from "@/components/prov";
 import { TopBar } from "@/components/topbar";
 import { IconChevron } from "@/components/icons";
 import { requireSession } from "@/lib/auth";
-import { EMERGENCY, dkk, minStr, pctStr, ppStr, relTime, today } from "@/lib/format";
+import { EMERGENCY, dkk, minStr, pctStr, ppStr, relStr, relTime, today } from "@/lib/format";
 import { nowMs } from "@/lib/clock";
 import { getOverview } from "@/lib/store";
 
@@ -31,7 +31,7 @@ export default async function OverviewPage() {
         <section className="focus-card" aria-labelledby="focus-title">
           <div>
             <span className="focus-eyebrow">{o.counts.actionTotal > 0 ? "Din næste opgave" : "Godt arbejde"}</span>
-            <h2 id="focus-title">{o.counts.actionTotal > 0 ? <><span className="focus-number">{o.counts.actionTotal}</span> {o.counts.actionTotal === 1 ? "ting mangler" : "ting mangler"}</> : "Du er ajour."}</h2>
+            <h2 id="focus-title">{o.counts.actionTotal > 0 ? <><span className="focus-number">{o.counts.actionTotal}</span> {o.counts.actionTotal === 1 ? "opgave venter" : "opgaver venter"}</> : "Du er ajour."}</h2>
             <p>{o.urgent.length ? "Start med de akutte henvendelser." : nonUrgentPending.length ? "Der er svar, som du kan gennemgå og godkende." : o.counts.actionTotal ? "Gennemgå de opgaver, der venter på dig." : "Der er ingen opgaver, der kræver din handling lige nu."}</p>
           </div>
           <Link href={nextHref} className="focus-link">{o.counts.actionTotal > 0 ? "Gå til opgaver" : "Se alle sager"} <span aria-hidden="true">↗</span></Link>
