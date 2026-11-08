@@ -19,6 +19,7 @@ export default async function MorePage() {
   const u = getUser(s.tid, s.uid)!;
   const owner = can(s.role, "view_audit");
   const links = [
+    ...(owner ? [{ href: "/indsigt", label: "Resultater", sub: "Omsætning, udvikling og forslag" }] : []),
     { href: "/workers", label: "AI-workers", sub: "Opgaver, status, fejl og log" },
     ...(owner ? [{ href: "/mere/audit", label: "Auditlog", sub: "Hvem gjorde hvad og hvornår" }, { href: "/mere/gdpr", label: "Databehandling og GDPR", sub: "Databehandlere, sletning, opbevaring" }] : []),
   ];
