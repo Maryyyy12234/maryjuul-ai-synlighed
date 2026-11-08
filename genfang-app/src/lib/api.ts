@@ -24,7 +24,7 @@ export async function authed(req: Request): Promise<{ session: SessionPayload } 
   const session = await getSession();
   if (!session) return { response: fail("unauthorized", "Log ind igen.", 401) };
 
-  if (req.method !== "GET" && req.method !== "HEAD" && !/\s*Bearer\s+\S+\s*/i.test(req.headers.get("authorization") ?? "")) {
+  if (req.method !== "GET" && req.method !== "HEAD" && !/^\s*Bearer\s+[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\s*$/i.test(req.headers.get("authorization") ?? "")) {
     const origin = req.headers.get("origin");
     const host = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
     let sameOrigin = false;
