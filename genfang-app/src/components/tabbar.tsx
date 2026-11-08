@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { IconChart, IconHome, IconInbox, IconMore, IconQuote } from "./icons";
 
 const ALL = [
-  { href: "/", label: "Oversigt", Icon: IconHome, owner: false },
+  { href: "/", label: "Overblik", Icon: IconHome, owner: false },
   { href: "/henvendelser", label: "Sager", Icon: IconInbox, owner: false },
   { href: "/tilbud", label: "Tilbud", Icon: IconQuote, owner: false },
   { href: "/indsigt", label: "Indsigt", Icon: IconChart, owner: true },
@@ -16,7 +16,7 @@ export function TabBar({ pending, tenant, isOwner }: { pending: number; tenant: 
   const tabs = ALL.filter((t) => isOwner || !t.owner);
   // På en enkelt sag skjules fanebjælken på mobil (som i native apps), så handlingsknapperne får pladsen.
   const detail = /^\/henvendelser\/[^/]+$/.test(path);
-  const active = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(href + "/"));
+  const active = (href: string) => (href === "/" ? path === "/" : (href === "/mere" && path.startsWith("/indsigt")) || path === href || path.startsWith(href + "/"));
   return (
     <nav className="tabbar" aria-label="Hovedmenu" data-detail={detail} style={{ ["--tabs" as string]: tabs.length }}>
       <div className="sidebar-brand"><span className="wordmark"><i />GENFANG</span></div>
