@@ -1,3 +1,5 @@
+import { deliverPending } from "@/lib/delivery.ts";
+import { deliveryEnabled } from "@/lib/store.ts";
 import { commit } from "@/lib/persistence-runtime.ts";
 import { authed, fail, readJson, respond } from "@/lib/api.ts";
 import { rateLimit } from "@/lib/rate-limit.ts";
@@ -19,5 +21,6 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const r = decide(tid, uid, id, { decision: body.decision, expectedVersion: Number(body.expectedVersion), editedText: body.editedText as string | undefined });
   const result = r;
   await commit();
+  if (result.ok && deliveryEnabled()) { await deliverPending(); await commit(); }
   return respond(result, (ok) => ({ inquiry: ok.inquiry, delivery: "blokeret_testversion" }));
 }

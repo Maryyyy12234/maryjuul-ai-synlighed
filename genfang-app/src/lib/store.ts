@@ -19,7 +19,8 @@ import { checkReply } from "./guard.ts";
 import { can, type Permission } from "./permissions.ts";
 import { seed, type Db } from "./seed.ts";
 import { classify, normEmail, normPhone } from "./workers/intake.ts";
-import { writeDraft } from "./workers/responder.ts";
+import { describeSlot, pickSlots, writeDraft } from "./workers/responder.ts";
+import { aiDraft, aiEnabled, priceLine, type AiCall } from "./workers/claude-responder.ts";
 import { quoteExpiresAt, suggestFollowUps } from "./workers/followup.ts";
 import { WORKERS } from "./workers/defs.ts";
 import {
@@ -109,8 +110,15 @@ export function listOutbox(tenantId: TenantId): OutboxJob[] {
 function enqueue(tenantId: TenantId, kind: OutboxJob["kind"], ref: string, at: number) {
   const key = `${kind}:${ref}`;
   if (db().outbox.some((o) => o.tenantId === tenantId && `${o.kind}:${o.ref}` === key)) return; // idempotent
-  db().outbox.push({ id: nextId("out"), tenantId, kind, ref, createdAt: iso(at), state: "blokeret_testversion" });
+  // Eskaleringer går til vagten via SMS/opkald, som ikke er sat op – de afsendes aldrig automatisk.
+  const state = kind !== "eskalering" && deliveryEnabled() ? "klar" : "blokeret_testversion";
+  db().outbox.push({ id: nextId("out"), tenantId, kind, ref, createdAt: iso(at), state });
 }
+/** Udsendelse kræver ALLE tre: GENFANG_DELIVERY=on, RESEND_API_KEY og GENFANG_FROM_EMAIL. */
+export function deliveryEnabled(): boolean {
+  return process.env.GENFANG_DELIVERY === "on" && !!process.env.RESEND_API_KEY && !!process.env.GENFANG_FROM_EMAIL && !db().platform.emergencyStop;
+}
+
 function logRun(tenantId: TenantId, worker: WorkerId, status: WorkerRun["status"], summary: string, at: number, error?: string) {
   db().workerRuns.push({ id: nextId("run"), tenantId, worker, at: iso(at), status, summary, error, aiTokens: 0 });
 }
@@ -246,6 +254,38 @@ export function regenerateDraft(tenantId: TenantId, userId: UserId, id: string, 
   return { ok: true, inquiry: clone(row), guard };
 }
 
+/**
+ * Lader Claude forbedre et skabelon-udkast. Erstatter KUN udkastet, hvis:
+ * AI er slået til, intet nødstop, sagen er uændret imens, og sikkerhedslaget godkender teksten.
+ * Ellers beholdes skabelonen, og hændelsen logges.
+ */
+export async function improveDraftWithAi(tenantId: TenantId, id: string, call?: AiCall, at = nowMs()): Promise<"ai" | "skabelon" | "slaaet_fra"> {
+  if (!aiEnabled() && !call) return "slaaet_fra";
+  if (automationStopped(tenantId)) return "slaaet_fra";
+  const t = getTenant(tenantId);
+  const row = db().inquiries.find((x) => x.id === id && x.tenantId === tenantId);
+  if (!t || !row || row.status !== "udkast_klar") return "slaaet_fra";
+  const version = row.version;
+  const slots = row.emergency || row.category === "tilbud" ? [] : pickSlots(t, tenantSlots(t), at, 3);
+  const r = await aiDraft({
+    inquiry: row, tenantName: t.name.replace(/\s*\(testdata\)/, ""), signer: signer(t),
+    onCallName: t.employees.find((e) => e.onCall)?.name,
+    slotPhrases: slots.map((s) => ({ id: s.id, phrase: describeSlot(s, at, t.timezone) })),
+    prices: t.priceList.map((p) => ({ id: p.id, line: priceLine(p) })),
+  }, at, call);
+  const now2 = db().inquiries.find((x) => x.id === id && x.tenantId === tenantId);
+  if (!now2 || now2.version !== version || now2.status !== "udkast_klar") return "skabelon"; // ændret imens – rør ikke
+  const run = (status: WorkerRun["status"], summary: string, error?: string) =>
+    db().workerRuns.push({ id: nextId("run"), tenantId, worker: "worker-02", at: iso(at), status, summary, error, aiTokens: r.tokens });
+  if (!r.draft) { run("fejl", `Claude-udkast til ${id} mislykkedes – skabelon beholdt.`, r.reason); return "skabelon"; }
+  const guard = guardFor(t, now2, r.draft.text, at);
+  if (!guard.ok) { run("blokeret", `Claude-udkast til ${id} afvist af sikkerhedslaget – skabelon beholdt.`, guard.issues.map((i) => i.code).join(", ")); return "skabelon"; }
+  now2.draft = r.draft;
+  now2.version += 1;
+  run("ok", `Claude skrev udkast til ${id} – sikkerhedskontrol bestået.`);
+  return "ai";
+}
+
 /** Eskalér til vagthavende/ansvarlig medarbejder. Sendes ikke til kunden. */
 export function escalate(tenantId: TenantId, userId: UserId, id: string, reason: string, at = nowMs()): Ok<{ inquiry: Inquiry }> | Fail {
   const a = actor(tenantId, userId, "escalate");
@@ -277,13 +317,26 @@ export function ackEscalation(tenantId: TenantId, userId: UserId, id: string, at
 }
 
 /** Intake-pipeline: modtag → genkend kunde/dublet → klassificér → eskalér akut → Responder-udkast. */
-export function ingest(
-  tenantId: TenantId, userId: UserId,
-  input: { name: string; email?: string; phone?: string; address?: string; channel: Inquiry["channel"]; subject: string; message: string },
-  at = nowMs(),
-): Ok<{ inquiry: Inquiry; duplicate: boolean }> | Fail {
+export type IntakeInput = { name: string; email?: string; phone?: string; address?: string; channel: Inquiry["channel"]; subject: string; message: string };
+
+export function ingest(tenantId: TenantId, userId: UserId, input: IntakeInput, at = nowMs()): Ok<{ inquiry: Inquiry; duplicate: boolean }> | Fail {
   const a = actor(tenantId, userId, "simulate_intake");
   if ("ok" in a) return a;
+  return ingestInternal(a.tenant, userId, input, at);
+}
+
+/** Indgående mail (signeret webhook) – Worker 01 handler på virksomhedens vegne. */
+export function ingestSystem(tenantId: TenantId, input: IntakeInput, at = nowMs()): Ok<{ inquiry: Inquiry; duplicate: boolean }> | Fail {
+  const t = getTenant(tenantId);
+  if (!t) return fail("not_found", "Ukendt virksomhed.");
+  const r = ingestInternal(t, "worker-01", input, at);
+  if (r.ok && !r.duplicate) audit({ at: iso(at), tenantId, userId: "worker-01", action: "inbound_email", target: r.inquiry.id });
+  return r;
+}
+
+function ingestInternal(tenant: Tenant, userId: UserId, input: IntakeInput, at: number): Ok<{ inquiry: Inquiry; duplicate: boolean }> | Fail {
+  const tenantId = tenant.id;
+  const a = { tenant };
   const stop = automationStopped(tenantId);
   if (stop) return fail("stopped", stop);
   const name = String(input.name ?? "").trim().slice(0, 120);
@@ -324,7 +377,7 @@ export function ingest(
   row.status = "udkast_klar";
   const guard = guardFor(a.tenant, row, row.draft.text, at);
   logRun(tenantId, "worker-02", guard.ok ? "ok" : "blokeret", guard.ok ? `Udkast til ${row.id} klar til godkendelse.` : `Udkast til ${row.id} blokeret af sikkerhedslaget.`, at);
-  audit({ at: iso(at), tenantId, userId, action: "intake_simulated", target: row.id });
+  if (userId !== "worker-01") audit({ at: iso(at), tenantId, userId, action: "intake_simulated", target: row.id });
   return { ok: true, inquiry: clone(row), duplicate: false };
 }
 

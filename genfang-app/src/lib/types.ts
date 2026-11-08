@@ -193,7 +193,7 @@ export interface AuditEntry {
     | "approve" | "reject" | "login" | "push_subscribe" | "escalate" | "escalation_ack"
     | "regenerate" | "quote_approve" | "quote_reject" | "followup_approve" | "followup_reject"
     | "anonymize" | "emergency_stop" | "emergency_resume" | "tenant_pause" | "tenant_resume" | "intake_simulated"
-    | "guard_block";
+    | "guard_block" | "delivered" | "delivery_failed" | "inbound_email";
   target?: string;
   detail?: string;
 }
@@ -204,7 +204,11 @@ export interface OutboxJob {
   kind: "svar" | "tilbud" | "opfoelgning" | "eskalering";
   ref: string;
   createdAt: string;
-  state: "blokeret_testversion";
+  /** blokeret_testversion: udsendelse slået fra · klar: venter på afsendelse · sendt / fejlet */
+  state: "blokeret_testversion" | "klar" | "sendt" | "fejlet";
+  sentAt?: string;
+  error?: string;
+  providerId?: string;
 }
 
 export interface GuardIssue {

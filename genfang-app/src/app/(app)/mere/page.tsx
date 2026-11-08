@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { IconChevron } from "@/components/icons";
 import { InstallHint } from "@/components/install-hint";
+import { IntegrationList } from "@/components/integrations";
 import { LogoutButton } from "@/components/logout-button";
 import { PushToggle } from "@/components/push-toggle";
 import { SimulateIntake } from "@/components/simulate-intake";
@@ -54,6 +55,8 @@ export default async function MorePage() {
           </ul>
           <p className="notice">Kalender: testkalender (ikke forbundet til Google/Outlook endnu). Tidszone: {t.timezone}.</p>
         </section>
+
+        {owner ? <section className="section"><div className="section-head"><h2>Forbindelser</h2></div><IntegrationList /></section> : null}
 
         <section className="section"><div className="section-head"><h2>Notifikationer</h2></div><PushToggle /></section>
         <section className="section"><div className="section-head"><h2>App</h2></div><InstallHint /></section>

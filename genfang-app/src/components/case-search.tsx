@@ -25,7 +25,7 @@ export function CaseSearch({ items, now }: { items: InquirySummary[]; now: numbe
             placeholder="Søg efter kunde eller opgave…" />
           {query ? <button type="button" onClick={() => setQuery("")} aria-label="Ryd søgning">Ryd</button> : null}
         </div>
-        <span className="case-search-count" role="status">{filtered.length} ${filtered.length === 1 ? "sag" : "sager"}</span>
+        <span className="case-search-count" role="status">{filtered.length} {filtered.length === 1 ? "sag" : "sager"}</span>
       </div>
       <InquiryRows items={filtered} now={now} empty={query ? "Ingen sager matcher søgningen." : "Ingen sager her."} />
     </>

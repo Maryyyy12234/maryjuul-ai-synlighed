@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { EmergencyStop, PauseTenant, ResetDemo } from "@/components/admin-controls";
 import { LogoutButton } from "@/components/logout-button";
+import { IntegrationList } from "@/components/integrations";
 import { Prov, ProvLegend } from "@/components/prov";
 import { requireSession } from "@/lib/auth";
 import { nowMs } from "@/lib/clock";
@@ -69,6 +70,11 @@ export default async function OwnerPanel() {
           </ul>
           <p className="notice">Antagelser – erstattes af faktiske fakturaer fra Vercel, Anthropic, SMS-udbyder og Stripe, når de er forbundet.</p>
         </section>
+        <section className="section">
+          <div className="section-head"><h2>Integrationer</h2></div>
+          <IntegrationList />
+        </section>
+
         <section className="section">
           <div className="section-head"><h2>Data</h2><span>{process.env.DATABASE_URL ? "Gemmes i Postgres" : "Kun i hukommelsen"}</span></div>
           <p className="notice">{process.env.DATABASE_URL ? "Ændringer gemmes varigt og overlever genstart." : "Uden DATABASE_URL forsvinder ændringer ved genstart."}</p>
