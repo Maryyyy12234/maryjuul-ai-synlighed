@@ -178,8 +178,11 @@ async function paymentsApi(req, res, url, body) {
 async function api(req, res, url) {
   // Simpel CSRF-beskyttelse: kun JSON fra samme oprindelse.
   if (req.method === 'POST') {
+    // Oprindelsen skal være samme vært (også bag en proxy, der skifter http/https).
     const origin = req.headers.origin;
-    if (origin && origin !== `http://${req.headers.host}` && origin !== APP_URL) return send(res, 403, { error: 'Ugyldig oprindelse' });
+    let originHost = null; try { originHost = origin ? new URL(origin).host : null; } catch { originHost = 'ugyldig'; }
+    const allowed = [req.headers.host, req.headers['x-forwarded-host'], new URL(APP_URL).host].filter(Boolean);
+    if (origin && !allowed.includes(originHost)) return send(res, 403, { error: 'Ugyldig oprindelse' });
     if (!String(req.headers['content-type'] || '').startsWith('application/json')) return send(res, 415, { error: 'Brug JSON' });
   }
   const body = req.method === 'POST' ? JSON.parse((await readBody(req, 12_000_000)).toString('utf8') || '{}') : {};
