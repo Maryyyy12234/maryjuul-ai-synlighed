@@ -70,11 +70,13 @@ const ip = await iphone.newPage();
 
 await step("iPhone: login → nyt overblik med handling, resultater, datakilder og penge", async () => {
   await login(ip);
-  for (const h of ["Kræver handling", "Resultater", "Tilbud og penge", "GENFANG Insights", "AI-workers"]) await ip.getByRole("heading", { name: h, exact: true }).waitFor();
+  for (const h of ["Kræver din handling", "Resultater de sidste 30 dage", "Tilbud og betaling", "GENFANG Insights", "Automatik"]) await ip.getByRole("heading", { name: h, exact: true }).waitFor();
+  await ip.locator(".focus-card").waitFor();
   await ip.getByText("Sofie Kragh · Mulig vandskade").waitFor();
   const prov = await ip.locator(".kpi .prov").allTextContents();
-  assert(prov.some((t) => /testdata/i.test(t)) && prov.some((t) => /estimat/i.test(t)), "datakilder: " + prov.join(","));
-  await ip.getByText("Potentiel – ikke vundet endnu").first().waitFor();
+  assert(prov.some((t) => /testdata/i.test(t)), "datakilder: " + prov.join(","));
+  await ip.getByText("Tal i denne version er testdata.").waitFor();
+  await ip.getByText("Vis hele økonomioverblikket").waitFor();
   await ip.screenshot({ path: SHOTS + "01-oversigt-iphone.png" });
   await ip.screenshot({ path: SHOTS + "01b-oversigt-iphone-hel.png", fullPage: true });
 });
@@ -89,17 +91,21 @@ await step("iPhone: overskrifter ≤ 34 px, kontrast ≥ 4,5:1, ingen vandret sc
   assert(!(await ip.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)), "vandret scroll");
 });
 
-await step("iPhone: fanebjælke dækker ikke indhold og har 5 faner for ejer", async () => {
-  assert((await ip.locator(".tabbar .tab").count()) === 5, "antal faner");
+await step("iPhone: 4 enkle faner, Resultater via Mere, ingen overlap", async () => {
+  assert((await ip.locator(".tabbar .tab:visible").count()) === 4, "antal synlige faner");
   await ip.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await ip.waitForTimeout(150);
   const last = await ip.locator("main > *:last-child").boundingBox();
   const bar = await ip.locator(".tabbar").boundingBox();
   assert(last.y + last.height <= bar.y + 1, `indhold under fanebjælke: ${last.y + last.height} > ${bar.y}`);
-  for (const [label, path] of [["Sager", "/henvendelser"], ["Tilbud", "/tilbud"], ["Indsigt", "/indsigt"], ["Mere", "/mere"], ["Oversigt", "/"]]) {
+  for (const [label, path] of [["Sager", "/henvendelser"], ["Tilbud", "/tilbud"], ["Mere", "/mere"], ["Overblik", "/"]]) {
     await ip.locator(".tabbar").getByRole("link", { name: label }).click();
     await ip.waitForURL(BASE + path);
   }
+  await ip.locator(".tabbar").getByRole("link", { name: "Mere" }).click();
+  await ip.getByRole("link", { name: "Resultater" }).click();
+  await ip.waitForURL(BASE + "/indsigt");
+  await ip.locator(".tabbar").getByRole("link", { name: "Overblik" }).click();
 });
 
 await step("REGRESSION (UI): Sofies udkast kl. 16.42 med »i dag kl. 14–16« blokeres", async () => {
@@ -153,6 +159,7 @@ await step("Tilbud: syv statusser, potentiel vs. betalt, ejer godkender tilbud",
   await ip.goto(BASE + "/tilbud");
   for (const h of ["Afventer din godkendelse", "Sendt – venter på kunden", "Kladder", "Vundet", "Tabt", "Foreslåede opfølgninger"]) await ip.getByRole("heading", { name: h }).waitFor();
   await ip.getByText("Udløbet").first().waitFor();
+  await ip.getByText("Se alle økonomital").click();
   await ip.getByText("Faktureret").first().waitFor();
   await ip.screenshot({ path: SHOTS + "05-tilbud-iphone-hel.png", fullPage: true });
   const first = await ip.locator("main section.section").filter({ has: ip.getByRole("heading") }).first().locator("h2").first().textContent();
