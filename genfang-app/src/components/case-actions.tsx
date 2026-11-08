@@ -118,7 +118,7 @@ export function CaseActions(p: Props) {
         <>
           <label className="sr-only" htmlFor="draft">Svarudkast</label>
           <textarea id="draft" className="draft" value={text} readOnly={!editing || !open || !!busy} maxLength={5000} onChange={(e) => setText(e.target.value)} rows={10} />
-          {p.basis ? <p className="basis">{p.basis}</p> : null}
+          {p.basis ? <details className="dashboard-disclosure"><summary>Hvor kommer forslaget fra?</summary><p className="basis">{p.basis}</p></details> : null}
           {open ? <GuardBox guard={guard} checking={checking} /> : null}
         </>
       ) : <p className="empty">Worker 02 har endnu ikke skrevet et udkast.</p>}
@@ -131,7 +131,7 @@ export function CaseActions(p: Props) {
         </div>
       ) : null}
 
-      <p className="notice">Testversion: godkendte svar registreres, men sendes ikke til kunden.</p>
+      <p className="notice">Testversion: svar sendes ikke til kunden endnu.</p>
       {p.stopped ? <div className="banner" data-tone="stop" role="alert"><span><b>Stoppet.</b> {p.stopped}</span></div> : null}
 
       {p.status === "godkendt" ? <div className="result" data-tone="ok" role="status"><b>Godkendt</b> kl. {clock(p.decidedAt)}. Udsendelse er blokeret i testversionen.</div>
