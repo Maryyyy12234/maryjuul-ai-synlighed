@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { InquiryRows } from "@/components/rows";
+import { CaseSearch } from "@/components/case-search";
 import { TopBar } from "@/components/topbar";
 import { requireSession } from "@/lib/auth";
 import { nowMs } from "@/lib/clock";
@@ -17,15 +17,16 @@ export default async function InquiriesPage(props: { searchParams: Promise<{ fil
     <>
       <TopBar tenant={getTenant(s.tid)!.name} />
       <main className="main">
-        <p className="eyebrow">Henvendelser</p>
+        <p className="eyebrow">Din indbakke</p>
         <h1 className="title">Sager</h1>
+        <p className="dashboard-intro">Find henvendelser, og se hvilke svar der mangler.</p>
         <nav className="segment" aria-label="Filter">
           <Link href="/henvendelser?filter=aabne" aria-current={f === "aabne" ? "page" : undefined}>Åbne</Link>
           <Link href="/henvendelser?filter=alle" aria-current={f === "alle" ? "page" : undefined}>Alle</Link>
         </nav>
         <section className="section" style={{ marginTop: 24 }}>
-          <div className="section-head"><h2>{f === "aabne" ? "Kræver handling · akutte først" : "Alle sager"}</h2><span>{items.length}</span></div>
-          <InquiryRows items={items} now={now} empty="Ingen sager her." />
+          <div className="section-head"><h2>{f === "aabne" ? "Åbne sager" : "Alle sager"}</h2><span>{items.length}</span></div>
+          <CaseSearch items={items} now={now} />
         </section>
       </main>
     </>
