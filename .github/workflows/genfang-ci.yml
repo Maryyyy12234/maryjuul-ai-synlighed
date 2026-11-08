@@ -1,0 +1,68 @@
+name: GENFANG — kvalitet og sikkerhed
+
+on:
+  push:
+    branches:
+      - claude/charming-faraday-z1103s
+    paths:
+      - "genfang-app/**"
+      - ".github/workflows/genfang-ci.yml"
+  pull_request:
+    paths:
+      - "genfang-app/**"
+      - ".github/workflows/genfang-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: TypeScript, tests og build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: genfang-app
+    env:
+      SESSION_SECRET: ci-only-32-character-session-secret-for-genfang-2026
+      DEMO_PASSWORD: ci-genfang-demo-pass
+      OWNER_PASSWORD: ci-genfang-owner-pass
+      GENFANG_ENV: test
+      GENFANG_TEST_NOW: "2026-11-05T15:54:00Z"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: genfang-app/package-lock.json
+      - name: Installer afhængigheder
+        run: npm ci
+      - name: TypeScript
+        run: npm run typecheck
+      - name: Unit-tests
+        run: npm test
+      - name: Postgres og RLS-tests
+        run: npm run test:db
+      - name: Produktionsbuild
+        run: npm run build
+      - name: Installer Chromium-testværktøjer
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: E2E på mobil og desktop
+        run: |
+          npm start > /tmp/genfang-server.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:3100/login > /dev/null; then break; fi
+            sleep 2
+          done
+          curl -fsS http://localhost:3100/login > /dev/null
+          BASE_URL=http://localhost:3100 npm run test:e2e
+      - name: Upload skærmbilleder ved fejl
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: genfang-e2e-screenshots
+          path: genfang-app/test/e2e/screenshots/
+          if-no-files-found: ignore
