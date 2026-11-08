@@ -25,7 +25,7 @@ await step("Uden login → /login, API 401", async () => {
 const c = await b.newContext({ ...devices["iPhone 13"] }); const p = await c.newPage();
 await step("Ejer (iPhone): login og oversigt", async () => {
   await login(p, "ejer@hansen-vvs.test", PW);
-  for (const h of ["Kræver handling", "Resultater", "Tilbud og penge"]) await p.getByRole("heading", { name: h, exact: true }).waitFor();
+  for (const h of ["Kræver din handling", "Resultater de sidste 30 dage", "Tilbud og betaling"]) await p.getByRole("heading", { name: h, exact: true }).waitFor();
   await p.screenshot({ path: SHOTS + "live-oversigt-iphone.png" });
 });
 await step("Sofies gamle udkast er blokeret af sikkerhedslaget", async () => {
