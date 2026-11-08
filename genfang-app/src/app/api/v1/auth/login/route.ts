@@ -54,7 +54,7 @@ export async function POST(req: Request) {
   // Native apps (Expo/Tauri) får tokenet i svaret og gemmer det i Keychain/Keystore.
   // Web får det KUN som httpOnly-cookie.
   const native = req.headers.get("x-genfang-client") === "native";
-  (await cookies()).set(SESSION_COOKIE, token, {
+  if (!native) (await cookies()).set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
