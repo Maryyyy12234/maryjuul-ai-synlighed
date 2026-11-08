@@ -493,3 +493,20 @@ table.data td.num, table.data th.num { text-align: right; }
 @media (prefers-reduced-motion: reduce) {
   .dashboard-shortcuts a, .focus-link { transition: none; }
 }
+
+
+/* Søgning i sager: diskret og hurtig, ingen ekstra filtermenuer. */
+.case-search { display: flex; flex-direction: column; gap: 7px; margin: 16px 0 8px; }
+.case-search > label { font-size: 12px; color: var(--ink-2); font-weight: 600; }
+.case-search-input { display: flex; background: #fff; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; align-items: center; }
+.case-search-input:focus-within { border-color: var(--ink); box-shadow: 0 0 0 2px rgba(159,206,25,.18); }
+.case-search-input input { display: block; font: inherit; color: var(--ink); background: none; border: 0; outline: none; padding: 13px 14px; min-height: 48px; width: 100%; min-width: 0; }
+.case-search-input input::placeholder { color: var(--ink-3); }
+.case-search-input button { flex: none; border: 0; background: none; cursor: pointer; min-height: 48px; padding: 0 13px; color: var(--ink-2); font-size: 13px; }
+.case-search-count { color: var(--ink-2); font-size: 12px; text-align: right; }
+.quote-topline { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quote-topline > div { display: flex; flex-direction: column; gap: 8px; padding: 19px 17px; border: 1px solid var(--rule); background: #fff; border-radius: 12px; min-width: 0; }
+.quote-topline span { font-size: 12px; color: var(--ink-2); }
+.quote-topline strong { font-size: clamp(23px, 5.4vw, 31px); font-weight: 600; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.quote-disclosure { margin-top: 16px; }
+.quote-disclosure summary { display: list-item; }
