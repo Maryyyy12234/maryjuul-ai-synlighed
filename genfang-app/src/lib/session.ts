@@ -99,3 +99,8 @@ export async function safeEqual(a: string, b: string): Promise<boolean> {
   for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
   return diff === 0;
 }
+
+/** Kortlivet billet mellem adgangskode og MFA-kode. Signeret med en ANDEN nøgle end sessioner,
+ *  så en billet aldrig kan bruges som login. */
+export const MFA_TICKET_TTL = 300;
+export const mfaTicketSecret = () => `${sessionSecret()}::mfa-ticket`;

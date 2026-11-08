@@ -50,6 +50,8 @@ export interface Tenant {
   priceList: PriceItem[];
   plan: Plan;
   paused: boolean; // nødstop for denne virksomhed (sat af superadmin)
+  /** Workers, ejeren selv har sat på pause. */
+  pausedWorkers?: WorkerId[];
   dpaSigned: boolean; // databehandleraftale med GENFANG
   retentionDays: number;
 }
@@ -60,6 +62,8 @@ export interface User {
   email: string;
   name: string;
   role: Role;
+  /** MFA: krypteret TOTP-nøgle. pendingEnc bruges under opsætning, indtil første kode er bekræftet. */
+  mfa?: { enabled: boolean; secretEnc?: string; pendingEnc?: string; lastStep?: number; enabledAt?: string };
 }
 
 export interface Customer {
@@ -165,7 +169,7 @@ export interface FollowUpSuggestion {
 
 export type WorkerId = "worker-01" | "worker-02" | "worker-03" | "worker-04";
 
-export interface WorkerDef { id: WorkerId; name: string; role: string; does: string[]; needsApproval: string }
+export interface WorkerDef { id: WorkerId; name: string; label: string; role: string; does: string[]; needsApproval: string }
 
 export interface WorkerRun {
   id: string;
@@ -179,7 +183,7 @@ export interface WorkerRun {
 }
 
 export interface WorkerStatus extends WorkerDef {
-  state: "aktiv" | "fejl" | "stoppet";
+  state: "aktiv" | "fejl" | "stoppet" | "pause";
   lastRunAt?: string;
   lastError?: string;
   runs24h: number;
@@ -193,7 +197,8 @@ export interface AuditEntry {
     | "approve" | "reject" | "login" | "push_subscribe" | "escalate" | "escalation_ack"
     | "regenerate" | "quote_approve" | "quote_reject" | "followup_approve" | "followup_reject"
     | "anonymize" | "emergency_stop" | "emergency_resume" | "tenant_pause" | "tenant_resume" | "intake_simulated"
-    | "guard_block" | "delivered" | "delivery_failed" | "inbound_email";
+    | "guard_block" | "delivered" | "delivery_failed" | "inbound_email" | "worker_pause" | "worker_resume"
+    | "mfa_enabled" | "mfa_disabled" | "mfa_failed";
   target?: string;
   detail?: string;
 }

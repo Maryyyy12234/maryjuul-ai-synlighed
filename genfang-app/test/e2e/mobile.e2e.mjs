@@ -4,6 +4,18 @@
 // Testuret svarer til torsdag 5. nov. 2026 kl. 16.54 – Sofies henvendelse er modtaget kl. 16.42.
 import { createRequire } from "node:module";
 import { mkdirSync } from "node:fs";
+import { createHmac } from "node:crypto";
+
+// TOTP (RFC 6238) til test af MFA-login – samme algoritme som godkendelses-apps.
+// Serveren kan køre med fast testur (GENFANG_TEST_NOW) – koden skal beregnes ud fra samme tid.
+const SERVER_NOW = () => (process.env.GENFANG_TEST_NOW ? Date.parse(process.env.GENFANG_TEST_NOW) : Date.now());
+function totp(b32, ms = SERVER_NOW()) {
+  const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"; let bits = 0, val = 0; const bytes = [];
+  for (const ch of b32.replace(/[^A-Z2-7]/g, "")) { val = (val << 5) | A.indexOf(ch); bits += 5; if (bits >= 8) { bytes.push((val >>> (bits - 8)) & 255); bits -= 8; } }
+  const msg = Buffer.alloc(8); msg.writeBigUInt64BE(BigInt(Math.floor(ms / 30000)));
+  const h = createHmac("sha1", Buffer.from(bytes)).update(msg).digest(); const o = h[h.length - 1] & 15;
+  return String((((h[o] & 127) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3]) % 1e6).padStart(6, "0");
+}
 const require = createRequire(import.meta.url);
 const { chromium, devices } = require("playwright");
 
@@ -70,7 +82,7 @@ const ip = await iphone.newPage();
 
 await step("iPhone: login → nyt overblik med handling, resultater, datakilder og penge", async () => {
   await login(ip);
-  for (const h of ["Kræver din handling", "Resultater de sidste 30 dage", "Tilbud og betaling", "GENFANG Insights", "Automatik"]) await ip.getByRole("heading", { name: h, exact: true }).waitFor();
+  for (const h of ["Kræver din handling", "Resultater de sidste 30 dage", "Tilbud og betaling", "Forslag til dig", "Automatik"]) await ip.getByRole("heading", { name: h, exact: true }).waitFor();
   await ip.locator(".focus-card").waitFor();
   await ip.getByText("Sofie Kragh · Mulig vandskade").waitFor();
   const prov = await ip.locator(".kpi .prov").allTextContents();
@@ -169,7 +181,7 @@ await step("Tilbud: syv statusser, potentiel vs. betalt, ejer godkender tilbud",
 });
 
 await step("Opfølgning: lovligt grundlag vises, ejer godkender én", async () => {
-  await ip.getByText("Lovligt grundlag:").first().waitFor();
+  await ip.getByText("✓ Må gerne sendes").first().waitFor();
   const before = await ip.locator(".followup").count();
   await ip.locator(".followup").first().getByRole("button", { name: "Godkend og send" }).click();
   await ip.waitForFunction((n) => document.querySelectorAll(".followup").length < n, before);
@@ -193,10 +205,19 @@ await step("Simulér henvendelse: vandskade → akut, eskaleret, sikkert udkast"
   await ip.getByText("Sikkerhedskontrol bestået").waitFor();
 });
 
-await step("Workers-side viser opgaver, status og log", async () => {
+await step("Automatik: fire hjælpere med almindelige navne; ejeren kan sætte én på pause og starte den igen", async () => {
   await ip.goto(BASE + "/workers");
-  for (const n of ["Worker 01 · Intake", "Worker 02 · Responder", "Worker 03 · Follow-up", "Worker 04 · Analytics"]) await ip.getByRole("heading", { name: n }).waitFor();
-  await ip.getByRole("heading", { name: "Log" }).waitFor();
+  for (const n of ["Modtagelse", "Svarforslag", "Opfølgning", "Analyse"]) await ip.getByRole("heading", { name: n, exact: true }).waitFor();
+  ip.once("dialog", (d) => d.accept());
+  await ip.getByRole("button", { name: "Sæt på pause: Opfølgning" }).click();
+  await ip.getByRole("button", { name: "Start: Opfølgning" }).waitFor();
+  await ip.goto(BASE + "/");
+  await ip.getByText("Opfølgning er sat på pause").waitFor();
+  assert((await ip.getByText(/opfølgninger foreslået/).count()) === 0, "pausede forslag må ikke vises");
+  await ip.screenshot({ path: SHOTS + "06b-automatik-pause-iphone.png", fullPage: true });
+  await ip.goto(BASE + "/workers");
+  await ip.getByRole("button", { name: "Start: Opfølgning" }).click();
+  await ip.getByRole("button", { name: "Sæt på pause: Opfølgning" }).waitFor();
 });
 
 // ---------- Medarbejder ----------
@@ -284,7 +305,29 @@ await step("Virksomhedsisolering: Nordlys El ser ikke Hansen VVS' sager", async 
 await step("Ejerpanel: separat login, økonomi, ingen kundedata, nødstop virker", async () => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage();
   await login(p, "ejer@genfang.test", OWNER_PW, "/ejer");
+  // Uden MFA: kun opsætning – ingen data og ingen admin-API.
+  await p.getByRole("heading", { name: "Slå totrinsbekræftelse til" }).waitFor();
+  assert(!(await p.locator("body").innerText()).includes("Drift og økonomi"), "panelet må ikke vises uden MFA");
+  assert((await api(p, "/api/v1/admin/overview")).status === 404, "admin-API uden MFA");
+  await p.getByRole("button", { name: "Slå totrinsbekræftelse til" }).click();
+  const key = (await p.locator(".mfa-key").textContent()).replace(/\s/g, "");
+  await p.getByLabel("Kode fra din app").fill("000000");
+  await p.getByRole("button", { name: "Bekræft" }).click();
+  await p.getByText("Koden passer ikke").waitFor();
+  await p.getByLabel("Kode fra din app").fill(totp(key));
+  await p.getByRole("button", { name: "Bekræft" }).click();
   await p.getByRole("heading", { name: "Drift og økonomi" }).waitFor();
+  // Nyt login kræver nu koden – adgangskoden alene giver ingen session.
+  const ctx2 = await browser.newContext(); const p2 = await ctx2.newPage();
+  await p2.goto(BASE + "/login");
+  const pwOnly = await api(p2, "/api/v1/auth/login", { email: "ejer@genfang.test", password: OWNER_PW });
+  assert(pwOnly.body.mfaRequired && !(await ctx2.cookies()).some((c) => c.name === "gf_session"), "adgangskode alene må ikke give session");
+  await p2.fill('input[name="email"]', "ejer@genfang.test"); await p2.fill('input[name="password"]', OWNER_PW);
+  await p2.click('button[type="submit"]');
+  await p2.getByLabel("Kode fra din godkendelses-app").fill(totp(key, SERVER_NOW() + 30000));
+  await Promise.all([p2.waitForURL(BASE + "/ejer"), p2.getByRole("button", { name: "Bekræft" }).click()]);
+  await p2.getByRole("heading", { name: "Drift og økonomi" }).waitFor();
+  await ctx2.close();
   const body = await p.locator("body").innerText();
   assert(body.includes("4.985 kr."), "MRR mangler");
   for (const leak of ["Sofie", "Kragh", "Testvej", "Peter Sand"]) assert(!body.includes(leak), "lækker " + leak);

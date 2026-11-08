@@ -6,11 +6,26 @@ import { Prov, ProvLegend } from "@/components/prov";
 import { requireSession } from "@/lib/auth";
 import { nowMs } from "@/lib/clock";
 import { clock, dayLabel, dkk } from "@/lib/format";
-import { adminOverview } from "@/lib/store";
+import { MfaSetup } from "@/components/mfa-setup";
+import { adminOverview, superadminNeedsMfaSetup } from "@/lib/store";
 
 export default async function OwnerPanel() {
   const s = await requireSession();
   const now = nowMs();
+  if (superadminNeedsMfaSetup(s.uid)) {
+    return (
+      <>
+        <header className="topbar"><span className="wordmark"><i />GENFANG · Ejerpanel</span><span className="tenant">Kun for platformens ejer</span></header>
+        <main className="main">
+          <p className="eyebrow">Sikkerhed</p>
+          <h1 className="title">Slå totrinsbekræftelse til</h1>
+          <p className="lede-sm">Ejerpanelet giver adgang til nødstop og alle virksomheders drift. Derfor kræver det en kode fra din telefon ved hvert login.</p>
+          <section className="section"><MfaSetup enabled={false} canDisable={false} /></section>
+          <div style={{ marginTop: 28, maxWidth: 320 }}><LogoutButton /></div>
+        </main>
+      </>
+    );
+  }
   const r = adminOverview(s.uid, now);
   if (!r.ok) notFound();
   const { totals, tenants, platform, costModel } = r;
@@ -59,6 +74,27 @@ export default async function OwnerPanel() {
             </table>
           </div>
         </section>
+
+        <ul className="tenant-cards" aria-label="Virksomheder">
+          {tenants.map((t) => (
+            <li key={t.id} className="tenant-card">
+              <div className="tenant-card-head">
+                <div><b>{t.name}</b><small>{t.plan.name}{t.paused ? " · PAUSE" : ""}</small></div>
+                <PauseTenant id={t.id} paused={t.paused} />
+              </div>
+              <dl>
+                <div><dt>Pris</dt><dd>{dkk(t.mrr)}</dd></div>
+                <div><dt>Bidrag</dt><dd>{dkk(t.margin)}</dd></div>
+                <div><dt>Henvendelser</dt><dd>{t.usage.inquiries30d}</dd></div>
+                <div><dt>Venter</dt><dd>{t.queues.pendingApprovals}</dd></div>
+              </dl>
+              <p className="tenant-card-foot">
+                <span>{t.workers.every((w) => w.state === "aktiv") ? "Automatik kører" : t.workers.filter((w) => w.state !== "aktiv").map((w) => `${w.name}: ${w.state}`).join(" · ")}</span>
+                <span style={{ color: t.dpaSigned ? undefined : "var(--warn)" }}>{t.dpaSigned ? "Databehandleraftale OK" : "Databehandleraftale mangler"}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
 
         <section className="section">
           <div className="section-head"><h2>Omkostningsmodel</h2><Prov p="estimat" /></div>

@@ -3,12 +3,13 @@ import { IconChevron } from "@/components/icons";
 import { InstallHint } from "@/components/install-hint";
 import { IntegrationList } from "@/components/integrations";
 import { LogoutButton } from "@/components/logout-button";
+import { MfaSetup } from "@/components/mfa-setup";
 import { PushToggle } from "@/components/push-toggle";
 import { SimulateIntake } from "@/components/simulate-intake";
 import { TopBar } from "@/components/topbar";
 import { requireSession } from "@/lib/auth";
 import { can, ROLE_LABEL } from "@/lib/permissions";
-import { getTenant, getUser } from "@/lib/store";
+import { getTenant, getUser, mfaEnabled } from "@/lib/store";
 
 export const metadata = { title: "Mere" };
 
@@ -21,7 +22,7 @@ export default async function MorePage() {
   const owner = can(s.role, "view_audit");
   const links = [
     ...(owner ? [{ href: "/indsigt", label: "Resultater", sub: "Omsætning, udvikling og forslag" }] : []),
-    { href: "/workers", label: "AI-workers", sub: "Opgaver, status, fejl og log" },
+    { href: "/workers", label: "Automatik", sub: "Se og stop de fire hjælpere" },
     ...(owner ? [{ href: "/mere/audit", label: "Auditlog", sub: "Hvem gjorde hvad og hvornår" }, { href: "/mere/gdpr", label: "Databehandling og GDPR", sub: "Databehandlere, sletning, opbevaring" }] : []),
   ];
   return (
@@ -67,6 +68,11 @@ export default async function MorePage() {
             <SimulateIntake />
           </section>
         ) : null}
+
+        <section className="section" id="sikkerhed">
+          <div className="section-head"><h2>Totrinsbekræftelse</h2><span>{mfaEnabled(s.tid, s.uid) ? "Slået til" : "Anbefales"}</span></div>
+          <MfaSetup enabled={mfaEnabled(s.tid, s.uid)} />
+        </section>
 
         <section className="section">
           <div className="section-head"><h2>Konto</h2></div>

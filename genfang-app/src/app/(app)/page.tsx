@@ -17,7 +17,11 @@ export default async function OverviewPage() {
   const nonUrgentPending = o.pending.filter((p) => p.urgency !== "akut");
   const firstName = o.user.name.trim().split(" ")[0];
   const nextHref = o.urgent[0] ? `/henvendelser/${o.urgent[0].id}` : nonUrgentPending.length ? "/henvendelser?filter=aabne" : o.quotesAwaiting.length && s.role === "owner" ? "/tilbud" : o.counts.followUps ? "/tilbud#opfoelgning" : "/henvendelser";
-  const activeWorkers = o.workers.filter((w) => w.state === "aktiv").length;
+  const troubled = o.workers.filter((w) => w.state !== "aktiv");
+  const autoLine = troubled.length === 0 ? "Automatikken kører normalt"
+    : troubled.every((w) => w.state === "pause") ? `${troubled.map((w) => w.label).join(" og ")} er sat på pause`
+    : troubled.some((w) => w.state === "stoppet") ? "Automatikken er stoppet"
+    : `${troubled.map((w) => w.label).join(" og ")} har en fejl`;
 
   return (
     <>
@@ -91,9 +95,9 @@ export default async function OverviewPage() {
           <section className="section" aria-labelledby="h-res">
             <div className="section-head"><h2 id="h-res">Resultater de sidste 30 dage</h2><Link href="/indsigt">Se alle tal</Link></div>
             <div className="kpis">
-              <Kpi label="Betalt omsætning" value={dkk(a.cur.revenuePaid)} delta={relStr(a.changes.revenuePaid.rel)} dir={a.changes.revenuePaid.abs} prov="testdata" />
+              <Kpi label="Nye henvendelser" value={String(a.cur.inquiries)} delta={a.changes.inquiries.rel !== null ? `${relStr(a.changes.inquiries.rel)} mod forrige 30 dage` : ""} dir={a.changes.inquiries.abs} prov="testdata" />
               <Kpi label="Tilbud accepteret" value={pctStr(a.cur.acceptRate)} delta={ppStr(a.changes.acceptRate.pp)} dir={a.changes.acceptRate.pp} prov="testdata" />
-              <Kpi label="Median svartid" value={minStr(a.cur.medianResponseMin)} delta={a.prev.medianResponseMin !== null ? `fra ${minStr(a.prev.medianResponseMin)}` : ""} dir={a.changes.medianResponseMin.abs !== null ? -a.changes.medianResponseMin.abs : null} prov="testdata" />
+              <Kpi label="Typisk svartid" value={minStr(a.cur.medianResponseMin)} delta={a.prev.medianResponseMin !== null ? `fra ${minStr(a.prev.medianResponseMin)}` : ""} dir={a.changes.medianResponseMin.abs !== null ? -a.changes.medianResponseMin.abs : null} prov="testdata" />
              </div>
             <p className="dashboard-fineprint">Tal i denne version er testdata. <Link href="/indsigt">Se metode og øvrige målinger</Link>.</p>
           </section>
@@ -114,22 +118,22 @@ export default async function OverviewPage() {
 
         {a && a.recommendations.length ? (
           <section className="section" aria-labelledby="h-ins">
-            <div className="section-head"><h2 id="h-ins">GENFANG Insights</h2><Link href="/indsigt#forslag">Alle forslag</Link></div>
+            <div className="section-head"><h2 id="h-ins">Forslag til dig</h2><Link href="/indsigt#forslag">Alle forslag</Link></div>
             {a.recommendations.slice(0, 1).map((r) => (
               <div className="insight" key={r.id}>
                 <h3>{r.title}</h3>
                 <p>{r.why} {r.action}</p>
-                <div className="meta-row"><span>Forslag fra Worker 04 · Analytics</span><Prov p={r.provenance} /></div>
+                <div className="meta-row"><span>Forslag fra GENFANG</span><Prov p={r.provenance} /></div>
               </div>
             ))}
           </section>
         ) : null}
 
         <section className="section dashboard-workers" aria-labelledby="h-workers">
-          <div className="section-head"><h2 id="h-workers">Automatik</h2><Link href="/workers">Se status</Link></div>
+          <div className="section-head"><h2 id="h-workers">Automatik</h2><Link href="/workers">Styr automatik</Link></div>
           <Link href="/workers" className="dashboard-worker-line">
-            <span className="dot" data-state={activeWorkers === o.workers.length ? "aktiv" : "fejl"} />
-            <span>{activeWorkers} af {o.workers.length} workers aktive</span>
+            <span className="dot" data-state={troubled.length === 0 ? "aktiv" : troubled.some((w) => w.state === "fejl" || w.state === "stoppet") ? "fejl" : "pause"} />
+            <span>{autoLine}</span>
             <span className="dashboard-worker-end">Se detaljer <IconChevron /></span>
           </Link>
         </section>

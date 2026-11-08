@@ -99,7 +99,7 @@ export function CaseActions(p: Props) {
   const base = `/api/v1/inquiries/${encodeURIComponent(p.id)}`;
   const approve = () => run("approve", `${base}/decision`, { decision: "approve", expectedVersion: p.version, editedText: text !== p.draft ? text : undefined }, "Godkendt. Udsendelse er blokeret i testversionen.");
   const reject = () => { if (window.confirm("Afvis udkastet? Sagen skal så besvares manuelt.")) run("reject", `${base}/decision`, { decision: "reject", expectedVersion: p.version }, "Udkast afvist."); };
-  const regenerate = () => run("regen", `${base}/draft`, { expectedVersion: p.version }, "Worker 02 har skrevet et nyt udkast ud fra kalender og prisliste.");
+  const regenerate = () => run("regen", `${base}/draft`, { expectedVersion: p.version }, "Nyt forslag skrevet ud fra kalender og prisliste.");
   const escalate = () => {
     const reason = window.prompt("Hvorfor skal sagen eskaleres? (Sendes til vagthavende – ikke til kunden)", p.emergency ? "Akut sag – ring kunden op" : "");
     if (reason !== null) run("esc", `${base}/escalate`, { reason }, "Eskaleret til vagthavende. Besked er blokeret i testversionen.");
@@ -111,7 +111,7 @@ export function CaseActions(p: Props) {
     <>
       <div className="draft-label">
         <h2>{open ? "Svarudkast" : p.draft ? "Svar" : "Svarudkast"}</h2>
-        <span>{p.draftBy === "legacy" ? "Gammelt udkast (før sikkerhedslag)" : p.draft ? "Skrevet af Worker 02" : ""}</span>
+        <span>{p.draftBy === "legacy" ? "Gammelt forslag (før kontrol)" : p.draft ? "Forslag fra GENFANG" : ""}</span>
       </div>
 
       {p.draft || open ? (
@@ -121,7 +121,7 @@ export function CaseActions(p: Props) {
           {p.basis ? <details className="dashboard-disclosure"><summary>Hvor kommer forslaget fra?</summary><p className="basis">{p.basis}</p></details> : null}
           {open ? <GuardBox guard={guard} checking={checking} /> : null}
         </>
-      ) : <p className="empty">Worker 02 har endnu ikke skrevet et udkast.</p>}
+      ) : <p className="empty">Der er endnu ikke et svarforslag. Tryk »Nyt udkast« for at få et.</p>}
 
       {open || p.status === "ny" ? (
         <div className="toolbar">

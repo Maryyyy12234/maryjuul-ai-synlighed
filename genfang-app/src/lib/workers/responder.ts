@@ -73,7 +73,13 @@ export function writeDraft(inquiry: Inquiry, tenant: Tenant, slots: CalendarSlot
 
   const chosen = inquiry.category === "tilbud" ? [] : pickSlots(tenant, slots, nowMs);
   if (chosen.length) {
-    const opts = chosen.map((s) => describeSlot(s, nowMs, tenant.timezone));
+    // "i morgen mellem kl. 8 og 10 eller mellem kl. 10 og 12" – dagen gentages ikke.
+    const opts = chosen.map((s, i) => {
+      const d = describeSlot(s, nowMs, tenant.timezone);
+      const prev = i > 0 ? describeSlot(chosen[i - 1], nowMs, tenant.timezone) : "";
+      const day = d.slice(0, d.indexOf(" mellem"));
+      return prev.startsWith(day + " mellem") ? d.slice(day.length + 1) : d;
+    });
     lines.push(opts.length === 1
       ? `Vi har en ledig tid ${opts[0]}. Passer det? Tiden er først reserveret, når du har bekræftet.`
       : `Vi har ledige tider ${opts.join(" eller ")}. Passer en af dem? Tiden er først reserveret, når du har bekræftet.`);

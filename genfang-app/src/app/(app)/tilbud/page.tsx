@@ -30,7 +30,7 @@ export default async function QuotesPage() {
           <section className="section" id="opfoelgning">
             <div className="section-head"><h2>Foreslåede opfølgninger</h2><span>{followUps.length}</span></div>
             <ul className="rows">{followUps.map((f) => <FollowUpCard key={f.id} {...f} />)}</ul>
-            <p className="notice">Worker 03 sender intet selv. Kun opfølgning på konkrete tilbud og sager – aldrig reklame uden samtykke. Højst {2} opfølgninger pr. tilbud.</p>
+            <p className="notice">GENFANG sender intet selv. Kun opfølgning på konkrete tilbud og sager – aldrig reklame uden samtykke. Højst {2} opfølgninger pr. tilbud.</p>
           </section>
         ) : null;
 
@@ -64,7 +64,7 @@ export default async function QuotesPage() {
             <div key={g.title}>
             <section className="section" data-group={g.statuses[0]}>
               <div className="section-head"><h2>{g.title}</h2><span>{items.length} · {dkk(items.reduce((a, q) => a + q.amountDkk, 0))}</span></div>
-              <QuoteRows items={items} now={now} empty="" actions={owner ? (q) => (q.status === "afventer_godkendelse" ? <QuoteApproval id={q.id} version={q.version} /> : null) : undefined} />
+              <QuoteRows items={items} now={now} empty="" showStatus={g.statuses.length > 1} actions={owner ? (q) => (q.status === "afventer_godkendelse" ? <QuoteApproval id={q.id} version={q.version} /> : null) : undefined} />
               {g.note ? <p className="notice">{g.note}</p> : null}
             </section>
             {fuSection}

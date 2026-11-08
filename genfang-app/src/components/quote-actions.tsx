@@ -15,11 +15,11 @@ export function QuoteApproval({ id, version }: { id: string; version: number }) 
     if (r?.ok) router.refresh(); else setErr(d?.error?.message ?? "Noget gik galt.");
   }
   return (
-    <span style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+    <>
       <button className="btn btn-sm btn-primary" disabled={!!busy} onClick={() => go("approve")}>{busy === "approve" ? "Sender…" : "Godkend og send"}</button>
-      <button className="btn btn-sm btn-quiet" disabled={!!busy} onClick={() => go("reject")}>Tilbage til kladde</button>
-      {err ? <span role="alert" style={{ color: "var(--warn)", fontSize: 13 }}>{err}</span> : null}
-    </span>
+      <button className="btn btn-sm btn-quiet" disabled={!!busy} onClick={() => go("reject")}>Ret først</button>
+      {err ? <span role="alert" style={{ color: "var(--warn)", fontSize: 13, flexBasis: "100%" }}>{err}</span> : null}
+    </>
   );
 }
 
@@ -43,7 +43,9 @@ export function FollowUpCard(f: { id: string; version: number; customerName: str
           <summary style={{ cursor: "pointer", fontSize: 14, minHeight: 32 }}>Se forslag til besked</summary>
           <pre style={{ whiteSpace: "pre-wrap", font: "inherit", fontSize: 14, background: "#fbfaf6", border: "1px solid var(--rule)", borderRadius: 6, padding: 12 }}>{f.draft}</pre>
         </details>
-        <p className="notice" style={{ marginTop: 6 }}>{f.allowed ? "Lovligt grundlag: " : "Må ikke sendes: "}{f.legalBasis}</p>
+        {f.allowed ? (
+          <details className="legal-note"><summary>✓ Må gerne sendes</summary><p>{f.legalBasis}</p></details>
+        ) : <p className="notice" style={{ marginTop: 6 }}>Må ikke sendes: {f.legalBasis}</p>}
         <span style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
           <button className="btn btn-sm btn-primary" disabled={!!busy || !f.allowed} onClick={() => go("approve")}>{busy === "approve" ? "Godkender…" : "Godkend og send"}</button>
           <button className="btn btn-sm btn-quiet" disabled={!!busy} onClick={() => go("reject")}>Afvis forslag</button>

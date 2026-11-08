@@ -16,6 +16,8 @@ const MATRIX = {
   view_audit: ["owner"],
   anonymize_customer: ["owner"],
   simulate_intake: ["owner"],
+  pause_workers: ["owner"],
+  manage_own_mfa: ["owner", "staff", "superadmin"],
   platform_admin: ["superadmin"],
 } as const satisfies Record<string, readonly Role[]>;
 

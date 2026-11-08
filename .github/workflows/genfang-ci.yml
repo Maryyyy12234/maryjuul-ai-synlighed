@@ -66,3 +66,20 @@ jobs:
           name: genfang-e2e-screenshots
           path: genfang-app/test/e2e/screenshots/
           if-no-files-found: ignore
+
+  deploy:
+    name: Deploy testversion til Render (kun når alt er grønt)
+    needs: validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/claude/charming-faraday-z1103s'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start deploy via Render Deploy Hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::notice::RENDER_DEPLOY_HOOK_URL er ikke sat som GitHub-secret – deploy springes over."
+            exit 0
+          fi
+          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL" > /dev/null
+          echo "Deploy startet for ${GITHUB_SHA}"

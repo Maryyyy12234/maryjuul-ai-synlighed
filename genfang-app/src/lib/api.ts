@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { ApiError } from "./types.ts";
 import { getSession } from "./auth.ts";
 import type { SessionPayload } from "./session.ts";
-import type { Fail } from "./store.ts";
+import { superadminNeedsMfaSetup, type Fail } from "./store.ts";
 
 const NO_STORE = { "Cache-Control": "no-store, private", Vary: "Cookie, Authorization" };
 
@@ -54,5 +54,5 @@ export function respond<T extends { ok: true }>(r: T | Fail, pick: (ok: T) => un
 }
 
 export function requireSuper(session: SessionPayload) {
-  return session.role === "superadmin" && session.tid === "__platform__";
+  return session.role === "superadmin" && session.tid === "__platform__" && !superadminNeedsMfaSetup(session.uid);
 }

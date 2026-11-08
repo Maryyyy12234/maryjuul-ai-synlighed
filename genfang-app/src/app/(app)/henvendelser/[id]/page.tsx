@@ -37,7 +37,7 @@ export default async function InquiryPage(props: { params: Promise<{ id: string 
       <main className="main" data-has-actions={i.status === "udkast_klar"}>
         <p className="eyebrow" style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           {i.urgency === "akut" ? <span className="tag" data-kind="akut">Akut</span> : null}
-          <span>{i.urgency === "akut" ? "" : `${CATEGORY[i.category]} · `}Sorteret af Worker 01</span>
+          <span>{i.urgency === "akut" ? "" : `${CATEGORY[i.category]} · `}Sorteret automatisk</span>
         </p>
         <h1 className="title">{i.customerName}</h1>
         <p className="lede" style={{ color: "var(--ink)", fontWeight: 500 }}>{i.subject}</p>

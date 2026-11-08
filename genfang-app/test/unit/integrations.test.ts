@@ -1,3 +1,4 @@
+process.env.OWNER_MFA_OPTIONAL = "1"; // disse tests handler ikke om MFA (se mfa-workers.test.ts)
 import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";

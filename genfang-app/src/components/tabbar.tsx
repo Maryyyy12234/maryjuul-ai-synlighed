@@ -7,7 +7,7 @@ const ALL = [
   { href: "/", label: "Overblik", Icon: IconHome, owner: false },
   { href: "/henvendelser", label: "Sager", Icon: IconInbox, owner: false },
   { href: "/tilbud", label: "Tilbud", Icon: IconQuote, owner: false },
-  { href: "/indsigt", label: "Indsigt", Icon: IconChart, owner: true },
+  { href: "/indsigt", label: "Resultater", Icon: IconChart, owner: true },
   { href: "/mere", label: "Mere", Icon: IconMore, owner: false },
 ] as const;
 

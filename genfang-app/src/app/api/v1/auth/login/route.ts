@@ -1,9 +1,8 @@
-import { commit } from "@/lib/persistence-runtime.ts";
-import { cookies } from "next/headers";
 import { fail, json, readJson } from "@/lib/api.ts";
 import { clearKey, rateLimit } from "@/lib/rate-limit.ts";
-import { SESSION_COOKIE, SESSION_TTL_SECONDS, safeEqual, signSession } from "@/lib/session.ts";
-import { audit, findUserByEmail } from "@/lib/store.ts";
+import { MFA_TICKET_TTL, mfaTicketSecret, safeEqual, signSession } from "@/lib/session.ts";
+import { issueSession } from "@/lib/issue-session.ts";
+import { findUserByEmail, mfaEnabled } from "@/lib/store.ts";
 
 export const runtime = "nodejs";
 
@@ -47,19 +46,9 @@ export async function POST(req: Request) {
   if (!user || !pwOk) return fail("unauthorized", "Forkert e-mail eller adgangskode.", 401);
 
   clearKey(`login-email:${email}`); // kun fejlede forsøg tæller mod e-mail-grænsen
-  const token = await signSession({ uid: user.id, tid: user.tenantId, role: user.role });
-  audit({ at: new Date().toISOString(), tenantId: user.tenantId, userId: user.id, action: "login" });
-
-  await commit();
-  // Native apps (Expo/Tauri) får tokenet i svaret og gemmer det i Keychain/Keystore.
-  // Web får det KUN som httpOnly-cookie.
-  const native = req.headers.get("x-genfang-client") === "native";
-  if (!native) (await cookies()).set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_TTL_SECONDS,
-  });
-  return json(native ? { ok: true, token, expiresIn: SESSION_TTL_SECONDS, role: user.role } : { ok: true, role: user.role });
+  if (mfaEnabled(user.tenantId, user.id)) {
+    const ticket = await signSession({ uid: user.id, tid: user.tenantId, role: user.role }, { secret: mfaTicketSecret(), ttl: MFA_TICKET_TTL });
+    return json({ ok: true, mfaRequired: true, ticket });
+  }
+  return issueSession(req, user);
 }

@@ -52,11 +52,16 @@ await step("Anden virksomhed ser ikke Hansen VVS' sag; ejerpanel giver 404", asy
   ok((await p3.goto(BASE + "/ejer")).status() === 404, "ejer");
   await c3.close();
 });
-await step("Ejerpanel: separat login, ingen kundedata", async () => {
+await step("Ejerpanel: separat login, kræver MFA, ingen kundedata", async () => {
   const c4 = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p4 = await c4.newPage();
-  await login(p4, "ejer@genfang.test", OPW, "/ejer");
+  await p4.goto(BASE + "/login", { timeout: 90000 });
+  await p4.fill('input[name="email"]', "ejer@genfang.test"); await p4.fill('input[name="password"]', OPW);
+  await p4.click('button[type="submit"]');
+  // Røgtesten slår ALDRIG MFA til (det skal ejeren selv gøre med sin telefon).
+  await p4.waitForFunction(() => /Slå totrinsbekræftelse til|Drift og økonomi|Kode fra din godkendelses-app/.test(document.body.innerText), null, { timeout: 60000 });
   const t = await p4.locator("body").innerText();
-  ok(t.includes("Drift og økonomi") && !t.includes("Sofie"), "indhold");
+  ok(!t.includes("Sofie"), "kundedata i ejerpanel");
+  if (t.includes("Slå totrinsbekræftelse til")) ok((await p4.evaluate(async () => (await fetch("/api/v1/admin/overview")).status)) === 404, "admin-API uden MFA");
   await p4.screenshot({ path: SHOTS + "live-ejerpanel.png" });
   await c4.close();
 });

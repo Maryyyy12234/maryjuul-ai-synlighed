@@ -510,3 +510,56 @@ table.data td.num, table.data th.num { text-align: right; }
 .quote-topline strong { font-size: clamp(23px, 5.4vw, 31px); font-weight: 600; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
 .quote-disclosure { margin-top: 16px; }
 .quote-disclosure summary { display: list-item; }
+
+/* ================ GENFANG 3.1 · stop, MFA og mobil-tabeller ================ */
+.dot[data-state="pause"] { background: transparent; border: 1.5px solid var(--ink-2); }
+.fineprint { font-size: 12px; color: var(--ink-3); margin: 8px 0 0; }
+.inline-error { color: var(--warn); font-size: 13px; }
+
+/* Tilbud: handlinger får deres egen linje under rækken – aldrig klemt ind i en kolonne. */
+.row > div.row-actions { display: flex; grid-template-columns: none; min-height: 0; flex-wrap: wrap; gap: 8px; padding: 0 0 16px 64px; align-items: center; }
+.row-actions .btn { flex: 1 1 140px; }
+@media (min-width: 720px) { .row-actions .btn { flex: 0 0 auto; } }
+.legal-note { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
+.legal-note summary { cursor: pointer; color: #2f5d00; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+.legal-note p { margin: 4px 0 0; }
+
+/* Automatik: fire rolige kort. */
+.worker-cards { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 10px; }
+@media (min-width: 720px) { .worker-cards { grid-template-columns: 1fr 1fr; } }
+.worker-card { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 18px 18px 6px; }
+.worker-card[data-state="pause"] { background: var(--paper-2); }
+.worker-card[data-state="fejl"] { border-color: rgba(179,38,30,.4); }
+.worker-card-head { display: grid; grid-template-columns: 10px 1fr auto; gap: 12px; align-items: start; }
+.worker-card-head .dot { margin-top: 7px; }
+.worker-card-title h2 { margin: 0; font-size: 17px; font-weight: 650; letter-spacing: -.02em; }
+.worker-card-title p { margin: 3px 0 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.4; }
+.worker-card-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 14px 0 0 22px; font-size: 12.5px; color: var(--ink-2); }
+.worker-card-meta span:first-child { color: var(--ink); font-weight: 600; }
+.worker-card-error { margin: 10px 0 0 22px; font-size: 13px; color: var(--warn); }
+.worker-card .dashboard-disclosure { margin-left: 22px; }
+
+/* Totrinsbekræftelse */
+.mfa { margin-top: 12px; }
+.mfa-state { display: flex; align-items: center; gap: 8px; font-weight: 600; margin: 0; }
+.mfa-row { display: flex; gap: 8px; margin-top: 10px; align-items: center; flex-wrap: wrap; }
+.mfa-steps { margin: 0; padding-left: 20px; display: grid; gap: 12px; font-size: 15px; }
+.mfa-steps a { text-decoration: underline; text-underline-offset: 3px; }
+.mfa-key { display: inline-block; margin-top: 6px; padding: 8px 10px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; font-family: var(--mono); font-size: 14px; letter-spacing: .06em; word-break: break-all; user-select: all; }
+.code-input { font: inherit; font-family: var(--mono); font-size: 18px; letter-spacing: .25em; width: 9.5em; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 9px; background: #fff; color: var(--ink); }
+.code-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 2px rgba(159,206,25,.25); }
+.code-input-lg { width: 100%; font-size: 26px; text-align: center; letter-spacing: .4em; }
+
+/* Ejerpanel: kort på mobil, tabel på computer. */
+.tenant-cards { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+.tenant-card { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 16px; }
+.tenant-card-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.tenant-card-head small { display: block; color: var(--ink-2); font-size: 12px; margin-top: 2px; }
+.tenant-card dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; }
+.tenant-card dt { font-size: 11px; color: var(--ink-2); }
+.tenant-card dd { margin: 2px 0 0; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 14px; }
+.tenant-card-foot { display: flex; flex-direction: column; gap: 4px; margin: 12px 0 0; font-size: 12px; color: var(--ink-2); }
+@media (max-width: 719px) { .admin-shell .table-wrap { display: none; } }
+@media (min-width: 720px) { .tenant-cards { display: none; } }
+.integration-list li > span:last-child { white-space: nowrap; }
+@media (max-width: 719px) { .kpis .kpi:last-child:nth-child(odd) { grid-column: 1 / -1; } }

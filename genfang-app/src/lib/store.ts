@@ -27,6 +27,7 @@ import {
   change, extraRevenueEstimate, MINUTES_SAVED, periodStats, ratio, recommend, type JourneyCase, type PeriodStats,
 } from "./workers/analytics.ts";
 import { nowMs } from "./clock.ts";
+import { decryptSecret, encryptSecret, newSecret, otpauthUri, verifyTotp } from "./totp.ts";
 
 const g = globalThis as unknown as { __genfangDb?: Db };
 
@@ -94,6 +95,84 @@ export function automationStopped(tenantId: TenantId): string | null {
   if (p.emergencyStop) return "GENFANG har aktiveret nødstop. Ingen udsendelser eller workers kører.";
   if (getTenant(tenantId)?.paused) return "Automatik er sat på pause for jeres virksomhed.";
   return null;
+}
+
+// ---------------------------------------------------------------- MFA
+
+function mfaKeyMaterial() {
+  return process.env.MFA_ENCRYPTION_KEY || process.env.SESSION_SECRET || "dev-only-mfa-material";
+}
+function userById(tenantId: TenantId, userId: UserId) {
+  return db().users.find((u) => u.id === userId && u.tenantId === tenantId);
+}
+
+export function mfaEnabled(tenantId: TenantId, userId: UserId): boolean {
+  return !!userById(tenantId, userId)?.mfa?.enabled;
+}
+
+/** Platformens ejer SKAL bruge MFA (kan kun slås fra med OWNER_MFA_OPTIONAL=1, fx i automatiske tests). */
+export function superadminNeedsMfaSetup(userId: UserId): boolean {
+  const u = userById("__platform__", userId);
+  return !!u && u.role === "superadmin" && !u.mfa?.enabled && process.env.OWNER_MFA_OPTIONAL !== "1";
+}
+
+export function startMfa(tenantId: TenantId, userId: UserId): Ok<{ secret: string; uri: string }> | Fail {
+  const u = userById(tenantId, userId);
+  if (!u) return fail("forbidden", "Ukendt bruger.");
+  if (u.mfa?.enabled) return fail("conflict", "MFA er allerede slået til.");
+  const secret = newSecret();
+  u.mfa = { ...(u.mfa ?? { enabled: false }), pendingEnc: encryptSecret(secret, mfaKeyMaterial()) };
+  return { ok: true, secret, uri: otpauthUri(secret, u.email) };
+}
+
+export function confirmMfa(tenantId: TenantId, userId: UserId, code: string, at = nowMs()): Ok<{ enabled: true }> | Fail {
+  const u = userById(tenantId, userId);
+  if (!u?.mfa?.pendingEnc) return fail("invalid", "Start opsætningen først.");
+  const step = verifyTotp(decryptSecret(u.mfa.pendingEnc, mfaKeyMaterial()), code, at);
+  if (step === null) {
+    audit({ at: iso(at), tenantId, userId, action: "mfa_failed", detail: "opsætning" });
+    return fail("invalid", "Koden passer ikke. Tjek at telefonens ur er korrekt, og prøv igen.");
+  }
+  u.mfa = { enabled: true, secretEnc: u.mfa.pendingEnc, lastStep: step, enabledAt: iso(at) };
+  audit({ at: iso(at), tenantId, userId, action: "mfa_enabled" });
+  return { ok: true, enabled: true };
+}
+
+/** Kontrollerer en MFA-kode ved login. Samme kode kan ikke bruges to gange. */
+export function checkMfaCode(tenantId: TenantId, userId: UserId, code: string, at = nowMs()): boolean {
+  const u = userById(tenantId, userId);
+  if (!u?.mfa?.enabled || !u.mfa.secretEnc) return false;
+  const step = verifyTotp(decryptSecret(u.mfa.secretEnc, mfaKeyMaterial()), code, at, u.mfa.lastStep);
+  if (step === null) { audit({ at: iso(at), tenantId, userId, action: "mfa_failed", detail: "login" }); return false; }
+  u.mfa.lastStep = step;
+  return true;
+}
+
+export function disableMfa(tenantId: TenantId, userId: UserId, code: string, at = nowMs()): Ok<{ enabled: false }> | Fail {
+  const u = userById(tenantId, userId);
+  if (!u?.mfa?.enabled) return fail("conflict", "MFA er ikke slået til.");
+  if (u.role === "superadmin" && process.env.OWNER_MFA_OPTIONAL !== "1") return fail("forbidden", "MFA kan ikke slås fra for platformens ejer.");
+  if (!checkMfaCode(tenantId, userId, code, at)) return fail("invalid", "Koden passer ikke.");
+  u.mfa = { enabled: false };
+  audit({ at: iso(at), tenantId, userId, action: "mfa_disabled" });
+  return { ok: true, enabled: false };
+}
+
+/** Er en bestemt worker stoppet (nødstop, virksomhedspause eller ejerens egen pause)? */
+export function workerPaused(tenantId: TenantId, w: WorkerId): boolean {
+  return !!automationStopped(tenantId) || !!getTenant(tenantId)?.pausedWorkers?.includes(w);
+}
+
+export function setWorkerPaused(tenantId: TenantId, userId: UserId, w: WorkerId, paused: boolean, at = nowMs()): Ok<{ paused: WorkerId[] }> | Fail {
+  const a = actor(tenantId, userId, "pause_workers");
+  if ("ok" in a) return a;
+  if (!WORKERS.some((x) => x.id === w)) return fail("invalid", "Ukendt worker.");
+  const set = new Set(a.tenant.pausedWorkers ?? []);
+  if (paused) set.add(w); else set.delete(w);
+  a.tenant.pausedWorkers = [...set];
+  logRun(tenantId, w, paused ? "stoppet" : "ok", paused ? `Sat på pause af ${a.user.name}.` : `Genstartet af ${a.user.name}.`, at);
+  audit({ at: iso(at), tenantId, userId, action: paused ? "worker_pause" : "worker_resume", target: w });
+  return { ok: true, paused: [...set] };
 }
 
 export function audit(entry: AuditEntry) {
@@ -241,6 +320,7 @@ export function regenerateDraft(tenantId: TenantId, userId: UserId, id: string, 
   if ("ok" in a) return a;
   const stop = automationStopped(tenantId);
   if (stop) return fail("stopped", stop);
+  if (workerPaused(tenantId, "worker-02")) return fail("stopped", "Svar-automatikken (Worker 02) er sat på pause.");
   const row = db().inquiries.find((x) => x.id === id && x.tenantId === tenantId);
   if (!row) return fail("not_found", "Sagen findes ikke.");
   if (row.status !== "udkast_klar" && row.status !== "ny") return fail("conflict", "Sagen er allerede behandlet.", { current: clone(row) });
@@ -261,7 +341,7 @@ export function regenerateDraft(tenantId: TenantId, userId: UserId, id: string, 
  */
 export async function improveDraftWithAi(tenantId: TenantId, id: string, call?: AiCall, at = nowMs()): Promise<"ai" | "skabelon" | "slaaet_fra"> {
   if (!aiEnabled() && !call) return "slaaet_fra";
-  if (automationStopped(tenantId)) return "slaaet_fra";
+  if (workerPaused(tenantId, "worker-02")) return "slaaet_fra";
   const t = getTenant(tenantId);
   const row = db().inquiries.find((x) => x.id === id && x.tenantId === tenantId);
   if (!t || !row || row.status !== "udkast_klar") return "slaaet_fra";
@@ -337,8 +417,7 @@ export function ingestSystem(tenantId: TenantId, input: IntakeInput, at = nowMs(
 function ingestInternal(tenant: Tenant, userId: UserId, input: IntakeInput, at: number): Ok<{ inquiry: Inquiry; duplicate: boolean }> | Fail {
   const tenantId = tenant.id;
   const a = { tenant };
-  const stop = automationStopped(tenantId);
-  if (stop) return fail("stopped", stop);
+  // En henvendelse gemmes ALTID – også under nødstop/pause. Kun automatikken stoppes.
   const name = String(input.name ?? "").trim().slice(0, 120);
   const subject = String(input.subject ?? "").trim().slice(0, 160);
   const message = String(input.message ?? "").trim().slice(0, 4000);
@@ -367,16 +446,20 @@ function ingestInternal(tenant: Tenant, userId: UserId, input: IntakeInput, at: 
   db().inquiries.push(row);
   logRun(tenantId, "worker-01", "ok", `${row.id} sorteret som ${c.category}${known ? " (kendt kunde)" : ""}.`, at);
 
-  if (row.emergency) {
+  if (row.emergency && !workerPaused(tenantId, "worker-01")) {
     const to = a.tenant.employees.find((e) => e.onCall) ?? a.tenant.employees[0];
     row.escalation = { to: to.id, toName: to.name, reason: `Mulig ${row.emergency.kind} registreret af Intake`, at: iso(at), by: "worker-01", state: "afventer_kvittering", delivery: "blokeret_testversion" };
     enqueue(tenantId, "eskalering", `${row.id}@1`, at);
     logRun(tenantId, "worker-01", "ok", `Akut sag ${row.id} eskaleret til ${to.name}.`, at);
   }
-  row.draft = writeDraft(row, a.tenant, tenantSlots(a.tenant), at);
-  row.status = "udkast_klar";
-  const guard = guardFor(a.tenant, row, row.draft.text, at);
-  logRun(tenantId, "worker-02", guard.ok ? "ok" : "blokeret", guard.ok ? `Udkast til ${row.id} klar til godkendelse.` : `Udkast til ${row.id} blokeret af sikkerhedslaget.`, at);
+  if (workerPaused(tenantId, "worker-02")) {
+    logRun(tenantId, "worker-02", "stoppet", `Intet udkast til ${row.id} – svar-automatikken er stoppet.`, at);
+  } else {
+    row.draft = writeDraft(row, a.tenant, tenantSlots(a.tenant), at);
+    row.status = "udkast_klar";
+    const guard = guardFor(a.tenant, row, row.draft.text, at);
+    logRun(tenantId, "worker-02", guard.ok ? "ok" : "blokeret", guard.ok ? `Udkast til ${row.id} klar til godkendelse.` : `Udkast til ${row.id} blokeret af sikkerhedslaget.`, at);
+  }
   if (userId !== "worker-01") audit({ at: iso(at), tenantId, userId, action: "intake_simulated", target: row.id });
   return { ok: true, inquiry: clone(row), duplicate: false };
 }
@@ -459,7 +542,7 @@ function signer(t: Tenant) {
 
 export function listFollowUps(tenantId: TenantId, at = nowMs()): FollowUpSuggestion[] {
   const t = getTenant(tenantId);
-  if (!t) return [];
+  if (!t || workerPaused(tenantId, "worker-03")) return [];
   refreshQuotes(tenantId, at);
   const fresh = suggestFollowUps(db().quotes.filter((q) => q.tenantId === tenantId), db().inquiries.filter((i) => i.tenantId === tenantId), at, signer(t));
   const store = db().followUps;
@@ -510,7 +593,7 @@ export function workerStatuses(tenantId: TenantId, at = nowMs()): WorkerStatus[]
     const last = mine[0];
     return {
       ...w,
-      state: stopped ? "stoppet" : last?.status === "fejl" ? "fejl" : "aktiv",
+      state: stopped ? "stoppet" : getTenant(tenantId)?.pausedWorkers?.includes(w.id) ? "pause" : last?.status === "fejl" ? "fejl" : "aktiv",
       lastRunAt: last?.at,
       lastError: last?.status === "fejl" ? last.error : undefined,
       runs24h: mine.filter((r) => at - Date.parse(r.at) < 86_400_000).length,
@@ -607,7 +690,7 @@ export function getOverview(tenantId: TenantId, userId: UserId, at = nowMs()) {
     followUps,
     quoteTotals: quoteTotals(quotes),
     workers: workerStatuses(tenantId, at),
-    analytics: can(user.role, "view_analytics") ? analytics(tenantId, 30, at) : undefined,
+    analytics: can(user.role, "view_analytics") && !workerPaused(tenantId, "worker-04") ? analytics(tenantId, 30, at) : undefined,
   };
 }
 
@@ -636,6 +719,7 @@ export function buildUrgentPushPayload(urgentCount: number) {
 function requireSuperadmin(userId: UserId): User | Fail {
   const u = db().users.find((x) => x.id === userId && x.tenantId === "__platform__");
   if (!u || !can(u.role, "platform_admin")) return fail("forbidden", "Kun for GENFANG-ejeren.");
+  if (superadminNeedsMfaSetup(userId)) return fail("forbidden", "Slå MFA til, før ejerpanelet kan bruges.");
   return u;
 }
 

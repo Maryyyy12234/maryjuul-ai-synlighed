@@ -35,28 +35,28 @@ export function InquiryRows({ items, empty, now }: { items: InquirySummary[]; em
 
 const POTENTIAL = new Set(["kladde", "afventer_godkendelse", "sendt"]);
 
-export function QuoteRows({ items, empty, now, actions }: { items: Quote[]; empty: string; now: number; actions?: (q: Quote) => React.ReactNode }) {
+export function QuoteRows({ items, empty, now, actions, showStatus = true }: { items: Quote[]; empty: string; now: number; actions?: (q: Quote) => React.ReactNode; showStatus?: boolean }) {
   if (!items.length) return <p className="empty">{empty}</p>;
   return (
     <ul className="rows">
-      {items.map((q) => (
+      {items.map((q) => { const act = actions?.(q); return (
         <li className="row" key={q.id}>
           <div>
             <span className="when">{q.sentAt ? <>Sendt<br />{dayLabel(q.sentAt, now)}</> : "Ikke sendt"}</span>
             <span style={{ minWidth: 0 }}>
               <span className="who"><span>{q.customerName}</span></span>
               <span className="what" style={{ display: "block" }}>{q.title}</span>
-              {actions ? actions(q) : null}
             </span>
             <span className="aside" style={{ flexDirection: "column", alignItems: "flex-end", gap: 4 }}>
               <span className="amount" style={POTENTIAL.has(q.status) ? { color: "var(--ink-2)", fontWeight: 500 } : undefined} title={POTENTIAL.has(q.status) ? "Potentiel – ikke vundet endnu" : undefined}>{dkk(q.amountDkk)}</span>
-              <span className="tag" data-kind={q.paidAt ? "ok" : q.status === "afvist" || q.status === "udloebet" ? "muted" : q.status === "afventer_godkendelse" ? undefined : "muted"}>
-                {q.paidAt ? "Betalt" : QUOTE_STATUS[q.status]}
-              </span>
+              {showStatus || q.paidAt ? (
+                <span className="tag" data-kind={q.paidAt ? "ok" : "muted"}>{q.paidAt ? "Betalt" : QUOTE_STATUS[q.status]}</span>
+              ) : null}
             </span>
           </div>
+          {act ? <div className="row-actions">{act}</div> : null}
         </li>
-      ))}
+      ); })}
     </ul>
   );
 }

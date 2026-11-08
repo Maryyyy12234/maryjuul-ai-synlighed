@@ -2,7 +2,7 @@ import { integrationStatus } from "@/lib/integrations";
 
 export function IntegrationList() {
   return (
-    <ul className="kv">
+    <ul className="kv integration-list">
       {integrationStatus().map((i) => (
         <li key={i.id}>
           <span>{i.label}<small>{i.how}</small></span>
