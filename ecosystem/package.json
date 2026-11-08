@@ -1,0 +1,11 @@
+{
+  "name": "ecosystem-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fælles kerne til OVERBLIK, PULS, LAGER og INDSIGT (domænelogik, ingen UI endnu)",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node demo.js"
+  }
+}
