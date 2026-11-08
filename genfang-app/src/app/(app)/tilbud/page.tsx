@@ -38,14 +38,23 @@ export default async function QuotesPage() {
     <>
       <TopBar tenant={getTenant(s.tid)!.name} />
       <main className="main">
-        <p className="eyebrow">Tilbud · opfølgning via Worker 03</p>
+
+        <p className="eyebrow">Kunder og betaling</p>
         <h1 className="title">Tilbud</h1>
-        <ul className="money">
-          <li data-real="false"><span>Potentiel – ikke vundet endnu</span><b>{dkk(t.potential)}</b></li>
-          <li data-real="false"><span>Accepteret – ikke faktureret</span><b>{dkk(t.acceptedNotInvoiced)}</b></li>
-          <li data-real="false"><span>Faktureret – ikke betalt</span><b>{dkk(t.invoicedUnpaid)}</b></li>
-          <li data-real="true"><span>Betalt</span><b>{dkk(t.paid)}</b><small><Prov p="testdata" /> · bliver først verificeret med forbindelse til økonomisystemet.</small></li>
-        </ul>
+        <p className="dashboard-intro">Se tilbud, der venter på dig, og følg op på kunder.</p>
+        <div className="quote-topline">
+          <div><span>Afventer godkendelse</span><strong>{quotes.filter((q) => q.status === "afventer_godkendelse").length}</strong></div>
+          <div><span>Betalt i alt</span><strong>{dkk(t.paid)}</strong></div>
+        </div>
+        <details className="dashboard-disclosure quote-disclosure">
+          <summary>Se alle økonomital</summary>
+          <ul className="money">
+            <li data-real="false"><span>Mulige indtægter</span><b>{dkk(t.potential)}</b></li>
+            <li data-real="false"><span>Accepteret, ikke faktureret</span><b>{dkk(t.acceptedNotInvoiced)}</b></li>
+            <li data-real="false"><span>Faktureret, ikke betalt</span><b>{dkk(t.invoicedUnpaid)}</b></li>
+            <li data-real="true"><span>Betalt</span><b>{dkk(t.paid)}</b><small><Prov p="testdata" /> · ikke verificeret via økonomisystem</small></li>
+          </ul>
+        </details>
 
         {GROUPS.map((g, gi) => {
           const items = quotes.filter((q) => g.statuses.includes(q.status));
