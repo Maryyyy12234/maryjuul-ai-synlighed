@@ -223,10 +223,29 @@ await step("To enheder: desktop kan ikke godkende en sag, telefonen netop har go
   await desk.close();
 });
 
+await step("Søgning viser kun relevante sager og kan nulstilles", async () => {
+  const ctx = await browser.newContext({ ...devices["iPhone 13"] });
+  const page = await ctx.newPage();
+  await login(page);
+  await page.goto(BASE + "/henvendelser?filter=alle");
+  const input = page.getByRole("searchbox", { name: "Find en sag" });
+  const initial = await page.locator("li.row").count();
+  assert(initial > 0, "manglende sager");
+  await input.fill("helt-ukendt-soegning-24881");
+  assert(await page.locator("li.row").count() === 0, "søgefilter");
+  await page.getByRole("button", { name: "Ryd søgning" }).click();
+  assert(await page.locator("li.row").count() === initial, "ryd søgning");
+  await ctx.close();
+});
+
 await step("CSRF: POST fra fremmed oprindelse afvises", async () => {
   const c = (await iphone.cookies()).find((x) => x.name === "gf_session");
   const r = await fetch(BASE + "/api/v1/inquiries/inq_1039/escalate", { method: "POST", headers: { "Content-Type": "application/json", Cookie: `gf_session=${c.value}`, Origin: "https://ond-side.example" }, body: "{}" });
   assert(r.status === 403, "status " + r.status);
+  const spoof = await fetch(BASE + "/api/v1/inquiries/inq_1039/escalate", {
+    method: "POST", headers: { "Content-Type": "application/json", Cookie: `gf_session=${c.value}`, Origin: "https://ond-side.example", Authorization: "Basic not-a-bearer-token" }, body: "{}",
+  });
+  assert(spoof.status === 403, "Auth-header må ikke omgå CSRF: " + spoof.status);
 });
 
 await step("Service worker cacher aldrig API eller sider; offline viser neutral side", async () => {
