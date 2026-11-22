@@ -1,0 +1,911 @@
+<title>DUO STUDIO</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="DUO STUDIO – dansk tøjbrand. Festlige styles og moderne hverdagstøj. Kollektion 01: Lace Line.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Inter+Tight:wght@400;500;600&display=swap">
+<style>
+/* Layout: "duo" – alt kommer i par. Delt kampagne (dag/aften), to-kolonne produktside, smalle hårstreger som i logoets serifer. */
+:root{
+  --paper:#F3EEE7;      /* varm off-white – sidebaggrund */
+  --sand:#E8E0D5;       /* varm beige – flader */
+  --tile:#F7F3EE;       /* billedfelt (samme tone som tegningerne) */
+  --ink:#151515;        /* sort – tekst og knapper */
+  --muted:#6F675E;      /* neutral, varm grå */
+  --line:#D6CCBF;       /* hårstreg */
+  --on-ink:#F3EEE7;
+  --sale:#7A3E2B;       /* bruges kun til "få tilbage"-status */
+  --display:"Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --ui:"Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gut:max(16px, env(safe-area-inset-left, 0px));
+  --gut-r:max(16px, env(safe-area-inset-right, 0px));
+  --maxw:1320px;
+  --ease:cubic-bezier(.2,.7,.1,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141413; --sand:#1F1E1C; --tile:#ECE6DD; --ink:#EEE9E2; --muted:#A39A8E;
+    --line:#34312D; --on-ink:#141413; --sale:#D9A08A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141413; --sand:#1F1E1C; --tile:#ECE6DD; --ink:#EEE9E2; --muted:#A39A8E;
+  --line:#34312D; --on-ink:#141413; --sale:#D9A08A; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--paper)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:1.5px solid var(--ink);outline-offset:3px}
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-left:var(--gut);padding-right:var(--gut-r)}
+.label{font-family:var(--ui);font-size:11px;font-weight:500;letter-spacing:.22em;text-transform:uppercase}
+.muted{color:var(--muted)}
+.serif{font-family:var(--display);font-weight:400}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+/* Logo – farves via mask, så det følger tema */
+.logo{display:block;aspect-ratio:1140/496;background:currentColor;
+  -webkit-mask:url(assets/logo.png) center/contain no-repeat;mask:url(assets/logo.png) center/contain no-repeat}
+
+/* ---------- Top ---------- */
+.announce{background:var(--ink);color:var(--on-ink);text-align:center;font-size:12px;letter-spacing:.04em;padding:8px var(--gut-r) 8px var(--gut)}
+.announce b{font-weight:500}
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+.bar .logo{width:84px;justify-self:center}
+.nav{display:none;gap:28px}
+.nav a{font-size:13px;letter-spacing:.02em;position:relative;padding-block:4px}
+.nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:currentColor;transition:right .35s var(--ease)}
+.nav a:hover::after,.nav a[aria-current="page"]::after{right:0}
+.bar-right{display:flex;justify-content:flex-end;gap:18px;align-items:center}
+.iconbtn{display:inline-flex;align-items:center;gap:8px;font-size:13px;height:40px}
+.iconbtn svg{width:20px;height:20px}
+.bag-count{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--ink);color:var(--on-ink);font-size:11px;font-weight:600;padding:0 5px;transition:transform .3s var(--ease)}
+.bag-count.bump{transform:scale(1.25)}
+.menu-btn{justify-self:start}
+@media (min-width:900px){
+  .bar{grid-template-columns:auto 1fr auto;height:68px}
+  .bar .logo{width:92px;justify-self:start;grid-column:1;grid-row:1}
+  .nav{display:flex;justify-self:center}
+  .menu-btn{display:none}
+}
+
+/* ---------- Mobilmenu ---------- */
+.sheet{position:fixed;inset:0;z-index:80;background:var(--paper);display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) var(--gut-r) calc(env(safe-area-inset-bottom,0px) + 24px) var(--gut);
+  transform:translateY(-100%);transition:transform .5s var(--ease);visibility:hidden}
+.sheet.open{transform:none;visibility:visible}
+.sheet-top{display:flex;justify-content:space-between;align-items:center;height:48px}
+.sheet nav{display:flex;flex-direction:column;margin-top:32px}
+.sheet nav a{font-family:var(--display);font-size:42px;line-height:1.15;padding-block:6px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.sheet nav a small{font-family:var(--ui);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.sheet .sheet-foot{margin-top:auto;display:grid;gap:6px;font-size:13px;color:var(--muted)}
+
+/* ---------- Knapper ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:50px;padding:0 26px;background:var(--ink);color:var(--on-ink);font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--ink);transition:background .25s,color .25s}
+.btn:hover{background:transparent;color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--on-ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%}
+.link{font-size:13px;letter-spacing:.04em;border-bottom:1px solid currentColor;padding-bottom:2px}
+
+/* ---------- Kampagne ---------- */
+.hero{padding-block:28px 56px}
+.hero-grid{display:grid;gap:28px}
+.hero-copy{display:grid;gap:20px;align-content:end}
+.hero h1{font-size:clamp(46px,12vw,92px);line-height:.98}
+.hero h1 em{font-style:italic}
+.hero-lede{max-width:34ch;font-size:16px;color:var(--muted)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.duo figure{margin:0;position:relative}
+.duo .ph{background:var(--tile);aspect-ratio:4/5;overflow:hidden}
+.duo .ph img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;transition:transform 1.2s var(--ease)}
+.duo figure:hover img{transform:scale(1.035)}
+.duo figure:nth-child(2){margin-top:44px}
+.duo figcaption{display:flex;justify-content:space-between;margin-top:10px;gap:8px}
+.duo figcaption .serif{font-size:18px}
+.hero-tag{position:absolute;top:12px;left:12px;color:#151515}
+@media (min-width:900px){
+  .hero{padding-block:48px 96px}
+  .hero-grid{grid-template-columns:6fr 6fr;gap:56px;align-items:end}
+  .duo{gap:18px}
+  .duo figure:nth-child(2){margin-top:96px}
+}
+/* indgangsanimation – starter synlig, kun en lille bevægelse */
+@media (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .9s var(--ease) both}
+  .rise.d1{animation-delay:.08s}.rise.d2{animation-delay:.16s}.rise.d3{animation-delay:.24s}
+  @keyframes rise{from{transform:translateY(14px)}to{transform:none}}
+}
+
+/* ---------- Sektioner ---------- */
+section.block{padding-block:56px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:24px}
+.sec-head h2{font-size:clamp(32px,6vw,52px);line-height:1}
+.rule{display:flex;align-items:center;gap:14px}
+.rule::after{content:"";height:1px;flex:1;background:var(--line);min-width:24px}
+@media (min-width:900px){section.block{padding-block:88px}}
+
+/* ---------- Produktkort ---------- */
+.row{display:grid;grid-auto-flow:column;grid-auto-columns:72%;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;scrollbar-width:none;
+  margin-right:calc(-1 * var(--gut-r));padding-right:var(--gut-r)}
+.row::-webkit-scrollbar{display:none}
+.row > *{scroll-snap-align:start}
+@media (min-width:700px){.row{grid-auto-columns:40%}}
+@media (min-width:1000px){.row{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);overflow:visible;margin-right:0;padding-right:0}}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}
+@media (min-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:40px 18px}}
+.card{display:grid;gap:10px;min-width:0}
+.card-media{position:relative;background:var(--tile);aspect-ratio:4/5;overflow:hidden}
+.card-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;transition:opacity .5s var(--ease),transform 1s var(--ease)}
+.card-media img.alt{opacity:0}
+@media (hover:hover){.card:hover .card-media img.alt{opacity:1}.card:hover .card-media img.main{opacity:0}.card:hover .card-media img{transform:scale(1.03)}}
+.card-badge{position:absolute;top:10px;left:10px;z-index:2;color:#151515}
+.card-quick{position:absolute;right:10px;bottom:10px;z-index:2;width:38px;height:38px;display:grid;place-items:center;background:#F7F3EE;color:#151515;border:1px solid #151515;transition:background .2s,color .2s}
+.card-quick:hover{background:#151515;color:#F7F3EE}
+.card-info{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.card-name{font-family:var(--display);font-size:19px;line-height:1.2}
+.card-price{font-size:14px;white-space:nowrap}
+.card-meta{font-size:12px;color:var(--muted);margin-top:-6px}
+.card-was{color:var(--muted);text-decoration:line-through;margin-right:6px;font-size:12px}
+.card.soon .card-media{background:transparent;border:1px solid var(--line);display:grid;place-items:center;text-align:center;padding:20px}
+.card.soon .card-media > div{display:grid;gap:12px;justify-items:center}
+.card.soon h3{font-size:26px;line-height:1.05}
+
+/* ---------- Dag/Aften ---------- */
+.two-ways{background:var(--sand)}
+.tw-grid{display:grid;gap:28px}
+.toggle{display:inline-flex;border:1px solid var(--ink);padding:3px;gap:3px}
+.toggle button{height:38px;padding:0 20px;font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;transition:background .3s,color .3s}
+.toggle button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink)}
+.tw-copy{display:grid;gap:18px;align-content:start}
+.tw-copy h2{font-size:clamp(34px,6.5vw,60px);line-height:1}
+.tw-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.tw-list li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.tw-list li span:first-child{color:var(--muted)}
+.tw-stage{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-height:0}
+.tw-stage .ph{background:var(--tile);aspect-ratio:4/5;overflow:hidden;transition:opacity .45s var(--ease)}
+.tw-stage .ph img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+.tw-stage.swap .ph{opacity:0}
+@media (min-width:900px){.tw-grid{grid-template-columns:5fr 7fr;gap:64px;align-items:center}}
+
+/* ---------- Kollektioner ---------- */
+.coll{display:grid;gap:14px}
+.coll-card{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--tile);overflow:hidden}
+.coll-card img{width:100%;aspect-ratio:4/5;object-fit:cover;mix-blend-mode:multiply;transition:transform 1.2s var(--ease)}
+.coll-card:hover img{transform:scale(1.03)}
+.coll-info{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:12px;flex-wrap:wrap}
+.coll-info h3{font-size:28px}
+.coll-next{border:1px solid var(--line);display:grid;align-content:space-between;gap:28px;padding:24px;min-height:260px}
+.coll-next h3{font-size:clamp(30px,5vw,44px);line-height:1}
+.notify{display:flex;border-bottom:1px solid var(--ink)}
+.notify input{flex:1;min-width:0;background:transparent;border:0;font:inherit;color:var(--ink);padding:12px 0;outline:none}
+.notify input::placeholder{color:var(--muted)}
+.notify button{font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding-left:12px}
+.form-note{font-size:12px;color:var(--muted);margin-top:8px;min-height:1.5em}
+@media (min-width:900px){.coll{grid-template-columns:2fr 1fr;gap:18px;align-items:start}}
+
+/* ---------- Løfter ---------- */
+.promises{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.promises div{padding:18px 4px;display:grid;gap:4px}
+.promises div:nth-child(odd){padding-right:12px}
+.promises div + div{border-left:1px solid var(--line);padding-left:14px}
+.promises div:nth-child(3){border-left:0;padding-left:4px;border-top:1px solid var(--line)}
+.promises div:nth-child(4){border-top:1px solid var(--line)}
+.promises strong{font-weight:500;font-size:14px}
+.promises span{font-size:12px;color:var(--muted)}
+@media (min-width:900px){.promises{grid-template-columns:repeat(4,1fr)}.promises div:nth-child(3){border-left:1px solid var(--line);padding-left:14px;border-top:0}.promises div:nth-child(4){border-top:0}}
+
+/* ---------- Shop ---------- */
+.page-head{padding-block:28px 20px;display:grid;gap:10px}
+.page-head h1{font-size:clamp(44px,10vw,96px);line-height:.95}
+.filters{display:flex;justify-content:space-between;gap:12px;align-items:center;padding-block:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:24px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.chips button{height:34px;padding:0 14px;font-size:13px;border:1px solid var(--line);white-space:nowrap;transition:border-color .2s,background .2s,color .2s}
+.chips button:hover{border-color:var(--ink)}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.sort{display:flex;align-items:center;gap:8px;font-size:13px}
+.sort select{font:inherit;background:transparent;color:var(--ink);border:0;border-bottom:1px solid var(--ink);padding:4px 18px 4px 0;appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);background-position:right 6px top 55%,right 2px top 55%;background-size:4px 4px;background-repeat:no-repeat}
+.sort select option{background:var(--paper);color:var(--ink)}
+.count{font-size:12px;color:var(--muted)}
+
+/* ---------- Produktside ---------- */
+.crumbs{font-size:12px;color:var(--muted);padding-block:16px;display:flex;gap:8px;flex-wrap:wrap}
+.crumbs a:hover{color:var(--ink)}
+.pdp{display:grid;gap:24px;padding-bottom:64px}
+.gallery{display:grid;grid-auto-flow:column;grid-auto-columns:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-inline:calc(-1 * var(--gut)) calc(-1 * var(--gut-r))}
+.gallery::-webkit-scrollbar{display:none}
+.gallery figure{margin:0;scroll-snap-align:start;background:var(--tile);aspect-ratio:4/5;position:relative}
+.gallery img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+.gallery figcaption{position:absolute;left:14px;bottom:12px;color:#151515}
+.dots{display:flex;gap:6px;justify-content:center;margin-top:12px}
+.dots span{width:18px;height:2px;background:var(--line);transition:background .3s}
+.dots span.on{background:var(--ink)}
+.buy{display:grid;gap:22px;align-content:start}
+.buy h1{font-size:clamp(38px,7vw,58px);line-height:1}
+.buy-price{font-size:18px}
+.buy-price small{font-size:12px;color:var(--muted);margin-left:8px}
+.swatch-row{display:flex;gap:10px;align-items:center;font-size:13px}
+.swatch{width:22px;height:22px;border:1px solid var(--ink);background:linear-gradient(135deg,#F6F1EA 50%,#151515 50%)}
+.sizes-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.sizes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.sizes button{height:48px;border:1px solid var(--line);font-size:14px;position:relative;transition:border-color .2s,background .2s,color .2s}
+.sizes button:hover:not([disabled]){border-color:var(--ink)}
+.sizes button[aria-pressed="true"]{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.sizes button[disabled]{color:var(--muted);cursor:not-allowed;background:linear-gradient(to top right,transparent calc(50% - .5px),var(--line) 50%,transparent calc(50% + .5px))}
+.stock-note{font-size:12px;margin-top:8px;min-height:1.5em;color:var(--muted)}
+.stock-note.low{color:var(--sale)}
+.acc{border-top:1px solid var(--line)}
+.acc details{border-bottom:1px solid var(--line)}
+.acc summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:16px 0;cursor:pointer;font-size:14px}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:"+";font-size:18px;font-weight:300;transition:transform .3s var(--ease)}
+.acc details[open] summary::after{transform:rotate(45deg)}
+.acc .acc-body{padding-bottom:18px;font-size:14px;color:var(--muted);display:grid;gap:8px;max-width:60ch}
+.acc ul{margin:0;padding-left:18px}
+.duo-note{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:16px;background:var(--sand);font-size:13px;align-items:start}
+.duo-note .serif{font-size:22px;line-height:1;font-style:italic}
+@media (min-width:900px){
+  .pdp{grid-template-columns:7fr 5fr;gap:56px}
+  .gallery{grid-auto-flow:row;grid-template-columns:1fr 1fr;grid-auto-columns:auto;overflow:visible;margin-inline:0;gap:10px}
+  .gallery figure:first-child{grid-column:1 / -1;aspect-ratio:5/5.4}
+  .dots{display:none}
+  .buy{position:sticky;top:96px}
+}
+.mobile-buy{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--paper);border-top:1px solid var(--line);
+  padding:10px var(--gut-r) calc(env(safe-area-inset-bottom,0px) + 10px) var(--gut);display:flex;gap:12px;align-items:center;
+  transform:translateY(110%);transition:transform .4s var(--ease)}
+.mobile-buy.show{transform:none}
+.mobile-buy .mb-info{flex:1;min-width:0;display:grid;font-size:13px;line-height:1.3}
+.mobile-buy .mb-info .serif{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobile-buy .btn{height:46px;padding:0 18px}
+@media (min-width:900px){.mobile-buy{display:none}}
+
+/* ---------- Skuffer (kurv, størrelsesguide, info) ---------- */
+.scrim{position:fixed;inset:0;z-index:90;background:rgba(10,10,10,.38);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+.scrim.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:100;width:min(440px,100%);background:var(--paper);display:flex;flex-direction:column;
+  transform:translateX(102%);transition:transform .45s var(--ease);visibility:hidden;
+  padding:calc(env(safe-area-inset-top,0px)) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) 0}
+.drawer.open{transform:none;visibility:visible}
+.d-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.d-head h2{font-size:26px}
+.d-body{flex:1;overflow-y:auto;padding:20px;display:grid;gap:18px;align-content:start}
+.d-foot{border-top:1px solid var(--line);padding:18px 20px;display:grid;gap:12px}
+.ship{display:grid;gap:8px;font-size:13px}
+.ship-track{height:2px;background:var(--line);position:relative;overflow:hidden}
+.ship-track i{position:absolute;inset:0 auto 0 0;background:var(--ink);transition:width .6s var(--ease)}
+.line-item{display:grid;grid-template-columns:84px 1fr;gap:14px}
+.line-item .ph{background:var(--tile);aspect-ratio:4/5}
+.line-item .ph img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply}
+.li-top{display:flex;justify-content:space-between;gap:10px}
+.li-top .serif{font-size:18px;line-height:1.2}
+.li-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.li-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line)}
+.qty button{width:32px;height:32px;font-size:16px}
+.qty span{min-width:24px;text-align:center;font-size:13px}
+.remove{font-size:12px;color:var(--muted);border-bottom:1px solid currentColor}
+.sum-row{display:flex;justify-content:space-between;font-size:14px}
+.sum-row.total{font-size:16px;font-weight:500}
+.empty{display:grid;gap:16px;justify-items:start;padding-block:24px}
+.empty .serif{font-size:30px;line-height:1.1}
+table.sizes-t{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.sizes-t th,.sizes-t td{padding:10px 6px;text-align:left;border-bottom:1px solid var(--line)}
+.sizes-t th{font-weight:500;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.table-x{overflow-x:auto}
+.unit-toggle{display:inline-flex;gap:14px;font-size:13px}
+.unit-toggle button[aria-pressed="true"]{border-bottom:1px solid currentColor}
+.measure{display:grid;gap:10px;font-size:13px;color:var(--muted)}
+.measure b{color:var(--ink);font-weight:500}
+
+/* ---------- Kasse ---------- */
+.checkout{display:grid;gap:32px;padding-bottom:72px}
+.co-form{display:grid;gap:28px}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:12px}
+legend{padding:0;margin-bottom:12px}
+.field{display:grid;gap:6px}
+.field label{font-size:12px;color:var(--muted)}
+.field input{height:48px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;padding:0 14px;border-radius:0}
+.field input:focus{outline:none;border-color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two.zip{grid-template-columns:1fr 2fr}
+.opt{display:flex;gap:12px;align-items:center;border:1px solid var(--line);padding:14px;cursor:pointer;font-size:14px}
+.opt:has(input:checked){border-color:var(--ink)}
+.opt input{accent-color:var(--ink);width:16px;height:16px;margin:0}
+.opt span:last-child{margin-left:auto}
+.opt-sub{display:block;font-size:12px;color:var(--muted)}
+.co-summary{background:var(--sand);padding:20px;display:grid;gap:14px;align-content:start;align-self:start}
+.notice{border:1px solid var(--ink);padding:14px;font-size:13px}
+@media (min-width:900px){.checkout{grid-template-columns:7fr 5fr;gap:64px}.co-summary{position:sticky;top:96px}}
+
+/* ---------- Footer ---------- */
+footer.site{background:var(--ink);color:var(--on-ink);margin-top:0}
+.f-inner{padding-block:56px 28px;display:grid;gap:40px}
+.f-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.f-cols h4{margin:0 0 12px;font-weight:500;font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.6}
+.f-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14px}
+.f-cols a:hover,.f-cols button:hover{opacity:.65}
+.f-news{display:grid;gap:12px;max-width:420px}
+.f-news .serif{font-size:28px;line-height:1.1}
+.f-news .notify{border-color:var(--on-ink)}
+.f-news .notify input{color:var(--on-ink)}
+.f-news .notify input::placeholder{color:currentColor;opacity:.55}
+.f-news .form-note{color:inherit;opacity:.65}
+.f-logo{width:100%;max-width:880px;margin-inline:auto;opacity:.95}
+.f-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;opacity:.6;border-top:1px solid color-mix(in srgb,var(--on-ink) 20%,transparent);padding-top:18px}
+@media (min-width:900px){.f-inner{grid-template-columns:1fr 1.4fr}.f-cols{grid-template-columns:repeat(3,1fr)}}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);z-index:120;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--on-ink);padding:12px 18px;font-size:13px;transition:opacity .3s,transform .3s var(--ease);pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="announce"><b>Fri fragt</b> over 499 kr. · 30 dages retur · Kollektion 01 er landet</div>
+
+<header class="site">
+  <div class="wrap bar">
+    <button class="iconbtn menu-btn" id="menuBtn" aria-label="Åbn menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 8h18M3 16h18"/></svg>
+    </button>
+    <a href="#forside" class="logo" aria-label="DUO STUDIO – forside"></a>
+    <nav class="nav" aria-label="Hovedmenu">
+      <a href="#nyheder" data-nav="nyheder">New In</a>
+      <a href="#shop" data-nav="shop">Shop alt</a>
+      <a href="#kollektioner" data-nav="kollektioner">Kollektioner</a>
+      <button type="button" class="nav-a" data-open="sizeguide" style="font-size:13px;letter-spacing:.02em">Størrelsesguide</button>
+    </nav>
+    <div class="bar-right">
+      <button class="iconbtn" id="bagBtn" aria-label="Åbn kurv">
+        <span class="label" style="display:none" id="bagWord">Kurv</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="bag-count num" id="bagCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-top">
+    <span class="label">Menu</span>
+    <button class="iconbtn" data-close aria-label="Luk menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5l14 14M19 5 5 19"/></svg></button>
+  </div>
+  <nav aria-label="Mobilmenu">
+    <a href="#nyheder">New In <small>3 styles</small></a>
+    <a href="#shop">Shop alt <small>Alle</small></a>
+    <a href="#kollektioner">Kollektioner <small>01 · 02</small></a>
+    <a href="#shop" data-filter="saet">Sæt <small>Spar 199 kr.</small></a>
+  </nav>
+  <div class="sheet-foot">
+    <button type="button" data-open="sizeguide" style="text-align:left">Størrelsesguide</button>
+    <button type="button" data-open="info" style="text-align:left">Levering &amp; retur</button>
+  </div>
+</div>
+
+<main id="app" tabindex="-1"></main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="f-inner">
+      <form class="f-news" data-notify>
+        <span class="label" style="opacity:.6">Nyhedsbrev</span>
+        <p class="serif">Hør om næste drop før alle andre.</p>
+        <div class="notify">
+          <label class="sr" for="newsEmail">E-mail</label>
+          <input id="newsEmail" type="email" placeholder="Din e-mail" required autocomplete="email">
+          <button type="submit">Tilmeld</button>
+        </div>
+        <p class="form-note" aria-live="polite"></p>
+      </form>
+      <div class="f-cols">
+        <div><h4>Shop</h4><ul>
+          <li><a href="#nyheder">New In</a></li>
+          <li><a href="#shop">Alle produkter</a></li>
+          <li><a href="#kollektioner">Kollektioner</a></li>
+        </ul></div>
+        <div><h4>Hjælp</h4><ul>
+          <li><button type="button" data-open="sizeguide">Størrelsesguide</button></li>
+          <li><button type="button" data-open="info">Levering &amp; retur</button></li>
+        </ul></div>
+        <div><h4>Butik</h4><ul>
+          <li>Online i hele Danmark</li>
+          <li class="f-muted" style="opacity:.6">Fysisk butik – på vej</li>
+        </ul></div>
+      </div>
+    </div>
+    <span class="logo f-logo" role="img" aria-label="DUO STUDIO"></span>
+    <div class="f-bottom" style="margin-top:28px;padding-bottom:24px">
+      <span>© <span id="year"></span> DUO STUDIO · Designet i Danmark</span>
+      <span>Alle priser i DKK inkl. moms</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Kurv -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="cart" aria-label="Kurv" aria-hidden="true">
+  <div class="d-head"><h2>Kurv <span class="muted num" id="cartQty" style="font-family:var(--ui);font-size:14px"></span></h2>
+    <button class="iconbtn" data-close aria-label="Luk kurv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
+  <div class="d-body" id="cartBody"></div>
+  <div class="d-foot" id="cartFoot"></div>
+</aside>
+
+<!-- Størrelsesguide -->
+<aside class="drawer" id="sizeguide" aria-label="Størrelsesguide" aria-hidden="true">
+  <div class="d-head"><h2>Størrelsesguide</h2>
+    <button class="iconbtn" data-close aria-label="Luk størrelsesguide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
+  <div class="d-body">
+    <div class="sizes-head" style="margin:0"><span class="label">Kropsmål</span>
+      <div class="unit-toggle" role="group" aria-label="Enhed"><button type="button" data-unit="cm" aria-pressed="true">cm</button><button type="button" data-unit="in" aria-pressed="false">inches</button></div></div>
+    <div class="table-x"><table class="sizes-t" id="sizeTable"></table></div>
+    <p class="muted" style="font-size:13px">Pants 01 har én længde: <b style="color:var(--ink);font-weight:500" id="inseam">82 cm</b> indvendig benlængde. Mellem to størrelser? Vælg den største i Vest 01 – den er syet tæt til kroppen.</p>
+    <div class="measure">
+      <span class="label" style="color:var(--ink)">Sådan måler du</span>
+      <p><b>Bryst</b> – rundt om den bredeste del af brystet, under armene.</p>
+      <p><b>Talje</b> – rundt om den smalleste del af livet.</p>
+      <p><b>Hofte</b> – rundt om den bredeste del af hofterne, med samlede fødder.</p>
+    </div>
+  </div>
+</aside>
+
+<!-- Levering & retur -->
+<aside class="drawer" id="info" aria-label="Levering og retur" aria-hidden="true">
+  <div class="d-head"><h2>Levering &amp; retur</h2>
+    <button class="iconbtn" data-close aria-label="Luk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5l14 14M19 5 5 19"/></svg></button></div>
+  <div class="d-body">
+    <div class="tw-list" style="list-style:none">
+      <div class="sum-row" style="padding:12px 0;border-bottom:1px solid var(--line)"><span>Pakkeshop (GLS)</span><span>39 kr.</span></div>
+      <div class="sum-row" style="padding:12px 0;border-bottom:1px solid var(--line)"><span>Levering til døren</span><span>59 kr.</span></div>
+      <div class="sum-row" style="padding:12px 0;border-bottom:1px solid var(--line)"><span>Ordrer over 499 kr.</span><span>Gratis</span></div>
+    </div>
+    <p class="muted" style="font-size:14px">Vi sender inden for 1–2 hverdage. Du har 30 dages returret fra du modtager pakken. Tøjet skal være ubrugt og med mærker på.</p>
+  </div>
+</aside>
+
+<div class="mobile-buy" id="mobileBuy" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+/* ================= DATA – tilføj nye produkter og kollektioner her ================= */
+const COLLECTIONS = [
+  { id:'lace-line', name:'Lace Line', no:'01', status:'live', text:'Skarpe snit i ivory, brudt af sort blonde i siderne. Bygget til festen – og til at blive brugt igen dagen efter.' },
+  { id:'kollektion-02', name:'Kollektion 02', no:'02', status:'soon', text:'Under udvikling. Tilmeld dig, så hører du først, når den lander.' }
+];
+const PRODUCTS = [
+  { id:'vest-01', name:'Vest 01', cat:'overdele', catName:'Overdele', coll:'lace-line', price:899, isNew:true, added:3,
+    color:'Ivory / sort blonde', imgs:[['vest-front','Forside'],['vest-3d','Side'],['vest-back','Bagside']],
+    sizes:{XS:'ok',S:'ok',M:'low',L:'ok',XL:'out'},
+    desc:'Tætsiddende vest med dyb V-hals og spids forkant. Paneler af sort blonde former taljen fra siden og bag. Lukkes med skjult lynlås midt for.',
+    details:['Dyb V-hals','Blondepaneler i siderne for og bag','Spids, dobbelt forkant','Skjult lynlås midt for'],
+    care:'Håndvask koldt eller skånevask 30°. Må ikke tørretumbles. Stryg på vrangen.',
+    day:'Over en hvid t-shirt med straight jeans og loafers.', night:'Alene, med Pants 01 og hæle.' },
+  { id:'pants-01', name:'Pants 01', cat:'bukser', catName:'Bukser', coll:'lace-line', price:1099, isNew:true, added:2,
+    color:'Ivory / sort blonde', imgs:[['pants-front','Forside'],['pants-3d','Side'],['pants-back','Bagside']],
+    sizes:{XS:'ok',S:'low',M:'ok',L:'ok',XL:'ok'},
+    desc:'Højtaljede bukser med vidde fra hoften og ned. Et bånd af sort blonde løber langs hele sidesømmen. Bred linning og pressefolder for.',
+    details:['Høj, bred linning','Blondebånd langs sidesømmen','Vide ben med fald','Én længde: 82 cm indv. benlængde'],
+    care:'Skånevask 30° på vrangen. Hæng til tørre. Stryg på lav varme.',
+    day:'Med en strikket top og flade sneakers.', night:'Med Vest 01 som sæt.' },
+  { id:'saet-01', name:'Sættet – Vest + Pants', cat:'saet', catName:'Sæt', coll:'lace-line', price:1799, was:1998, isNew:true, added:1,
+    color:'Ivory / sort blonde', imgs:[['vest-3d','Vest 01'],['pants-3d','Pants 01'],['vest-front','Vest forside'],['pants-front','Pants forside']],
+    sizes:{XS:'ok',S:'low',M:'low',L:'ok',XL:'out'},
+    desc:'Vest 01 og Pants 01 samlet. Blonden følger kroppen fra skulder til ankel og giver en lang, sammenhængende linje. Du sparer 199 kr. i forhold til at købe dem hver for sig.',
+    details:['Vest 01 + Pants 01','Samme størrelse i begge dele','Kan returneres samlet'],
+    care:'Se plejeanvisningen for hver del.',
+    day:'Bær delene hver for sig til hverdag.', night:'Bær dem sammen til fest, bryllup eller nytår.' }
+];
+const SIZES = ['XS','S','M','L','XL'];
+const SIZE_CHART = { // cm
+  'Bryst':[[80,84],[84,88],[88,92],[92,96],[96,100]],
+  'Talje':[[62,66],[66,70],[70,74],[74,78],[78,82]],
+  'Hofte':[[88,92],[92,96],[96,100],[100,104],[104,108]]
+};
+const FREE_SHIP = 499, SHIP = { pakkeshop:39, hjem:59 };
+
+/* ================= Hjælpere ================= */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const kr = n => n.toLocaleString('da-DK') + ' kr.';
+const img = (k) => `assets/${k}.jpg`;
+const byId = id => PRODUCTS.find(p => p.id === id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let toastT;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400); }
+
+/* ================= Kurv ================= */
+let cart = store.get('duo-cart', []).filter(l => byId(l.id) && SIZES.includes(l.size));
+const cartTotal = () => cart.reduce((s,l)=>s + byId(l.id).price*l.qty, 0);
+const cartCount = () => cart.reduce((s,l)=>s+l.qty,0);
+function saveCart(){ store.set('duo-cart', cart); renderCart(); }
+function addToCart(id, size){
+  const hit = cart.find(l => l.id===id && l.size===size);
+  hit ? hit.qty++ : cart.push({id,size,qty:1});
+  saveCart();
+  const c=$('#bagCount'); c.classList.add('bump'); setTimeout(()=>c.classList.remove('bump'),300);
+  openDrawer('cart');
+}
+function renderCart(){
+  const n = cartCount(), total = cartTotal();
+  $('#bagCount').textContent = n;
+  $('#cartQty').textContent = n ? `(${n})` : '';
+  const body = $('#cartBody'), foot = $('#cartFoot');
+  if(!cart.length){
+    body.innerHTML = `<div class="empty"><p class="serif">Din kurv er tom.</p><p class="muted">Start med det nyeste fra Kollektion 01.</p><a class="btn" href="#nyheder" data-close>Se New In</a></div>`;
+    foot.innerHTML = ''; return;
+  }
+  const left = Math.max(0, FREE_SHIP - total);
+  body.innerHTML = `<div class="ship"><span>${left ? `Du mangler <b>${kr(left)}</b> til fri fragt` : 'Du har <b>fri fragt</b>'}</span><div class="ship-track"><i style="width:${Math.min(100, total/FREE_SHIP*100)}%"></i></div></div>` +
+    cart.map((l,i) => { const p = byId(l.id); return `
+    <div class="line-item">
+      <a class="ph" href="#produkt-${p.id}" data-close><img src="${img(p.imgs[0][0])}" alt="${esc(p.name)}"></a>
+      <div>
+        <div class="li-top"><a class="serif" href="#produkt-${p.id}" data-close>${esc(p.name)}</a><span class="num">${kr(p.price*l.qty)}</span></div>
+        <p class="li-meta">Str. ${l.size} · ${esc(p.color)}</p>
+        <div class="li-bottom">
+          <div class="qty"><button type="button" data-q="${i}" data-d="-1" aria-label="Færre">−</button><span class="num">${l.qty}</span><button type="button" data-q="${i}" data-d="1" aria-label="Flere">+</button></div>
+          <button type="button" class="remove" data-rm="${i}">Fjern</button>
+        </div>
+      </div>
+    </div>`; }).join('');
+  foot.innerHTML = `<div class="sum-row total"><span>Subtotal</span><span class="num">${kr(total)}</span></div>
+    <p class="muted" style="font-size:12px">Inkl. moms. Fragt beregnes i kassen.</p>
+    <a class="btn block" href="#kassen" data-close>Gå til kassen</a>`;
+}
+document.addEventListener('click', e => {
+  const q = e.target.closest('[data-q]'); if(q){ const l = cart[+q.dataset.q]; l.qty += +q.dataset.d; if(l.qty<1) cart.splice(+q.dataset.q,1); saveCart(); if(location.hash==='#kassen') render(); return; }
+  const r = e.target.closest('[data-rm]'); if(r){ cart.splice(+r.dataset.rm,1); saveCart(); if(location.hash==='#kassen') render(); }
+});
+
+/* ================= Skuffer & menu ================= */
+let lastFocus;
+function openDrawer(id){
+  closeAll(true); lastFocus = document.activeElement;
+  const d = $('#'+id); d.classList.add('open'); d.setAttribute('aria-hidden','false');
+  $('#scrim').classList.add('open'); document.body.style.overflow='hidden';
+  setTimeout(()=>$('[data-close]', d)?.focus({preventScroll:true}), 50);
+}
+function openSheet(){ closeAll(true); const s=$('#sheet'); s.classList.add('open'); s.setAttribute('aria-hidden','false'); $('#menuBtn').setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+function closeAll(keepFocus){
+  $$('.drawer.open, .sheet.open').forEach(d => { d.classList.remove('open'); d.setAttribute('aria-hidden','true'); });
+  $('#scrim').classList.remove('open'); $('#menuBtn').setAttribute('aria-expanded','false'); document.body.style.overflow='';
+  if(!keepFocus && lastFocus) lastFocus.focus?.({preventScroll:true});
+}
+$('#bagBtn').onclick = () => openDrawer('cart');
+$('#menuBtn').onclick = openSheet;
+$('#scrim').onclick = () => closeAll();
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeAll(); });
+document.addEventListener('click', e => {
+  const o = e.target.closest('[data-open]'); if(o){ e.preventDefault(); openDrawer(o.dataset.open); return; }
+  const c = e.target.closest('[data-close]'); if(c) closeAll(true);
+  const f = e.target.closest('[data-filter]'); if(f){ state.filter = f.dataset.filter; state.coll='alle'; if(location.hash==='#shop') render(); }
+  const k = e.target.closest('#sheet a'); if(k) closeAll(true);
+});
+
+/* størrelsestabel cm / inches */
+function renderSizeTable(unit){
+  const f = v => unit==='cm' ? v : (v/2.54).toFixed(1).replace('.',',');
+  $('#sizeTable').innerHTML = `<thead><tr><th></th>${SIZES.map(s=>`<th>${s}</th>`).join('')}</tr></thead><tbody>` +
+    Object.entries(SIZE_CHART).map(([k,arr]) => `<tr><td>${k}</td>${arr.map(([a,b])=>`<td>${f(a)}–${f(b)}</td>`).join('')}</tr>`).join('') + '</tbody>';
+  $('#inseam').textContent = unit==='cm' ? '82 cm' : '32,3 in';
+  $$('[data-unit]').forEach(b => b.setAttribute('aria-pressed', b.dataset.unit===unit));
+}
+$$('[data-unit]').forEach(b => b.onclick = () => renderSizeTable(b.dataset.unit));
+renderSizeTable('cm');
+
+/* tilmelding – ikke koblet til e-mail-system endnu */
+document.addEventListener('submit', e => {
+  const f = e.target.closest('[data-notify]'); if(!f) return;
+  e.preventDefault();
+  f.querySelector('.form-note').textContent = 'Tak! (Prototype: tilmeldingen gemmes først, når shoppen er koblet til Shopify/Klaviyo.)';
+  f.reset();
+});
+
+/* ================= Komponenter ================= */
+function card(p){
+  const sold = Object.values(p.sizes).every(s=>s==='out');
+  return `<a class="card" href="#produkt-${p.id}">
+    <div class="card-media">
+      ${p.isNew ? '<span class="card-badge label">Nyhed</span>' : ''}
+      <img class="main" src="${img(p.imgs[0][0])}" alt="${esc(p.name)} – ${p.imgs[0][1].toLowerCase()}" loading="lazy">
+      <img class="alt" src="${img(p.imgs[1][0])}" alt="" loading="lazy">
+      ${sold ? '' : `<button type="button" class="card-quick" data-quick="${p.id}" aria-label="Vælg størrelse til ${esc(p.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg></button>`}
+    </div>
+    <div class="card-info"><span class="card-name">${esc(p.name)}</span><span class="card-price num">${p.was?`<span class="card-was">${kr(p.was)}</span>`:''}${kr(p.price)}</span></div>
+    <span class="card-meta">${esc(p.color)} · ${SIZES.filter(s=>p.sizes[s]!=='out').join(' ')}</span>
+  </a>`;
+}
+document.addEventListener('click', e => { const q = e.target.closest('[data-quick]'); if(q){ e.preventDefault(); location.hash = 'produkt-' + q.dataset.quick; setTimeout(()=>$('.sizes button:not([disabled])')?.focus(), 80); } });
+
+const soonCard = () => `<div class="card soon"><div class="card-media"><div>
+  <span class="label muted">Næste drop</span><h3>Kollektion 02</h3><a class="link" href="#kollektioner">Få besked</a></div></div>
+  <div class="card-info"><span class="card-name muted">Kommer snart</span></div></div>`;
+
+/* ================= Visninger ================= */
+const state = { filter:'alle', coll:'alle', sort:'nyeste', size:null, mode:'aften' };
+
+function viewHome(){
+  const newIn = [...PRODUCTS].filter(p=>p.isNew).sort((a,b)=>b.added-a.added);
+  return `
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="label rise">Kollektion 01 — Lace Line</span>
+        <h1 class="rise d1">Til festen.<br><em>Og dagen efter.</em></h1>
+        <p class="hero-lede rise d2">Ivory snit med sort blonde. Bær dem samlet til fest, eller hver for sig med jeans og sneakers.</p>
+        <div class="hero-cta rise d3"><a class="btn" href="#nyheder">Shop kollektionen</a><a class="link" href="#produkt-saet-01">Se sættet</a></div>
+      </div>
+      <div class="duo">
+        <figure><a href="#produkt-vest-01"><div class="ph"><img src="${img('vest-3d')}" alt="Vest 01 med sort blonde i siderne"></div></a>
+          <figcaption><span class="serif">Vest 01</span><span class="num">${kr(899)}</span></figcaption><span class="hero-tag label">Dag</span></figure>
+        <figure><a href="#produkt-pants-01"><div class="ph"><img src="${img('pants-3d')}" alt="Pants 01 med vide ben og blondebånd"></div></a>
+          <figcaption><span class="serif">Pants 01</span><span class="num">${kr(1099)}</span></figcaption><span class="hero-tag label">Aften</span></figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="promises">
+    <div><strong>Fri fragt</strong><span>Over 499 kr.</span></div>
+    <div><strong>30 dages retur</strong><span>Ubrugt og med mærker</span></div>
+    <div><strong>Sendes på 1–2 dage</strong><span>Pakkeshop eller til døren</span></div>
+    <div><strong>Designet i Danmark</strong><span>Små oplag pr. drop</span></div>
+  </div></div>
+
+  <section class="block wrap" id="sec-nyheder">
+    <div class="sec-head"><h2>New In</h2><a class="link" href="#shop">Se alle</a></div>
+    <div class="row">${newIn.map(card).join('')}${soonCard()}</div>
+  </section>
+
+  <section class="block two-ways">
+    <div class="wrap tw-grid">
+      <div class="tw-copy">
+        <span class="label rule">Ét stykke tøj · to måder</span>
+        <h2 id="twTitle"></h2>
+        <div class="toggle" role="group" aria-label="Vælg anledning">
+          <button type="button" data-mode="dag" aria-pressed="false">Dag</button>
+          <button type="button" data-mode="aften" aria-pressed="true">Aften</button>
+        </div>
+        <ul class="tw-list" id="twList"></ul>
+        <a class="link" style="justify-self:start" id="twLink" href="#produkt-saet-01">Shop looket</a>
+      </div>
+      <div class="tw-stage" id="twStage"></div>
+    </div>
+  </section>
+
+  <section class="block wrap" id="sec-udvalgt">
+    <div class="sec-head"><h2>Udvalgt</h2><span class="label muted">Bedst til fest</span></div>
+    <a class="card" href="#produkt-saet-01" style="gap:0">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--tile)">
+        <div class="card-media" style="aspect-ratio:4/5"><img class="main" src="${img('vest-front')}" alt="Vest 01 forside"></div>
+        <div class="card-media" style="aspect-ratio:4/5"><img class="main" src="${img('pants-front')}" alt="Pants 01 forside"></div>
+      </div>
+      <div class="coll-info"><h3 class="serif" style="font-size:28px">Sættet – Vest + Pants</h3><span class="num"><span class="card-was">${kr(1998)}</span>${kr(1799)}</span></div>
+      <span class="card-meta" style="margin-top:4px">Spar 199 kr. når du køber dem sammen</span>
+    </a>
+  </section>
+
+  <section class="block wrap" id="sec-koll" style="padding-top:0">
+    <div class="sec-head"><h2>Kollektioner</h2></div>
+    ${collectionsGrid()}
+  </section>`;
+}
+
+function collectionsGrid(){
+  const live = COLLECTIONS.find(c=>c.status==='live'), soon = COLLECTIONS.find(c=>c.status==='soon');
+  return `<div class="coll">
+    <a href="#shop" data-coll="${live.id}">
+      <div class="coll-card"><img src="${img('vest-3d')}" alt="Lace Line – Vest 01"><img src="${img('pants-3d')}" alt="Lace Line – Pants 01"></div>
+      <div class="coll-info"><h3>${live.no} — ${esc(live.name)}</h3><span class="link">Shop ${PRODUCTS.filter(p=>p.coll===live.id).length} styles</span></div>
+      <p class="muted" style="max-width:52ch;margin-top:6px">${esc(live.text)}</p>
+    </a>
+    ${soon ? `<div class="coll-next">
+      <div style="display:grid;gap:12px"><span class="label muted">Næste drop</span><h3>${esc(soon.name)}</h3><p class="muted">${esc(soon.text)}</p></div>
+      <form data-notify><div class="notify"><label class="sr" for="collEmail">E-mail</label><input id="collEmail" type="email" placeholder="Din e-mail" required autocomplete="email"><button type="submit">Få besked</button></div><p class="form-note" aria-live="polite"></p></form>
+    </div>` : ''}
+  </div>`;
+}
+document.addEventListener('click', e => { const c = e.target.closest('[data-coll]'); if(c){ state.coll=c.dataset.coll; state.filter='alle'; } });
+
+function wireTwoWays(){
+  const stage = $('#twStage'); if(!stage) return;
+  const modes = {
+    dag:{ title:'Om dagen: <em>én del ad gangen.</em>', imgs:[['vest-front','Vest 01'],['vest-back','Bagside']], link:'#produkt-vest-01',
+      list:[['Vest 01','Over en hvid t-shirt'],['Underdel','Straight jeans'],['Sko','Loafers eller sneakers']] },
+    aften:{ title:'Om aftenen: <em>det hele sammen.</em>', imgs:[['vest-3d','Vest 01'],['pants-3d','Pants 01']], link:'#produkt-saet-01',
+      list:[['Vest 01','Alene, knappet helt'],['Pants 01','Samme størrelse som vesten'],['Sko','Hæle eller spidse flats']] }
+  };
+  const set = (m, animate) => {
+    state.mode = m; const d = modes[m];
+    $$('[data-mode]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.mode===m));
+    const paint = () => {
+      $('#twTitle').innerHTML = d.title;
+      $('#twList').innerHTML = d.list.map(([a,b])=>`<li><span>${a}</span><span>${b}</span></li>`).join('');
+      $('#twLink').href = d.link;
+      stage.innerHTML = d.imgs.map(([k,a])=>`<div class="ph"><img src="${img(k)}" alt="${a}"></div>`).join('');
+      stage.classList.remove('swap');
+    };
+    if(animate && !matchMedia('(prefers-reduced-motion: reduce)').matches){ stage.classList.add('swap'); setTimeout(paint, 280); } else paint();
+  };
+  $$('[data-mode]').forEach(b => b.onclick = () => set(b.dataset.mode, true));
+  set(state.mode, false);
+}
+
+function viewShop(){
+  const cats = [['alle','Alle'],['overdele','Overdele'],['bukser','Bukser'],['saet','Sæt']];
+  let list = PRODUCTS.filter(p => (state.filter==='alle' || p.cat===state.filter) && (state.coll==='alle' || p.coll===state.coll));
+  list.sort(state.sort==='pris-op' ? (a,b)=>a.price-b.price : state.sort==='pris-ned' ? (a,b)=>b.price-a.price : (a,b)=>b.added-a.added);
+  const coll = COLLECTIONS.find(c=>c.id===state.coll);
+  return `<div class="wrap">
+    <div class="page-head"><span class="label muted">${coll ? `Kollektion ${coll.no}` : 'Shop'}</span><h1>${coll ? esc(coll.name) : 'Alt tøj'}</h1></div>
+    <div class="filters">
+      <div class="chips" role="group" aria-label="Kategori">${cats.map(([k,n])=>`<button type="button" data-cat="${k}" aria-pressed="${state.filter===k}">${n}</button>`).join('')}
+        ${coll ? `<button type="button" data-clearcoll aria-pressed="false">× ${esc(coll.name)}</button>`:''}</div>
+      <div class="sort"><label for="sortSel" class="muted">Sortér</label>
+        <select id="sortSel"><option value="nyeste">Nyeste</option><option value="pris-op">Pris, lav–høj</option><option value="pris-ned">Pris, høj–lav</option></select></div>
+    </div>
+    <p class="count" style="margin-bottom:14px">${list.length} ${list.length===1?'style':'styles'}</p>
+    <div class="grid" style="padding-bottom:72px">${list.map(card).join('') || '<p class="muted">Ingen styles her endnu.</p>'}</div>
+  </div>`;
+}
+function wireShop(){
+  const sel = $('#sortSel'); if(!sel) return;
+  sel.value = state.sort; sel.onchange = () => { state.sort = sel.value; render(); };
+  $$('[data-cat]').forEach(b => b.onclick = () => { state.filter = b.dataset.cat; render(); });
+  $('[data-clearcoll]')?.addEventListener('click', () => { state.coll='alle'; render(); });
+}
+
+function viewProduct(p){
+  const firstOk = null;
+  state.size = firstOk;
+  const coll = COLLECTIONS.find(c=>c.id===p.coll);
+  const others = PRODUCTS.filter(x=>x.id!==p.id);
+  return `<div class="wrap">
+    <nav class="crumbs" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>/</span><a href="#shop">Shop</a><span>/</span><span>${esc(p.name)}</span></nav>
+    <div class="pdp">
+      <div>
+        <div class="gallery" id="gallery">${p.imgs.map(([k,cap],i)=>`<figure><img src="${img(k)}" alt="${esc(p.name)} – ${cap.toLowerCase()}" ${i?'loading="lazy"':''}><figcaption class="label">${cap}</figcaption></figure>`).join('')}</div>
+        <div class="dots" id="dots">${p.imgs.map((_,i)=>`<span class="${i?'':'on'}"></span>`).join('')}</div>
+      </div>
+      <div class="buy">
+        <div style="display:grid;gap:10px">
+          <span class="label muted">Kollektion ${coll.no} — ${esc(coll.name)}</span>
+          <h1>${esc(p.name)}</h1>
+          <p class="buy-price num">${p.was?`<span class="card-was" style="font-size:15px">${kr(p.was)}</span>`:''}${kr(p.price)}<small>inkl. moms</small></p>
+        </div>
+        <div class="swatch-row"><span class="swatch" aria-hidden="true"></span><span>${esc(p.color)}</span></div>
+        <div>
+          <div class="sizes-head"><span class="label">Størrelse</span><button type="button" class="link" data-open="sizeguide">Størrelsesguide</button></div>
+          <div class="sizes" role="group" aria-label="Vælg størrelse">${SIZES.map(s=>`<button type="button" data-size="${s}" aria-pressed="false" ${p.sizes[s]==='out'?'disabled aria-label="'+s+' – udsolgt"':''}>${s}</button>`).join('')}</div>
+          <p class="stock-note" id="stockNote" aria-live="polite">${Object.values(p.sizes).includes('out') ? 'Overstregede størrelser er udsolgt.' : ''}</p>
+        </div>
+        <button type="button" class="btn block" id="addBtn" disabled>Vælg størrelse</button>
+        <div class="duo-note"><span class="serif">Duo</span><div><b style="font-weight:500">Dag:</b> ${esc(p.day)}<br><b style="font-weight:500">Aften:</b> ${esc(p.night)}</div></div>
+        <div class="acc">
+          <details open><summary>Beskrivelse</summary><div class="acc-body"><p>${esc(p.desc)}</p><ul>${p.details.map(d=>`<li>${esc(d)}</li>`).join('')}</ul></div></details>
+          <details><summary>Materiale &amp; pleje</summary><div class="acc-body"><p>${esc(p.care)}</p></div></details>
+          <details><summary>Levering &amp; retur</summary><div class="acc-body"><p>Fri fragt over 499 kr. Sendes inden for 1–2 hverdage. 30 dages returret.</p></div></details>
+        </div>
+      </div>
+    </div>
+    <section style="padding-block:24px 80px">
+      <div class="sec-head"><h2 style="font-size:clamp(28px,5vw,40px)">Style den med</h2></div>
+      <div class="row">${others.map(card).join('')}</div>
+    </section>
+  </div>`;
+}
+function wireProduct(p){
+  const add = $('#addBtn'), note = $('#stockNote'), mb = $('#mobileBuy');
+  const sync = () => {
+    const ok = !!state.size;
+    add.disabled = !ok; add.textContent = ok ? `Læg i kurv — ${kr(p.price)}` : 'Vælg størrelse';
+    mb.innerHTML = `<div class="mb-info"><span class="serif">${esc(p.name)}</span><span class="muted num">${state.size?'Str. '+state.size+' · ':''}${kr(p.price)}</span></div>
+      <button type="button" class="btn" id="mbAdd">${ok?'Læg i kurv':'Vælg str.'}</button>`;
+    $('#mbAdd').onclick = () => ok ? addToCart(p.id, state.size) : $('.sizes').scrollIntoView({behavior:'smooth', block:'center'});
+  };
+  $$('[data-size]').forEach(b => b.onclick = () => {
+    state.size = b.dataset.size;
+    $$('[data-size]').forEach(x=>x.setAttribute('aria-pressed', x===b));
+    const low = p.sizes[state.size]==='low';
+    note.className = 'stock-note' + (low?' low':'');
+    note.textContent = low ? `Få tilbage i ${state.size}` : `${state.size} er på lager`;
+    sync();
+  });
+  add.onclick = () => addToCart(p.id, state.size);
+  sync();
+  // galleri-prikker
+  const g = $('#gallery'), dots = $$('#dots span');
+  g.addEventListener('scroll', () => { const i = Math.round(g.scrollLeft / g.clientWidth); dots.forEach((d,j)=>d.classList.toggle('on', i===j)); }, {passive:true});
+  // mobil købebjælke vises når købeknappen er ude af syne
+  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 0; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); });
+  io.observe(add); cleanup.push(() => { io.disconnect(); mb.classList.remove('show'); });
+}
+
+function viewCheckout(){
+  if(!cart.length) return `<div class="wrap"><div class="page-head"><span class="label muted">Kasse</span><h1>Kurven er tom</h1></div><div style="padding-bottom:80px"><a class="btn" href="#nyheder">Se New In</a></div></div>`;
+  const sub = cartTotal(), method = state.ship || 'pakkeshop';
+  const ship = sub >= FREE_SHIP ? 0 : SHIP[method], total = sub + ship;
+  return `<div class="wrap">
+    <div class="page-head"><span class="label muted">Kasse</span><h1>Næsten dit</h1></div>
+    <div class="checkout">
+      <form class="co-form" id="coForm" novalidate>
+        <fieldset><legend class="label">Kontakt</legend>
+          <div class="field"><label for="coEmail">E-mail</label><input id="coEmail" type="email" autocomplete="email" required></div>
+          <div class="field"><label for="coPhone">Mobilnummer</label><input id="coPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+45"></div>
+        </fieldset>
+        <fieldset><legend class="label">Levering</legend>
+          <div class="two"><div class="field"><label for="coFirst">Fornavn</label><input id="coFirst" autocomplete="given-name" required></div><div class="field"><label for="coLast">Efternavn</label><input id="coLast" autocomplete="family-name" required></div></div>
+          <div class="field"><label for="coAddr">Adresse</label><input id="coAddr" autocomplete="street-address" required></div>
+          <div class="two zip"><div class="field"><label for="coZip">Postnr.</label><input id="coZip" autocomplete="postal-code" inputmode="numeric" maxlength="4" required></div><div class="field"><label for="coCity">By</label><input id="coCity" autocomplete="address-level2" required></div></div>
+          <label class="opt"><input type="radio" name="ship" value="pakkeshop" ${method==='pakkeshop'?'checked':''}><span>Pakkeshop (GLS)<span class="opt-sub">1–3 hverdage</span></span><span class="num">${sub>=FREE_SHIP?'Gratis':kr(SHIP.pakkeshop)}</span></label>
+          <label class="opt"><input type="radio" name="ship" value="hjem" ${method==='hjem'?'checked':''}><span>Levering til døren<span class="opt-sub">1–2 hverdage</span></span><span class="num">${sub>=FREE_SHIP?'Gratis':kr(SHIP.hjem)}</span></label>
+        </fieldset>
+        <fieldset><legend class="label">Betaling</legend>
+          <div class="notice">Prototype: betaling er ikke koblet på. I den rigtige shop håndteres MobilePay, kort og Apple Pay af Shopify Checkout. Der oprettes ingen ordre her.</div>
+        </fieldset>
+        <button class="btn block" type="submit">Gennemfør køb — <span class="num">${kr(total)}</span></button>
+        <p class="form-note" id="coNote" aria-live="polite"></p>
+      </form>
+      <aside class="co-summary">
+        <span class="label">Din ordre</span>
+        ${cart.map(l=>{const p=byId(l.id);return `<div class="line-item" style="grid-template-columns:64px 1fr"><div class="ph"><img src="${img(p.imgs[0][0])}" alt=""></div><div><div class="li-top"><span class="serif" style="font-size:16px">${esc(p.name)}</span><span class="num">${kr(p.price*l.qty)}</span></div><p class="li-meta">Str. ${l.size} · Antal ${l.qty}</p></div></div>`}).join('')}
+        <div style="border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px">
+          <div class="sum-row"><span>Subtotal</span><span class="num">${kr(sub)}</span></div>
+          <div class="sum-row"><span>Fragt</span><span class="num">${ship?kr(ship):'Gratis'}</span></div>
+          <div class="sum-row total"><span>I alt</span><span class="num">${kr(total)}</span></div>
+          <p class="muted" style="font-size:12px">Heraf moms ${kr(Math.round(total*0.2))}</p>
+        </div>
+      </aside>
+    </div>
+  </div>`;
+}
+function wireCheckout(){
+  const f = $('#coForm'); if(!f) return;
+  $$('input[name="ship"]').forEach(r => r.onchange = () => { state.ship = r.value; const y = scrollY; render(); scrollTo(0,y); });
+  f.onsubmit = e => {
+    e.preventDefault();
+    const bad = $$('input[required]', f).find(i => !i.value.trim() || (i.type==='email' && !/^\S+@\S+\.\S+$/.test(i.value)) || (i.id==='coZip' && !/^\d{4}$/.test(i.value)));
+    const note = $('#coNote');
+    if(bad){ bad.focus(); note.textContent = 'Udfyld ' + (bad.labels[0]?.textContent || 'feltet').toLowerCase() + ' for at fortsætte.'; return; }
+    note.textContent = 'Formularen er udfyldt korrekt. Ingen ordre er oprettet, fordi betaling ikke er koblet på endnu.';
+  };
+}
+
+/* ================= Router ================= */
+let cleanup = [];
+function render(){
+  cleanup.forEach(fn=>fn()); cleanup = [];
+  const h = (location.hash || '#forside').slice(1);
+  const app = $('#app'); let nav = '';
+  if(h.startsWith('produkt-') && byId(h.slice(8))){ const p = byId(h.slice(8)); app.innerHTML = viewProduct(p); wireProduct(p); document.title = p.name + ' — DUO STUDIO'; nav='shop'; }
+  else if(h==='shop'){ app.innerHTML = viewShop(); wireShop(); document.title='Shop — DUO STUDIO'; nav='shop'; }
+  else if(h==='kassen'){ app.innerHTML = viewCheckout(); wireCheckout(); document.title='Kasse — DUO STUDIO'; }
+  else { app.innerHTML = viewHome(); wireTwoWays(); document.title='DUO STUDIO'; nav = (h==='nyheder'||h==='kollektioner') ? h : 'forside'; }
+  $$('[data-nav]').forEach(a => a.dataset.nav===nav ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
+  return h;
+}
+function route(scroll=true){
+  const h = render();
+  if(!scroll) return;
+  const target = h==='nyheder' ? $('#sec-nyheder') : h==='kollektioner' ? $('#sec-koll') : null;
+  if(target){ const top = target.getBoundingClientRect().top + scrollY - 70; scrollTo({top, behavior:'auto'}); }
+  else scrollTo({top:0, behavior:'auto'});
+}
+addEventListener('hashchange', () => { closeAll(true); route(); });
+$('#year').textContent = new Date().getFullYear();
+renderCart();
+route(!!location.hash && location.hash !== '#forside');
+})();
+</script>
