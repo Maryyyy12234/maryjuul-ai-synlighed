@@ -200,6 +200,9 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 .lb-item:nth-child(even) img{height:min(48vh,420px)}
 .lb-item figcaption{display:flex;justify-content:space-between;gap:16px;color:var(--mute-d)}
 .lb-item figcaption b{color:var(--white);font-weight:500}
+.lb-review{border:1px dashed var(--mute-d);padding:12px 14px;font-size:13px;line-height:1.5;color:var(--white) !important;max-width:44ch}
+.lb-review b{font-weight:600}
+.lb-note{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#E8C9B0;max-width:32ch;line-height:1.45}
 @media (max-width:767px){.lb-item img{height:auto;width:78vw}.lb-item:nth-child(even) img{height:auto;width:64vw}}
 @media (min-width:1000px){.lookbook{padding-block:120px 96px}.lb-head{grid-template-columns:1fr auto;align-items:end}}
 
@@ -510,10 +513,10 @@ const PRODUCTS = [
 ];
 /* Kampagnebillederne er AI-genererede og afviger fra produkterne (se 'note'). Bruges kun som stemning. */
 const LOOKS = [
-  { img:'look-curls', cap:'Alma · Freja', note:'Bukser med blonder foran, sko med sten, maven synlig' },
-  { img:'look-red', cap:'Alma · Freja', note:'Bukser med blonder foran, sko med sten, maven synlig' },
-  { img:'look-bob', cap:'Alma · Freja', note:'Blonder på buksernes forside, sko med sten' },
-  { img:'look-brunette', cap:'Alma · Freja', note:'Bukser med blonder foran, sko med sten, maven synlig' }
+  { img:'look-curls', cap:'Alma · Freja', note:'Vesten for kort (maven synlig), blonder foran på bukserne, sko med sten' },
+  { img:'look-red', cap:'Alma · Freja', note:'Vesten for kort (maven synlig), blonder foran på bukserne, sko med sten' },
+  { img:'look-bob', cap:'Alma · Freja', note:'Blonder foran på bukserne, sko med sten' },
+  { img:'look-brunette', cap:'Alma · Freja', note:'Vesten for kort (maven synlig), blonder foran på bukserne, sko med sten' }
 ];
 const lookBy = k => LOOKS.find(l => l.img === k);
 
@@ -704,12 +707,12 @@ function viewHome(){
     <div class="wrap lb-head">
       <h2 class="cond" id="lbTitle">Look<span class="o">book</span></h2>
       <div class="lb-meta" style="display:grid;gap:18px">
-        <p>Noir Edit er til forskellige kroppe, aldre og udtryk. Træk eller swipe for at se alle looks.</p>
+        <p>Noir Edit er til forskellige kroppe, aldre og udtryk. Træk eller swipe for at se alle looks.</p>${PREVIEW?'<p class="lb-review"><b>Til gennemgang:</b> Lookbook-billederne er AI-genererede og viser ikke Alma, Freja og Cleo korrekt. De skal erstattes, før shoppen åbner.</p>':''}
         <div class="lb-ctrl"><button type="button" data-lb="-1" aria-label="Forrige look">←</button><span class="lb-count" id="lbCount">01 / 0${LOOKS.length}</span><button type="button" data-lb="1" aria-label="Næste look">→</button></div>
       </div>
     </div>
     <div class="lb-track" id="lbTrack" tabindex="0" aria-label="Lookbook-billeder">
-      ${LOOKS.map((l,i)=>`<figure class="lb-item"><div class="ph">${reviewTag(l.img)}<img src="${img(l.img)}" alt="Look ${i+1}: model i ${l.cap.replace(' · ',' og ')}" draggable="false"></div><figcaption class="mono"><b>Look 0${i+1}</b><span>${l.cap}</span></figcaption></figure>`).join('')}
+      ${LOOKS.map((l,i)=>`<figure class="lb-item"><div class="ph">${reviewTag(l.img)}<img src="${img(l.img)}" alt="Look ${i+1}: model i ${l.cap.replace(' · ',' og ')}" draggable="false"></div><figcaption class="mono"><b>Look 0${i+1}</b><span>${l.cap}</span></figcaption>${PREVIEW?`<p class="lb-note">Afviger: ${esc(l.note.toLowerCase())}</p>`:''}</figure>`).join('')}
     </div>
   </section>
 
@@ -809,7 +812,6 @@ function viewProduct(p){
   const sizeBlock = p.sizes
     ? `<div class="sizes" role="group" aria-label="Vælg størrelse">${p.sizes.map(s=>`<button type="button" data-size="${s}" aria-pressed="false">${s}</button>`).join('')}</div>`
     : `<div class="pending"><b>Størrelser tilføjes.</b> Størrelserne er ikke fastlagt endnu.</div>`;
-  const lk = lookBy(p.look);
   return `<div class="wrap">
     <nav class="crumbs mono" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>/</span><a href="#shop">Shop</a><span>/</span><span style="color:var(--ink)">${esc(p.name)}</span></nav>
     <div class="pdp">
@@ -837,11 +839,9 @@ function viewProduct(p){
           <details><summary>Detaljer</summary><div class="body"><ul>${p.details.map(d=>`<li>${esc(d)}</li>`).join('')}</ul></div></details>
           <details><summary>Materiale &amp; pleje</summary><div class="body"><p>${p.material?esc(p.material):'<span class="tbd">Materiale tilføjes</span>'}</p><p>${p.care?esc(p.care):'<span class="tbd">Plejeanvisning tilføjes</span>'}</p></div></details>
           <details><summary>Levering &amp; retur</summary><div class="body"><p><span class="tbd">Fragt og returregler tilføjes</span></p></div></details>
+          <details><summary>Styling</summary><div class="body"><p>Dag: ${esc(p.day)}.</p><p>Aften: ${esc(p.night)}.</p></div></details>
         </div>
-        <div class="seen">
-          <img src="${img(p.look)}" alt="Kampagnebillede fra Noir Edit" loading="lazy">
-          <p><b>Dag / aften</b>Dag: ${esc(p.day)}. Aften: ${esc(p.night)}.${PREVIEW&&lk?`<br><br><span class="mono" style="font-size:10px">AI-kampagnebillede – til gennemgang. Afviger fra produktet: ${esc(lk.note.toLowerCase())}.</span>`:''}</p>
-        </div>
+</div>
       </div>
     </div>
     <section class="related" aria-label="Fuldend looket">
