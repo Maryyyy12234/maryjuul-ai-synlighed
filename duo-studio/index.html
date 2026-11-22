@@ -38,9 +38,9 @@ h1,h2,h3,p{margin:0}
 h1,h2,h3{font-weight:inherit;text-wrap:balance}
 .wrap{max-width:var(--maxw);margin-inline:auto;padding-left:var(--gl);padding-right:var(--gr)}
 .cond{font-family:var(--display);font-stretch:62%;font-weight:800;text-transform:uppercase;line-height:.84;letter-spacing:-.005em}
-.mono{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;line-height:1.4}
+.mono{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;line-height:1.4}
 .mute{color:var(--mute)}
-.tbd{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--mute);border-bottom:1px dashed currentColor;padding-bottom:1px;white-space:nowrap}
+.tbd{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--mute);border-bottom:1px dashed currentColor;padding-bottom:1px;white-space:nowrap}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .logo{display:block;aspect-ratio:1140/496;background:currentColor;-webkit-mask:url(assets/logo.png) center/contain no-repeat;mask:url(assets/logo.png) center/contain no-repeat}
 
@@ -57,7 +57,7 @@ h1,h2,h3{font-weight:inherit;text-wrap:balance}
 
 /* ---------- Top ---------- */
 .strip{background:var(--ink);color:var(--white);text-align:center;padding:7px var(--gr) 7px var(--gl)}
-.strip .mono{font-size:10.5px}
+.strip .mono{font-size:11px}
 header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--ivory);transition:box-shadow .3s}
 header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 .bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:56px}
@@ -132,7 +132,7 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
   .idx a:hover{padding-left:8px}
   .idx b{font-family:var(--display);font-stretch:62%;font-weight:800;font-size:30px;text-transform:uppercase;line-height:1}
 }
-.review{position:absolute;left:10px;top:10px;z-index:3;background:var(--white);color:var(--ink);font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;line-height:1.2;pointer-events:none}
+.review{position:absolute;left:10px;top:10px;z-index:3;background:var(--white);color:var(--ink);font-family:var(--mono);font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;padding:4px 6px;line-height:1.2;pointer-events:none;font-size:11px}
 
 /* ---------- INTRO ---------- */
 .intro-band{background:var(--white);padding-block:72px 64px;margin-top:56px}
@@ -149,14 +149,14 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 .coll-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:40px;flex-wrap:wrap}
 .coll-head h2{font-size:clamp(48px,14vw,200px)}
 .pieces{display:grid;gap:56px}
-.piece{display:grid;gap:12px;min-width:0}
+.piece{display:grid;gap:12px;min-width:0;align-content:start;align-self:start}
 .piece-media{position:relative;overflow:hidden;background:var(--grey)}
 .piece-media a{display:block;position:relative;aspect-ratio:3/4}
 .piece-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
 .piece-media .back{clip-path:inset(100% 0 0 0);transition:clip-path .8s var(--ease),transform 1.2s var(--ease)}
 .piece.flipped .back{clip-path:inset(0 0 0 0)}
 @media (hover:hover){.piece-media:hover .back{clip-path:inset(0 0 0 0)}.piece-media:hover img{transform:scale(1.03)}}
-.flip{position:absolute;right:10px;bottom:10px;z-index:3;height:34px;padding:0 12px;background:var(--white);color:var(--ink);font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
+.flip{position:absolute;right:10px;bottom:10px;z-index:3;height:34px;padding:0 12px;background:var(--white);color:var(--ink);font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px}
 .flip:hover{background:var(--ink);color:var(--white)}
 .piece-cap{display:grid;grid-template-columns:1fr auto;align-items:end;gap:6px 12px}
 .piece-cap .nm{font-size:clamp(56px,13vw,120px);grid-row:span 2}
@@ -202,7 +202,7 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 .lb-item figcaption b{color:var(--white);font-weight:500}
 .lb-review{border:1px dashed var(--mute-d);padding:12px 14px;font-size:13px;line-height:1.5;color:var(--white) !important;max-width:44ch}
 .lb-review b{font-weight:600}
-.lb-note{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#E8C9B0;max-width:32ch;line-height:1.45}
+.lb-note{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:#E8C9B0;max-width:32ch;line-height:1.45}
 @media (max-width:767px){.lb-item img{height:auto;width:78vw}.lb-item:nth-child(even) img{height:auto;width:64vw}}
 @media (min-width:1000px){.lookbook{padding-block:120px 96px}.lb-head{grid-template-columns:1fr auto;align-items:end}}
 
@@ -261,7 +261,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 @media (max-width:560px){.toolbar{flex-wrap:wrap;row-gap:6px}.tabs{flex:1 1 100%}}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{font-size:12.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;padding:6px 0;color:var(--mute);border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
-.tabs button sup{font-family:var(--mono);font-weight:400;font-size:9.5px;margin-left:2px}
+.tabs button sup{font-family:var(--mono);font-weight:400;font-size:10.5px;margin-left:2px}
 .tabs button[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
 .sort{display:flex;align-items:center;gap:8px;font-size:12.5px;flex-shrink:0}
 .sort select{font:inherit;font-weight:600;background:transparent;color:var(--ink);border:0;padding:4px 16px 4px 0;appearance:none;-webkit-appearance:none;cursor:pointer;
@@ -306,7 +306,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 .sizes button[aria-pressed="true"]{background:var(--ink);color:var(--white);border-color:var(--ink)}
 .pending{border:1px dashed var(--mute);padding:14px 16px;font-size:13.5px;line-height:1.5;color:var(--mute)}
 .pending b{color:var(--ink);font-weight:600}
-.buy-note{font-size:12.5px;color:var(--mute);text-align:center}
+.buy-note{font-size:13px;color:var(--mute);text-align:center}
 .acc details{border-bottom:1px solid var(--grey)}
 .acc details:first-child{border-top:1.5px solid var(--ink)}
 .acc summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:16px 0;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
@@ -330,6 +330,12 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 @media (min-width:1400px){.pdp{grid-template-columns:minmax(0,1fr) 440px;gap:80px}}
 .related{padding-block:56px 96px;border-top:1.5px solid var(--ink)}
 .related h2{font-size:clamp(48px,9vw,110px);margin-bottom:28px}
+.closed{display:flex;gap:10px;align-items:flex-start;background:var(--ink);color:var(--white);padding:12px 14px;font-size:13.5px;line-height:1.45}
+.closed b{font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:12.5px;display:block;margin-bottom:2px}
+.closed i{flex:0 0 8px;height:8px;margin-top:5px;border-radius:50%;background:#E8C9B0}
+.btn.preview{background:transparent;color:var(--ink)}
+.btn.preview:hover{background:var(--ink);color:var(--white)}
+@media (max-width:999px){body.has-mbar{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}}
 .mbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--white);box-shadow:0 -1px 0 var(--grey);
   padding:10px var(--gr) calc(env(safe-area-inset-bottom,0px) + 10px) var(--gl);display:flex;gap:12px;align-items:center;transform:translateY(110%);transition:transform .45s var(--ease)}
 .mbar.show{transform:none}
@@ -376,7 +382,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 fieldset{border:0;padding:0;margin:0;display:grid;gap:12px;min-width:0}
 legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .fld{display:grid;gap:6px;min-width:0}
-.fld label{font-size:12.5px;color:var(--mute)}
+.fld label{font-size:13px;color:var(--mute)}
 .fld input{height:50px;width:100%;border:1px solid var(--grey);background:var(--white);color:var(--ink);font:inherit;font-size:16px;padding:0 14px;border-radius:0;transition:border-color .2s}
 .fld input:focus{outline:none;border-color:var(--ink)}
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
@@ -488,6 +494,8 @@ legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacin
 (() => {
 /* Forhåndsvisning: viser "til gennemgang"-mærker på AI-kampagnebilleder. Sæt til false ved lancering. */
 const PREVIEW = true;
+/* Sæt til true, når priser, størrelser og betaling er klar. Indtil da vises købsknapperne som forhåndsvisning. */
+const OPEN_FOR_SALE = false;
 
 /* ================= DATA – nye produkter og kollektioner tilføjes her =================
    price: null = pris ikke fastlagt · sizes: null = størrelser ikke fastlagt · material/care: null = ikke oplyst */
@@ -573,7 +581,7 @@ function renderCart(){
     </div>`; }).join('');
   foot.innerHTML = `<div class="sum tot"><span>Subtotal</span>${allPriced()?`<span class="mono">${kr(cartTotal())}</span>`:'<span class="tbd">Følger</span>'}</div>
     <p class="mute" style="font-size:12.5px">Priser og fragt vises, når de er fastlagt. Køb er ikke åbnet endnu.</p>
-    <a class="btn block" href="#kassen" data-close>Til kassen <span class="arr">→</span></a>`;
+    <a class="btn block" href="#kassen" data-close>${OPEN_FOR_SALE?'Til kassen':'Se kassen · forhåndsvisning'} <span class="arr">→</span></a>`;
 }
 document.addEventListener('click', e => {
   const q = e.target.closest('[data-q]'); if(q){ const l = cart[+q.dataset.q]; l.qty += +q.dataset.d; if(l.qty<1) cart.splice(+q.dataset.q,1); saveCart(); if(location.hash==='#kassen') render(); return; }
@@ -831,8 +839,8 @@ function viewProduct(p){
           ${sizeBlock}
         </div>
         <div style="display:grid;gap:10px">
-          <button type="button" class="btn block" id="addBtn">Læg i kurv <span class="arr">→</span></button>
-          <p class="buy-note">Køb er ikke åbnet endnu. Kurven er en forhåndsvisning.</p>
+          ${OPEN_FOR_SALE?'':'<div class="closed" role="status"><i aria-hidden="true"></i><span><b>Ikke åben for køb endnu</b>Pris og størrelser mangler. Du kan prøve kurven, men intet kan købes.</span></div>'}
+          <button type="button" class="btn block${OPEN_FOR_SALE?'':' preview'}" id="addBtn">Læg i kurv <span class="arr">→</span></button>
         </div>
         <div class="acc">
           <details open><summary>Beskrivelse</summary><div class="body"><p>${esc(p.desc)}</p></div></details>
@@ -841,7 +849,6 @@ function viewProduct(p){
           <details><summary>Levering &amp; retur</summary><div class="body"><p><span class="tbd">Fragt og returregler tilføjes</span></p></div></details>
           <details><summary>Styling</summary><div class="body"><p>Dag: ${esc(p.day)}.</p><p>Aften: ${esc(p.night)}.</p></div></details>
         </div>
-</div>
       </div>
     </div>
     <section class="related" aria-label="Fuldend looket">
@@ -855,9 +862,9 @@ function wireProduct(p){
   const needsSize = () => p.sizes && !state.size;
   const sync = () => {
     add.disabled = !!needsSize();
-    add.innerHTML = needsSize() ? 'Vælg størrelse' : 'Læg i kurv <span class="arr">→</span>';
-    mb.innerHTML = `<div class="i"><b>${esc(p.name)}</b>${p.price==null?'<span class="tbd" style="justify-self:start">Pris følger</span>':`<span class="mono">${kr(p.price)}</span>`}</div>
-      <button type="button" class="btn" id="mbAdd">${needsSize()?'Vælg str.':'Læg i kurv'}</button>`;
+    add.innerHTML = needsSize() ? 'Vælg størrelse' : (OPEN_FOR_SALE ? 'Læg i kurv <span class="arr">→</span>' : 'Prøv kurven · ikke åben for køb');
+    mb.innerHTML = `<div class="i"><b>${esc(p.name)}</b>${OPEN_FOR_SALE?(p.price==null?'<span class="tbd" style="justify-self:start">Pris følger</span>':`<span class="mono">${kr(p.price)}</span>`):'<span class="mono" style="color:var(--mute)">Ikke åben for køb</span>'}</div>
+      <button type="button" class="btn${OPEN_FOR_SALE?'':' preview'}" id="mbAdd">${needsSize()?'Vælg str.':(OPEN_FOR_SALE?'Læg i kurv':'Prøv kurven')}</button>`;
     $('#mbAdd').onclick = () => needsSize() ? add.scrollIntoView({behavior:'smooth', block:'center'}) : addToCart(p.id, state.size);
   };
   $$('[data-size]').forEach(b => b.onclick = () => { state.size = b.dataset.size; $$('[data-size]').forEach(x=>x.setAttribute('aria-pressed', x===b)); sync(); });
@@ -865,8 +872,8 @@ function wireProduct(p){
   sync();
   const g = $('#gal'), n = p.imgs.length;
   g.addEventListener('scroll', () => { if(g.scrollWidth <= g.clientWidth + 2) return; const i = Math.round(g.scrollLeft / g.clientWidth); $('#galN').textContent = (i+1) + ' / ' + n; $('#galI').style.transform = `translateX(${i*100}%)`; }, {passive:true});
-  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 0; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); });
-  io.observe(add); cleanup.push(() => { io.disconnect(); mb.classList.remove('show'); mb.setAttribute('aria-hidden','true'); });
+  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 80; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); document.body.classList.toggle('has-mbar', show); }, {rootMargin:'-64px 0px 0px 0px'});
+  io.observe(add); cleanup.push(() => { io.disconnect(); mb.classList.remove('show'); mb.setAttribute('aria-hidden','true'); document.body.classList.remove('has-mbar'); });
 }
 
 function viewCheckout(){
