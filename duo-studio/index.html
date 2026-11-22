@@ -1,6 +1,6 @@
 <title>DUO STUDIO</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="DUO STUDIO – dansk tøjbrand. Kollektion 01: NOIR EDIT.">
+<meta name="description" content="DUO STUDIO – dansk modebrand til kvinder og mænd. Kollektion 01: NOIR EDIT.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -448,7 +448,7 @@ legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacin
     <div class="f-top">
       <div style="display:grid;gap:12px;max-width:40ch">
         <span class="mono" style="color:var(--mute-d)">DUO STUDIO</span>
-        <p style="font-size:18px;line-height:1.4">Dansk tøjbrand. Fest og hverdag i samme garderobe.</p>
+        <p style="font-size:18px;line-height:1.4">Dansk modebrand til kvinder og mænd. Tailoring, streetwear, basics og festtøj.</p>
       </div>
       <div class="f-cols">
         <div><h4 class="mono">Shop</h4><ul>
@@ -500,25 +500,37 @@ const OPEN_FOR_SALE = false;
 /* ================= DATA – nye produkter og kollektioner tilføjes her =================
    price: null = pris ikke fastlagt · sizes: null = størrelser ikke fastlagt · material/care: null = ikke oplyst */
 const PRODUCTS = [
-  { id:'alma', name:'Alma', type:'Vest', cat:'overdele', coll:'noir-edit', order:1, price:null, sizes:null, material:null, care:null,
+  { id:'alma', dept:'women', name:'Alma', type:'Vest', cat:'overdele', coll:'noir-edit', order:1, price:null, sizes:null, material:null, care:null,
     front:'alma-front', back:'alma-back', look:'look-brunette',
     imgs:[['alma-front','Forside'],['alma-back','Bagside'],['alma-lace','Detalje · blonde']],
     desc:'Sort, figursyet vest uden ærmer med dyb V-udskæring. Sorte blomsterblonder i siderne følger kroppens form, og forsiden ender i to spidser.',
     details:['Uden ærmer','Dyb V-udskæring','Sorte blomsterblonder i siderne – for og bag','Spidse detaljer nederst på forsiden','Skræddersyet pasform'],
     day:'Alene som top', night:'Med Freja og Cleo' },
-  { id:'freja', name:'Freja', type:'Bukser', cat:'bukser', coll:'noir-edit', order:2, price:null, sizes:null, material:null, care:null,
+  { id:'freja', dept:'women', name:'Freja', type:'Bukser', cat:'bukser', coll:'noir-edit', order:2, price:null, sizes:null, material:null, care:null,
     front:'freja-front', back:'freja-back', look:'look-curls',
     imgs:[['freja-front','Forside'],['freja-back','Bagside'],['freja-lace','Detalje · blonde']],
     desc:'Sorte, højtaljede bukser med vide ben, læg foran og skræddersyet pasform. Sorte blomsterblonder løber langs ydersiden af begge ben.',
     details:['Høj talje','Vide ben','Læg foran','Sorte blomsterblonder langs de ydre sidesømme','Skræddersyet pasform'],
     day:'Med en enkel top', night:'Med Alma og Cleo' },
-  { id:'cleo', name:'Cleo', type:'Slingback heels', cat:'sko', coll:'noir-edit', order:3, price:null, sizes:null, material:null, care:null,
+  { id:'cleo', dept:'women', name:'Cleo', type:'Slingback heels', cat:'sko', coll:'noir-edit', order:3, price:null, sizes:null, material:null, care:null,
     front:'cleo-side', back:'cleo-back', look:'look-bob',
     imgs:[['cleo-pair','Par'],['cleo-side','Side'],['cleo-front','Forfra'],['cleo-back','Bagfra'],['cleo-lace','Detalje · blonde']],
     desc:'Sorte, spidse slingbacks med lav kitten heel. Sorte blomsterblonder i siderne og en smal rem bag hælen med ét enkelt spænde.',
     details:['Spids tå','Lav kitten heel','Sorte blomsterblonder i siderne','Smal rem bag hælen med ét spænde'],
     day:'Til Freja eller jeans', night:'Til hele Noir Edit-looket' }
 ];
+/* Afdelinger. En afdeling vises først i navigation og shop, når den har mindst ét produkt,
+   så der aldrig vises en tom herreshop. Tilføj herreprodukter med dept:'men'. */
+const DEPARTMENTS = [ { id:'women', name:'Women' }, { id:'men', name:'Men' } ];
+/* Kollektioner. Hver kollektion har sin egen afdeling, kampagnebilleder og evt. farvetema
+   (theme kan overskrive sidens farver, fx { ivory:'#EDEBE6', ink:'#0E0E0E' }). */
+const COLLECTIONS = [
+  { id:'noir-edit', no:'01', name:'Noir Edit', dept:'women', hero:'look-curls', rail:'look-bob', theme:{} }
+];
+const CATS = { overdele:'Overdele', bukser:'Bukser', sko:'Sko', jakker:'Jakker', strik:'Strik', 'shirts':'T-shirts', tilbehoer:'Tilbehør' };
+const liveDepts = () => DEPARTMENTS.filter(d => PRODUCTS.some(p => p.dept === d.id));
+const deptName = id => (DEPARTMENTS.find(d=>d.id===id)||{}).name || '';
+const themeStyle = c => Object.entries(c.theme||{}).map(([k,v])=>`--${k}:${v}`).join(';');
 /* Kampagnebillederne er AI-genererede og afviger fra produkterne (se 'note'). Bruges kun som stemning. */
 const LOOKS = [
   { img:'look-curls', cap:'Alma · Freja', note:'Vesten for kort (maven synlig), blonder foran på bukserne, sko med sten' },
@@ -659,17 +671,18 @@ document.addEventListener('click', e => {
 });
 
 /* ================= Visninger ================= */
-const state = { filter:'alle', sort:'kollektion', size:null, mode:'dag' };
+const state = { dept:'alle', filter:'alle', sort:'kollektion', size:null, mode:'dag' };
 
 function viewHome(){
   const [a,f,c] = ['alma','freja','cleo'].map(byId);
+  const col = COLLECTIONS[0];
   return `
-  <section class="hero wrap" aria-label="Noir Edit kampagne">
+  <section class="hero wrap" aria-label="${col.name} kampagne" style="${themeStyle(col)}">
     <div class="hero-m">
       <h1 class="cond w1"><span class="line"><span>Noir</span></span><span class="sr"> Edit</span></h1>
-      <div class="img">${reviewTag('look-curls')}<img src="${img('look-curls')}" alt="Model i Alma og Freja fra Noir Edit" fetchpriority="high"></div>
+      <div class="img">${reviewTag(col.hero)}<img src="${img(col.hero)}" alt="Model i Alma og Freja fra Noir Edit" fetchpriority="high"></div>
       <div class="row">
-        <div class="cta"><span class="mono">Kollektion 01</span><a class="btn" href="#kollektionen">Shop <span class="arr">→</span></a></div>
+        <div class="cta"><span class="mono">Kollektion ${col.no} · ${deptName(col.dept)}</span><a class="btn" href="#kollektionen">Shop <span class="arr">→</span></a></div>
         <span class="cond w2" aria-hidden="true"><span class="line l2"><span>Edit</span></span></span>
       </div>
     </div>
@@ -677,14 +690,14 @@ function viewHome(){
       <div class="txt">
         <div class="cond w" aria-hidden="true"><span class="line"><span>Noir</span></span><span class="line l2 w2"><span>Edit</span></span></div>
         <div class="intro">
-          <span class="mono">DUO STUDIO — Kollektion 01</span>
+          <span class="mono">DUO STUDIO — Kollektion ${col.no} · ${deptName(col.dept)}</span>
           <p>Tre styles i sort. Skræddersyet stof på den ene side, blomsterblonder på den anden.</p>
           <a class="btn" href="#kollektionen" style="justify-self:start">Shop kollektionen <span class="arr">→</span></a>
         </div>
       </div>
-      <div class="main">${reviewTag('look-curls')}<img src="${img('look-curls')}" alt="Model i Alma og Freja fra Noir Edit"></div>
+      <div class="main">${reviewTag(col.hero)}<img src="${img(col.hero)}" alt="Model i Alma og Freja fra Noir Edit"></div>
       <div class="rail">
-        <figure style="position:relative">${reviewTag('look-bob')}<img src="${img('look-bob')}" alt="Model i Alma og Freja fra Noir Edit"><figcaption class="mono mute">Look 03 / 04</figcaption></figure>
+        <figure style="position:relative">${reviewTag(col.rail)}<img src="${img(col.rail)}" alt="Model i Alma og Freja fra Noir Edit"><figcaption class="mono mute">Look 03 / 04</figcaption></figure>
         <nav class="idx" aria-label="Produkter i Noir Edit">${[a,f,c].map(p=>`<a href="#produkt-${p.id}"><b>${esc(p.name)}</b><span class="mono mute">${esc(p.type)}</span></a>`).join('')}</nav>
       </div>
     </div>
@@ -742,9 +755,9 @@ function viewHome(){
   <section class="next wrap" aria-label="Næste kollektion">
     <div class="next-grid">
       <div style="display:grid;gap:18px">
-        <span class="mono">Næste kapitel</span>
+        <span class="mono">Næste kapitel · Women &amp; Men</span>
         <h2 class="cond">Kollek&shy;tion <span class="o">02</span></h2>
-        <p class="mute" style="max-width:40ch">Under udvikling. Du kan skrive dig op her, så snart nyhedsbrevet er forbundet.</p>
+        <p class="mute" style="max-width:40ch">Kommende kollektioner er til både kvinder og mænd. Du kan skrive dig op her, så snart nyhedsbrevet er forbundet.</p>
       </div>
       <form class="form" data-notify>
         <label class="mono" for="newsEmail">Nyhedsbrev</label>
@@ -796,12 +809,17 @@ function wireHome(){
 }
 
 function viewShop(){
-  const cats = [['alle','Alle'],['overdele','Overdele'],['bukser','Bukser'],['sko','Sko']];
-  const n = k => k==='alle' ? PRODUCTS.length : PRODUCTS.filter(p=>p.cat===k).length;
-  let list = PRODUCTS.filter(p => state.filter==='alle' || p.cat===state.filter);
+  const depts = liveDepts();
+  const inDept = PRODUCTS.filter(p => state.dept==='alle' || p.dept===state.dept);
+  const cats = [['alle','Alle'], ...Object.keys(CATS).filter(k => inDept.some(p=>p.cat===k)).map(k=>[k,CATS[k]])];
+  if(!cats.some(([k])=>k===state.filter)) state.filter = 'alle';
+  const n = k => k==='alle' ? inDept.length : inDept.filter(p=>p.cat===k).length;
+  let list = inDept.filter(p => state.filter==='alle' || p.cat===state.filter);
+  const sub = (state.dept==='alle' ? depts.map(d=>d.name).join(' & ') : deptName(state.dept)) + ' · ' + list.length + ' ' + (list.length===1?'style':'styles');
   list.sort(state.sort==='navn' ? (a,b)=>a.name.localeCompare(b.name,'da') : (a,b)=>a.order-b.order);
   return `<div class="wrap">
-    <div class="shop-head"><h1 class="cond">Shop</h1><span class="mono mute" style="padding-bottom:10px">Noir Edit · ${list.length} ${list.length===1?'style':'styles'}</span></div>
+    <div class="shop-head"><h1 class="cond">Shop</h1><span class="mono mute" style="padding-bottom:10px">${sub}</span></div>
+    ${depts.length>1?`<div class="tabs" role="group" aria-label="Afdeling" style="margin-bottom:10px">${[['alle','Alle'],...depts.map(d=>[d.id,d.name])].map(([k,t])=>`<a class="nl" href="#${k==='alle'?'shop':'shop-'+k}" aria-current="${state.dept===k?'page':'false'}">${t}</a>`).join('')}</div>`:''}
     <div class="toolbar">
       <div class="tabs" role="group" aria-label="Kategori">${cats.map(([k,t])=>`<button type="button" data-cat="${k}" aria-pressed="${state.filter===k}">${t}<sup>${n(k)}</sup></button>`).join('')}</div>
       <div class="sort"><label for="sortSel" class="mute">Sortér</label><select id="sortSel" aria-label="Sortér"><option value="kollektion">Kollektion</option><option value="navn">Navn A–Å</option></select></div>
@@ -937,7 +955,7 @@ function render(){
   const h = (location.hash || '#forside').slice(1);
   const app = $('#app'); let nav = '';
   if(h.startsWith('produkt-') && byId(h.slice(8))){ const p = byId(h.slice(8)); app.innerHTML = viewProduct(p); wireProduct(p); document.title = p.name + ' — DUO STUDIO'; nav='shop'; }
-  else if(h==='shop'){ app.innerHTML = viewShop(); wireShop(); document.title='Shop — DUO STUDIO'; nav='shop'; }
+  else if(h==='shop' || h.startsWith('shop-')){ const d = h.slice(5); state.dept = liveDepts().some(x=>x.id===d) ? d : 'alle'; app.innerHTML = viewShop(); wireShop(); document.title='Shop — DUO STUDIO'; nav='shop'; }
   else if(h==='kassen'){ app.innerHTML = viewCheckout(); wireCheckout(); document.title='Kasse — DUO STUDIO'; }
   else { app.innerHTML = viewHome(); wireHome(); document.title='DUO STUDIO — Noir Edit'; nav = (h==='kollektionen'||h==='lookbook') ? h : 'forside'; }
   $$('[data-nav]').forEach(a => a.dataset.nav===nav ? a.setAttribute('aria-current','page') : a.removeAttribute('aria-current'));
@@ -953,6 +971,12 @@ function route(scroll=true){
   else scrollTo({top:0, behavior:'auto'});
 }
 addEventListener('hashchange', () => { closeAll(true); route(); });
+(function buildDeptNav(){
+  const depts = liveDepts(); if(depts.length < 2) return;
+  const shop = $('.nav-l a[data-nav="shop"]');
+  shop.insertAdjacentHTML('afterend', depts.map(d=>`<a class="nl desk" href="#shop-${d.id}">${d.name}</a>`).join(''));
+  $('#sheet .sheet-links').insertAdjacentHTML('afterbegin', depts.map(d=>`<a class="cond" href="#shop-${d.id}">${d.name} <span class="mono">${PRODUCTS.filter(p=>p.dept===d.id).length} styles</span></a>`).join(''));
+})();
 $('#year').textContent = new Date().getFullYear();
 renderCart();
 route(!!location.hash && location.hash !== '#forside');
