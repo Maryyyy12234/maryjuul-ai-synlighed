@@ -9,10 +9,11 @@
 /* Retning: "Two sides" – sort/hvid kontrast, kondenseret grotesk som art direction,
    mono til data. Ét bevidst lyst tema (sort bruges som sektionsflader, ikke som dark mode). */
 :root{
-  --ivory:#F7F6F2;   /* sidegrund */
-  --ink:#141414;     /* tekst, knapper, mørke sektioner */
+  --ivory:#F6F4F0;   /* varm alabast – sidegrund */
+  --ink:#111111;     /* kulsort */
+  --taupe:#C5B6A6;   /* varm taupe – packshot-baggrund */
   --white:#FFFFFF;   /* lyse sektioner, kort */
-  --grey:#D8D8D5;    /* linjer, pladsholdere */
+  --grey:#E2DDD5;    /* 1px gitterlinjer, pladsholdere */
   --mute:#6A6A66;    /* sekundær tekst på lys grund */
   --mute-d:#9B9B96;  /* sekundær tekst på mørk grund */
   --display:"Archivo","Arial Narrow","Helvetica Neue",Arial,sans-serif;
@@ -127,7 +128,7 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
   .hero-d .rail{grid-column:11 / 13;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
   .hero-d .rail figure{margin:0;display:grid;gap:8px}
   .hero-d .rail img{aspect-ratio:3/4;object-fit:cover;width:100%;background:var(--grey)}
-  .idx{display:grid;border-top:1.5px solid var(--ink)}
+  .idx{display:grid;border-top:1px solid var(--grey)}
   .idx a{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--grey);transition:padding .35s var(--ease)}
   .idx a:hover{padding-left:8px}
   .idx b{font-family:var(--display);font-stretch:62%;font-weight:800;font-size:30px;text-transform:uppercase;line-height:1}
@@ -139,7 +140,7 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 .statement{font-size:clamp(28px,4.6vw,68px);line-height:1.06;letter-spacing:-.02em;font-weight:400;max-width:20ch}
 .statement em{font-style:italic;font-weight:300}
 .chip{display:inline-block;width:1.05em;height:1.3em;vertical-align:-.2em;background-size:cover;background-position:center;margin-inline:.06em;background-color:var(--grey)}
-.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px;margin-top:48px;padding-top:18px;border-top:1.5px solid var(--ink)}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px;margin-top:48px;padding-top:18px;border-top:1px solid var(--grey)}
 .facts div{display:grid;gap:4px}
 .facts b{font-size:15px;font-weight:600}
 @media (min-width:768px){.facts{grid-template-columns:repeat(4,minmax(0,1fr))}.intro-band{padding-block:120px 96px;margin-top:88px}}
@@ -161,7 +162,7 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 .piece-cap{display:grid;grid-template-columns:1fr auto;align-items:end;gap:6px 12px}
 .piece-cap .nm{font-size:clamp(56px,13vw,120px);grid-row:span 2}
 .piece-cap .ty{text-align:right}
-.piece-cap .go{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1.5px solid var(--ink)}
+.piece-cap .go{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--grey)}
 .piece.p-alma{margin-right:14%}
 .piece.p-freja{margin-left:14%}
 .piece.p-cleo .piece-media a{aspect-ratio:4/3}
@@ -255,7 +256,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 /* ---------- SHOP ---------- */
 .shop-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-block:28px 20px;flex-wrap:wrap}
 .shop-head h1{font-size:clamp(84px,20vw,240px)}
-.toolbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:20;background:var(--ivory);display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px;border-top:1.5px solid var(--ink);border-bottom:1px solid var(--grey);margin-bottom:22px}
+.toolbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:20;background:var(--ivory);display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px;border-top:1px solid var(--grey);border-bottom:1px solid var(--grey);margin-bottom:22px}
 @media (min-width:1000px){.toolbar{top:calc(env(safe-area-inset-top,0px) + 64px)}}
 .tabs{display:flex;gap:18px;overflow-x:auto;scrollbar-width:none;min-width:0}
 @media (max-width:560px){.toolbar{flex-wrap:wrap;row-gap:6px}.tabs{flex:1 1 100%}}
@@ -295,7 +296,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 .buy{display:grid;gap:22px;align-content:start;min-width:0}
 .buy-top{display:grid;gap:12px}
 .buy h1{font-size:clamp(84px,22vw,150px)}
-.buy-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:12px;border-top:1.5px solid var(--ink)}
+.buy-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding-top:12px;border-top:1px solid var(--grey)}
 .buy-row span:first-child{font-size:15px}
 .swatch{display:flex;align-items:center;gap:10px;font-size:14px}
 .swatch i{width:18px;height:18px;background:var(--ink);outline:1px solid var(--ink);outline-offset:3px}
@@ -308,7 +309,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
 .pending b{color:var(--ink);font-weight:600}
 .buy-note{font-size:13px;color:var(--mute);text-align:center}
 .acc details{border-bottom:1px solid var(--grey)}
-.acc details:first-child{border-top:1.5px solid var(--ink)}
+.acc details:first-child{border-top:1px solid var(--grey)}
 .acc summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:16px 0;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 .acc summary::-webkit-details-marker{display:none}
 .acc summary::after{content:"";width:11px;height:11px;background:linear-gradient(currentColor,currentColor) center/11px 1.5px no-repeat,linear-gradient(currentColor,currentColor) center/1.5px 11px no-repeat;transition:transform .35s var(--ease)}
@@ -328,7 +329,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
   .buy h1{font-size:clamp(110px,10vw,160px)}
 }
 @media (min-width:1400px){.pdp{grid-template-columns:minmax(0,1fr) 440px;gap:80px}}
-.related{padding-block:56px 96px;border-top:1.5px solid var(--ink)}
+.related{padding-block:56px 96px;border-top:1px solid var(--grey)}
 .related h2{font-size:clamp(48px,9vw,110px);margin-bottom:28px}
 .closed{display:flex;gap:10px;align-items:flex-start;background:var(--ink);color:var(--white);padding:12px 14px;font-size:13.5px;line-height:1.45}
 .closed b{font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:12.5px;display:block;margin-bottom:2px}
@@ -351,7 +352,7 @@ footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-are
   transform:translateX(100%);transition:transform .55s var(--ease),visibility 0s .55s;visibility:hidden;
   padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) 0}
 .drawer.open{transform:none;visibility:visible;transition:transform .55s var(--ease),visibility 0s}
-.d-head{display:flex;justify-content:space-between;align-items:flex-end;padding:20px 20px 16px;border-bottom:1.5px solid var(--ink)}
+.d-head{display:flex;justify-content:space-between;align-items:flex-end;padding:20px 20px 16px;border-bottom:1px solid var(--grey)}
 .d-head h2{font-size:48px}
 .d-head h2 sup{font-family:var(--mono);font-size:12px;font-weight:400;vertical-align:top;margin-left:4px}
 .d-body{flex:1;overflow-y:auto;padding:20px;display:grid;gap:20px;align-content:start}
@@ -418,7 +419,7 @@ legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacin
 
 /* Forside: brand-hero */
 .bh{padding-block:10px 56px}
-.bh-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:8px 14px;border-bottom:1.5px solid var(--ink)}
+.bh-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:8px 14px;border-bottom:1px solid var(--grey)}
 .bh-logo{margin:22px 0 6px;color:var(--ink)}
 .bh-logo .logo{width:min(100%,calc(34svh * 2.3),1180px);margin-inline:auto}
 .bh-line{display:flex;justify-content:center;align-items:baseline;gap:.4em;flex-wrap:wrap;text-align:center;margin-bottom:28px}
@@ -429,7 +430,7 @@ legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacin
 .bh-img{margin:0;position:relative;overflow:hidden;background:var(--grey);aspect-ratio:4/5}
 .bh-img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
 .bh-a:hover img,.bh-b:hover img{transform:scale(1.03)}
-.bh-cap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:1.5px solid var(--ink);padding-top:8px}
+.bh-cap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:1px solid var(--grey);padding-top:8px}
 .bh-cap b{font-size:clamp(34px,5vw,64px)}
 .bh-mid{display:grid;gap:16px;align-content:center;justify-items:start;padding-block:8px}
 .bh-mid p{font-size:17px;line-height:1.5;max-width:34ch}
@@ -477,7 +478,7 @@ legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacin
 .about-s{padding-block:96px;display:grid;gap:28px}
 .about-q{font-size:clamp(40px,7vw,104px);line-height:.95;letter-spacing:-.02em;max-width:16ch}
 .about-q .cond{font-size:.92em}
-.pillars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1.5px solid var(--ink)}
+.pillars{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--grey)}
 .pillars div{display:grid;gap:4px;padding:14px 12px 14px 0;border-bottom:1px solid var(--grey)}
 .pillars b{font-size:clamp(28px,4vw,48px)}
 .about-p{max-width:60ch;font-size:16px}
@@ -505,7 +506,7 @@ legend{padding:0;margin-bottom:12px;font-size:13px;font-weight:700;letter-spacin
 .ab-hero h1{font-size:clamp(56px,10vw,150px);line-height:.92;letter-spacing:-.02em}
 .ab-hero h1 .serif{display:block;font-size:.62em}
 .ab-cols{display:grid;gap:28px;padding-bottom:72px}
-.ab-cols > div{display:grid;gap:10px;border-top:1.5px solid var(--ink);padding-top:14px}
+.ab-cols > div{display:grid;gap:10px;border-top:1px solid var(--grey);padding-top:14px}
 .ab-cols p{font-size:16px;max-width:46ch}
 @media (min-width:900px){.ab-cols{grid-template-columns:repeat(3,1fr)}}
 .ab-sig{padding-bottom:110px}
@@ -593,7 +594,7 @@ main[data-coll="in-out"]{--ivory:#F3ECE0;--grey:#E3D8C6;--mute:#6B5D52;backgroun
 .colors button{padding:3px;border:1px solid transparent;border-radius:50%;line-height:0}
 .colors button[aria-pressed="true"]{border-color:var(--ink)}
 .sizes button[disabled]{color:var(--mute);border-style:dashed;cursor:not-allowed;background:transparent}
-.sheet-d{padding-block:56px;border-top:1.5px solid var(--ink)}
+.sheet-d{padding-block:56px;border-top:1px solid var(--grey)}
 .ds{display:grid;gap:24px}
 .ds-views{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
 .ds-views figure{margin:0;display:grid;gap:6px}
@@ -620,6 +621,103 @@ main[data-coll="in-out"]{--ivory:#F3ECE0;--grey:#E3D8C6;--mute:#6B5D52;backgroun
 body.home-top .bar > .logo{opacity:0;pointer-events:none}
 .bar > .logo{transition:opacity .4s var(--ease)}
 .bh-cap{flex-wrap:wrap}
+
+/* ---------- IN / OUT v2: tre looks ---------- */
+.io-claim{font-family:var(--mono);font-size:13px;letter-spacing:.32em;text-transform:uppercase}
+.io-looks3{padding-block:24px 64px}
+.look3{display:grid;gap:22px;padding-block:28px;border-top:1.5px solid currentColor}
+.look3-img{position:relative;display:block;overflow:hidden;background:var(--grey);aspect-ratio:3/4}
+.look3-img img{width:100%;height:100%;object-fit:cover;object-position:50% 12%;transition:transform 1.2s var(--ease)}
+.look3-img:hover img{transform:scale(1.03)}
+.look3-txt{display:grid;gap:14px;align-content:start;justify-items:start;min-width:0}
+.look3-txt h3,.set-hero-txt h1{font-size:clamp(52px,8vw,112px)}
+.look3-sw{display:flex;flex-wrap:wrap;gap:10px 18px}
+.look3-sw > span{display:inline-flex;gap:8px;align-items:center}
+.look3-line{font-size:17px;max-width:40ch}
+.look3-parts{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.look3-parts a{display:grid;gap:8px;background:var(--white);padding:8px}
+.look3-parts img{aspect-ratio:3/4;object-fit:cover;width:100%;object-position:50% 20%}
+.look3-parts a > span{display:grid;gap:2px;font-size:13px}
+.look3-parts b{font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+@media (min-width:900px){.look3{grid-template-columns:5fr 7fr;gap:48px;align-items:center}.look3.rev .look3-img{order:2}}
+.palette.p5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.mtable-x{overflow-x:auto;margin-top:8px}
+.mtable{border-collapse:collapse;width:100%;font-size:14px;min-width:560px}
+.mtable th,.mtable td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--grey);vertical-align:top}
+.mtable th{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.mtable.sz{min-width:520px}.mtable .num{font-variant-numeric:tabular-nums}
+.io-set{padding-bottom:20px}
+.set-hero{display:grid;gap:22px;padding-block:8px 40px}
+.set-hero figure{margin:0;position:relative;overflow:hidden;aspect-ratio:3/4;background:var(--grey)}
+.set-hero figure img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.set-hero-txt{display:grid;gap:16px;align-content:center;justify-items:start;min-width:0}
+.set-jump{display:flex;gap:18px;flex-wrap:wrap}
+@media (min-width:900px){.set-hero{grid-template-columns:5fr 7fr;gap:56px}.set-hero figure{max-height:82svh}}
+.part{display:grid;gap:24px;padding-block:40px;border-top:1.5px solid currentColor}
+.part-gal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.part-gal figure{margin:0;display:grid;gap:6px;aspect-ratio:auto}
+.part-gal img,.part-gal .gal-ph{aspect-ratio:3/4;object-fit:cover;width:100%;object-position:50% 20%}
+.part-gal .gal-ph{font-size:12px}
+.part-info{display:grid;gap:16px;align-content:start;min-width:0}
+.part-info h2{font-size:clamp(48px,7vw,96px)}
+.swrow{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+@media (max-width:640px){.part-gal{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.part-gal .gal-ph p{display:none}}
+@media (min-width:1000px){.part{grid-template-columns:7fr 5fr;gap:56px}}
+.ds2{display:grid;gap:28px}
+.ds-col h3{margin-bottom:8px}
+@media (min-width:1000px){.ds2{grid-template-columns:1fr 1fr;gap:48px}}
+.other-looks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.other-looks a{display:grid;gap:6px}
+.other-looks img{aspect-ratio:3/4;object-fit:cover;width:100%;object-position:50% 12%}
+.other-looks b{font-size:clamp(28px,4vw,48px)}
+.fit-grid > *,.io-cm > *{min-width:0}
+.look3,.set-hero{grid-template-columns:minmax(0,1fr)}
+.look3-sw{max-width:100%}
+@media (min-width:900px){.look3{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}.set-hero{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}}
+.palette div{min-width:0}.palette i{width:100%}.palette .mono{overflow-wrap:anywhere}
+.palette div{grid-template-columns:minmax(0,1fr)}@media (max-width:420px){.palette .mono{font-size:10px;letter-spacing:.02em}}
+
+/* ---------- Opgradering: gitter, taupe, sæt-karrusel, tech pack ---------- */
+.bh-uni{display:flex;gap:18px;flex-wrap:wrap}
+.card .m,.gal figure,.piece-media{background:var(--taupe)}
+.sets4{display:grid;grid-auto-flow:column;grid-auto-columns:72%;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin-right:calc(-1 * var(--gr));padding-right:var(--gr)}
+.sets4::-webkit-scrollbar{display:none}
+.set4{scroll-snap-align:start;display:grid;gap:6px;align-content:start;border-top:1px solid var(--grey);padding-top:10px}
+.set4-m{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--taupe)}
+.set4-m img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;transition:opacity .6s var(--ease),transform 1.2s var(--ease)}
+.set4-m .b{opacity:0;object-position:50% 30%}
+@media (hover:hover){.set4:hover .set4-m .b{opacity:1}.set4:hover .set4-m img{transform:scale(1.03)}}
+.set4 b{font-size:clamp(30px,3vw,44px)}
+@media (min-width:700px){.sets4{grid-auto-columns:44%}}
+@media (min-width:1000px){.sets4{grid-auto-flow:row;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible;margin-right:0;padding-right:0;gap:16px}}
+.part-gal{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:640px){.part-gal{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.part-gal .gal-ph{background:repeating-linear-gradient(135deg,transparent 0 10px,rgba(0,0,0,.05) 10px 20px),var(--taupe) !important;color:#3b3029}
+.zf{position:relative;overflow:hidden;aspect-ratio:3/4;background:var(--taupe)}
+.zf img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;transition:transform .35s var(--ease);transform-origin:var(--zx,50%) var(--zy,50%)}
+.zoomable .zf{cursor:zoom-in}
+.zoomable .zf.on{cursor:zoom-out}.zoomable .zf.on img{transform:scale(2.2)}
+@media (hover:hover){.zoomable .zf:hover img{transform:scale(1.6)}.zoomable .zf.on:hover img{transform:scale(2.4)}}
+.pend{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;border:1px dashed var(--mute);padding:5px 8px;color:var(--mute)}
+.drop{display:grid;gap:10px}
+.drop-form{max-width:none}
+.techpack{border:1px solid var(--grey);background:var(--white)}
+.tp-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--grey)}
+.tp-tabs{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--grey)}
+.tp-tabs::-webkit-scrollbar{display:none}
+.tp-tabs button{flex:0 0 auto;padding:11px 14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mute);border-bottom:2px solid transparent}
+.tp-tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+.tp-panel{padding:14px;font-size:14.5px;display:grid;gap:8px}
+.tp-list{list-style:none;margin:0;padding:0}
+.tp-list li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--grey)}
+.tp-list.plain li{display:list-item;list-style:disc;margin-left:18px;border:0;padding:3px 0}
+.tp-dl{margin:0;display:grid}
+.tp-dl > div{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--grey)}
+.tp-dl dt{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}
+.tp-dl dd{margin:0}
+.tp-note{padding:12px 14px;display:grid;gap:4px;font-size:14px}
+.part{grid-template-columns:minmax(0,1fr)}.part > *,.techpack{min-width:0}
+@media (min-width:1000px){.part{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -747,8 +845,8 @@ const DEPARTMENTS = [ { id:'women', name:'Women' }, { id:'men', name:'Men' } ];
 const COLLECTIONS = [
   { id:'noir-edit', no:'01', name:'Noir Edit', dept:'women', status:'preview', hero:'look-curls', rail:'look-bob', theme:{},
     tagline:'Elegant. Sort. Blonde.', text:'Skræddersyet sort med blomsterblonder langs siderne. Alma, Freja og Cleo.' },
-  { id:'in-out', no:'02', name:'In / Out', dept:'women', status:'concept', hero:'io-camp', theme:{},
-    tagline:'IN for comfort. OUT for everything.', text:'Elevated loungewear i farver. Otte styles til mix & match. Koncept – under udvikling.' }
+  { id:'in-out', no:'02', name:'In / Out', dept:'women', status:'concept', hero:'io2-hero', theme:{},
+    tagline:'IN for comfort. OUT for everything.', text:'Hjemme. Ude. Helt dig. Tre sæt elevated loungewear – The Everywhere Set, The Soft Fit Set og The Off-Duty Set. Koncept – under udvikling.' }
 ];
 const CATS = { overdele:'Overdele', bukser:'Bukser', sko:'Sko', jakker:'Jakker', strik:'Strik', 'shirts':'T-shirts', shorts:'Shorts', tilbehoer:'Tilbehør' };
 const liveDepts = () => DEPARTMENTS.filter(d => PRODUCTS.some(p => p.dept === d.id));
@@ -764,100 +862,87 @@ const LOOKS = [
 const lookBy = k => LOOKS.find(l => l.img === k);
 
 /* ================= COLLECTION 02 — IN / OUT (KONCEPT) =================
-   Alle IN / OUT-produkter er designkoncepter. Billederne er udsnit af AI-genererede designboards.
-   status:'concept' = kan ikke lægges i kurv, ingen pris, ingen lagerstatus.                         */
-const COLORS = {
-  'Cherry Red':'#8C1D2C', 'Cobalt Blue':'#2142A3', 'Butter Yellow':'#F1DD8E', 'Soft Lilac':'#C6B5DD',
-  'Sage Green':'#A3AD8D', 'Chocolate Brown':'#4B2F23', 'Warm Cream':'#F0E6D2', 'Washed Grey':'#8E8F8B'
-};
-const MATERIALS = {
-  jersey:{ name:'Soft Jersey / Interlock', comp:'65 % bomuld · 30 % modal · 5 % elastan', weight:'ca. 220–280 g/m²', img:'io-mat-jersey',
-    text:'Blødt, åndbart, fleksibelt og behageligt mod huden. Til T-shirts, kropsnære toppe og udvalgte bukser.' },
-  sweat:{ name:'Soft Structured Sweat', comp:'Bomuldsrig sweatkvalitet – sammensætning afklares', weight:'ca. 300–350 g/m²', img:'io-mat-sweat',
-    text:'Blød inderside, god formstabilitet og et struktureret fald. Til hoodies og sweatshirts – mest til afslapning og hverdag, ikke nødvendigvis til at sove i.' },
-  sleep:{ name:'Let sovekvalitet – undersøges', comp:'Fx bomuld/modal- eller lyocell/modal-jersey', weight:'ca. 160–200 g/m²', img:null,
-    text:'Til de styles, der også skal kunne bruges til søvn. Modal og lyocell er bløde, kølige og optager fugt godt. Vægt og opacitet skal testes, så lyse farver som Butter Yellow og Warm Cream ikke bliver gennemsigtige.' }
-};
+   Endelig retning: PRÆCIS tre sæt (seks dele) fra referencebilledet med tre modeller.
+   Alle dele er designkoncepter: ingen pris, ingen størrelser i salg, ingen lager, ingen køb.
+   refImg = udsnit af det AI-genererede referencebillede (på model). front/back = produktbillede uden model
+   (null = ikke lavet endnu – kræver billedgenerering, som afventer godkendelse).                        */
+const COLORS = { 'Butter Yellow':'#F1DD8E', 'Burgundy':'#6E1A26', 'Chocolate Brown':'#4B2F23', 'Sage Green':'#A3AD8D', 'Cream':'#F0E6D2' };
 const SIZE_RANGE = ['XXS','XS','S','M','L','XL','2XL','3XL','4XL'];
 const LENGTHS = ['Petite','Regular','Tall'];
-const POM_TOP = ['½ brystvidde','Længde fra skulderpunkt','Skulderbredde / skulderfald','Ærmelængde','Ærmegab og kantbredde','Ribkantens højde'];
+/* Foreløbigt kropsmålskema i cm – forslag, ikke testet */
+const SIZE_CHART = { cols:SIZE_RANGE, rows:[
+  ['Bryst',[76,80,86,92,98,104,112,120,128]], ['Talje',[58,62,68,74,80,86,94,102,110]], ['Hofte',[84,88,94,100,106,112,120,128,136]] ] };
+const INSEAM = { Petite:74, Regular:79, Tall:84 };
+const POM_TOP = ['½ brystvidde','Længde fra skulderpunkt','Skulderfald (dropped shoulder)','Ærmelængde og ærmegab','Halsåbning','Kantribs / rib-højde'];
 const POM_PANT = ['Talje afslappet og strakt','Hoftevidde','Forskridt og bagskridt','Lårvidde','Indvendig benlængde (Petite / Regular / Tall)','Benåbning'];
-const IO = (o) => Object.assign({ dept:'women', coll:'in-out', status:'concept', price:null, sizes:null, care:null }, o);
+const IO = (o) => Object.assign({ dept:'women', coll:'in-out', status:'concept', price:null, sizes:null, care:null, back:null }, o);
 PRODUCTS.push(
-  IO({ id:'signature-hoodie', no:'01', name:'Signature Hoodie', type:'Hoodie', cat:'overdele', order:11, front:'io-hoodie', back:null,
-    imgs:[['io-hoodie','Forside · koncept']], mat:'sweat', fit:'Boxy oversized med dropped shoulders. Lidt kortere end en klassisk hoodie, men ikke cropped – maven er dækket.',
-    colors:['Butter Yellow','Washed Grey','Chocolate Brown','Cherry Red'],
-    desc:'En boxy, oversized hoodie med blød, rummelig hætte og let struktureret silhuet. Lavet til at slappe af i – og pæn nok til at gå ud i.',
-    details:['Dropped shoulders','Blød, rummelig hætte','Lidt kortere længde – ikke cropped','Kraftig ribkant ved ærmer og nederst','Let struktureret silhuet'],
-    signature:['Tone-i-tone DUO STUDIO-broderi på brystet','Sidelinjen: kontrastsøm langs sidesømmen (forslag)','Vævet nakkelabel med kollektionsnavn'],
-    note:'Boardet viser almindelig længde – længden skal være lidt kortere.', pom:POM_TOP, with:['signature-wide-pants','relaxed-stripe-pants'] }),
-  IO({ id:'half-zip-sweat', no:'02', name:'Half-Zip Sweat', type:'Half-zip sweatshirt', cat:'overdele', order:12, front:'io-halfzip', back:null,
-    imgs:[['io-halfzip','Forside · koncept'],['io-d-zip','Detalje · lynlås']], mat:'sweat', fit:'Afslappet og boxy med let voluminøse ærmer.',
-    colors:['Sage Green','Washed Grey','Cobalt Blue'],
-    desc:'Afslappet half-zip med høj krave og kort lynlås. Ser gennemtænkt ud over både bukser og jeans.',
-    details:['Høj krave','Kort lynlås','Let voluminøse ærmer','Bløde ribkanter','Boxy pasform'],
-    signature:['DUO-graveret lynlåstræk','Kontrastfarvet lynlåsbånd (forslag)','Diskret logo på brystet'],
-    note:'', pom:POM_TOP, with:['relaxed-stripe-pants','everyday-straight-pants'] }),
-  IO({ id:'soft-fit-long-sleeve', no:'03', name:'Soft Fit Long Sleeve', type:'Langærmet top', cat:'overdele', order:13, front:'io-softls', back:'io-softls-back',
-    imgs:[['io-softls','Forside · koncept'],['io-softls-back','Bagside · koncept']], mat:'jersey', sleep:true, fit:'Kropsnær og let taljeret uden at stramme. Længden dækker maven.',
-    colors:['Cherry Red','Chocolate Brown','Soft Lilac','Warm Cream'],
-    desc:'Blød, kropsnær top med elegant bådudskæring. Den rolige modvægt til de vide bukser.',
-    details:['Elegant bådudskæring','Lange ærmer','Blødt, strækbart materiale','Let taljeret pasform','Længde der dækker maven'],
-    signature:['Lille tone-i-tone broderi i nakken (forslag)','Vævet nakkelabel'],
-    note:'', pom:POM_TOP, with:['signature-wide-pants','everyday-straight-pants'] }),
-  IO({ id:'everyday-tee', no:'04', name:'Everyday Tee', type:'Oversized T-shirt', cat:'overdele', order:14, front:'io-tee', back:null,
-    imgs:[['io-tee','Forside · koncept']], mat:'jersey', sleep:true, fit:'Oversized og boxy med godt fald og god længde.',
-    colors:['Warm Cream','Butter Yellow','Washed Grey'], combos:'Cream med Cherry Red-kant · Butter med Cobalt-kant · Grey med Cherry Red-kant',
-    desc:'En oversized T-shirt med kontrastfarvet halskant. Blød, men formstabil.',
-    details:['Boxy silhuet med flot fald','God længde','Kontrastfarvet halskant','Kontrast ved ærmekanter (forslag)','Blødt, formstabilt stof'],
-    signature:['Diskret DUO STUDIO-logo på brystet','Kontrastkanten går igen på tværs af kollektionen'],
-    note:'', pom:POM_TOP, with:['lounge-shorts','relaxed-stripe-pants'] }),
-  IO({ id:'relaxed-stripe-pants', no:'05', name:'Relaxed Stripe Pants', type:'Bukser', cat:'bukser', order:15, front:'io-stripe', back:null, lengths:true,
-    imgs:[['io-stripe','Forside · koncept']], mat:'jersey', sleep:true, fit:'Brede ben med et næsten skræddersyet fald.',
-    colors:['Warm Cream','Butter Yellow'], combos:'Warm Cream med Chocolate-striber · Butter Yellow med Cream-striber',
-    desc:'Vide, bløde bukser med diskrete lodrette striber. Elastisk talje uden synlig snøre, så de ikke ligner pyjamas.',
-    details:['Brede ben','Diskrete lodrette striber','Blød elastisk talje','Skjult justering','Sidelommer','Ingen synlig snøre'],
-    signature:['Tone-i-tone broderi på hoften','Vævet label i linningen'],
-    note:'', pom:POM_PANT, with:['half-zip-sweat','everyday-tee'] }),
-  IO({ id:'signature-wide-pants', no:'06', name:'Signature Wide Pants', type:'Bukser', cat:'bukser', order:16, front:'io-wide', back:null, lengths:true,
-    imgs:[['io-wide','Forside · koncept'],['io-d-piping','Detalje · piping']], mat:'jersey', fit:'Ekstra vide ben med volumen og god plads til hofter og lår.',
-    colors:['Cherry Red','Cobalt Blue','Chocolate Brown'], combos:'Cherry Red med Cream-piping · Cobalt Blue med Cream-piping · Chocolate Brown med Lilac-piping',
-    desc:'Kollektionens fashion-silhuet. Volumen i benene og en diskret piping langs ydersømmen – samme placering som blonden på Noir Edit.',
-    details:['Flot volumen i benene','Diskret piping langs ydersømmen','Blød talje','Lommer','Plads til hofter og lår','Elegant fald med sneakers'],
-    signature:['Sidelinjen: piping langs ydersømmen','Tone-i-tone broderi på hoften'],
-    note:'Boardet viser bred, hvid piping – den skal være mere diskret.', pom:POM_PANT, with:['signature-hoodie','soft-fit-long-sleeve'] }),
-  IO({ id:'everyday-straight-pants', no:'07', name:'Everyday Straight Pants', type:'Bukser', cat:'bukser', order:17, front:'io-straight', back:'io-straight-back', lengths:true,
-    imgs:[['io-straight','Forside · koncept'],['io-straight-side','Side · koncept'],['io-straight-back','Bagside · koncept'],['io-d-pocket','Detalje · lomme']], mat:'jersey',
-    fit:'Straight leg. Mindre oversized end Signature Wide Pants, så de passer til både kropsnære og oversized overdele.',
-    colors:['Cherry Red','Sage Green','Washed Grey','Chocolate Brown'],
-    desc:'Lige, afslappede bukser med bred, behagelig elastik og skjult snøre. Den rene basis i kollektionen.',
-    details:['Straight-leg fit','Bred, behagelig elastik','Skjult snøre','Sidelommer','Enkle, rene sømme'],
-    signature:['Tone-i-tone broderi på hoften','Vævet label i linningen'],
-    note:'', pom:POM_PANT, with:['soft-fit-long-sleeve','half-zip-sweat'] }),
-  IO({ id:'lounge-shorts', no:'08', name:'Lounge Shorts', type:'Shorts', cat:'shorts', order:18, front:'io-shorts', back:null,
-    imgs:[['io-shorts','Forside · koncept']], mat:'jersey', sleep:true, fit:'Løs pasform med behagelig længde og ingen stramme kanter.',
-    colors:['Warm Cream','Sage Green','Butter Yellow'],
-    desc:'Afslappede shorts med blød talje og sidelommer. Til sommer, sofa og søndag.',
-    details:['Løs pasform','Behagelig længde','Blød talje','Sidelommer','Ingen stramme kanter','Kontrastpiping (forslag)'],
-    signature:['Diskret broderi på benet','Kontrastpiping som på Signature Wide Pants'],
-    note:'Boardet viser synlig snøre – skal afklares, om den skjules som på bukserne.', pom:POM_PANT, with:['everyday-tee','soft-fit-long-sleeve'] })
+  IO({ id:'everywhere-tee', set:'everywhere', part:'Overdel', name:'Everywhere Tee', type:'Oversized boxy T-shirt', cat:'overdele', order:11,
+    front:null, refImg:'io2-l1top', detail:[['io2-d-neck','Bordeaux ribkant'],['io2-d-logo1','Logo · venstre bryst']], colors:['Butter Yellow','Burgundy'], colorway:'Butter Yellow med dyb bordeaux ribkant',
+    desc:'Oversized, boxy T-shirt i Butter Yellow med dyb bordeaux ribkant i halsen og et lille DUO STUDIO-logo på venstre bryst. Sænkede skuldre, brede ærmer og en længde, der dækker maven.',
+    details:['Oversized, boxy silhuet','Dyb bordeaux ribkant i halsen','Sænkede skuldre','Brede, afslappede ærmer','Længde der dækker maven','Blødt, tungt fald'],
+    signature:['Lille DUO STUDIO-logo på venstre bryst (bordeaux)','Vævet nakkelabel'],
+    fit:'Oversized og boxy. Falder løst over de vide bukser og over jeans.',
+    mat:{ comp:'Kraftig bomuld/modal-jersey med ca. 5 % elastan', weight:'230–250 GSM', stretch:'Let stræk; ribkanten holder faconen efter vask', comfort:'Blødt, tungt fald uden at være gennemsigtigt', durability:'Ribkanten skal holde formen efter vask – testes', care:'30 °C på vrangen (forslag)', construction:'Dobbeltsyet ribkant i halsen, dækstingssømme' },
+    sleep:true, use:'Egnet til søvn, lounge og hverdag. Ingen hårde syninger, lynlåse eller synlige snører.', pom:POM_TOP, note:'' }),
+  IO({ id:'everywhere-stripe-pants', set:'everywhere', part:'Bukser', name:'Everywhere Stripe Pants', type:'Ekstra vide bukser', cat:'bukser', order:12, lengths:true,
+    front:null, refImg:'io2-l1pants', detail:[['io2-d-stripe','Striber + logo ved hoften']], colors:['Cream','Burgundy'], colorway:'Cream med tynde lodrette bordeaux striber',
+    desc:'Ekstra vide bukser i Cream med tynde lodrette bordeaux striber, skjult taljejustering og et lille logo ved hoften. Ingen synlig pyjamassnøre.',
+    details:['Ekstra vide ben','Tynde lodrette bordeaux striber','Blød elastisk talje','Skjult taljejustering','Diskrete sidelommer','Flydende fald'],
+    signature:['Lille DUO STUDIO-logo ved hoften (bordeaux)','Vævet label i linningen'],
+    fit:'Ekstra vide ben. Elastisk talje med plads til forskellige hofte- og taljemål.',
+    mat:{ comp:'Vævet eller finstrikket Tencel™ Lyocell / økologisk bomuld', weight:'210–240 GSM', stretch:'Let mekanisk stræk', comfort:'Falder flydende og køligt mod huden', durability:'Indvævede striber – ikke print, så de ikke falmer', care:'30 °C på vrangen (forslag)', construction:'Linning med indvendig elastik og skjult snøre, stikkede sidelommer' },
+    sleep:true, use:'Egnet til søvn, lounge og hverdag. Ingen synlig snøre eller hårde syninger.', pom:POM_PANT, note:'' }),
+  IO({ id:'soft-fit-top', set:'soft-fit', part:'Overdel', name:'Soft Fit Long Sleeve', type:'Kropsnær langærmet top', cat:'overdele', order:13,
+    front:'io-softls', back:'io-softls-back', refImg:'io2-l2top', detail:[['io2-d-boat','Bred bådudskæring']], colors:['Burgundy'], colorway:'Deep Burgundy',
+    desc:'Kropsnær langærmet top i Deep Burgundy med bred bådudskæring, lange let smalle ærmer og en let taljeret pasform.',
+    details:['Bred bådudskæring','Lange, let smalle ærmer','Blødt strækbart stof','Let taljeret pasform','Længde der kan dække maven'],
+    signature:['Meget diskret tone-i-tone branding','Vævet nakkelabel'],
+    fit:'Kropsnær, "second skin" uden at stramme. Modvægten til de meget vide bukser.',
+    mat:{ comp:'Ultrablød bomuld/modal-interlock eller dobbeltstrikket jersey med 6–8 % elastan', weight:'240–260 GSM', stretch:'God 4-vejs stræk', comfort:'Sidder glat som "second skin" og bliver ikke gennemsigtig', durability:'Interlock holder formen – testes for fnuller', care:'30 °C på vrangen, ingen tørretumbler (forslag)', construction:'Bådudskæring med indvendig belægning, dækstingssømme' },
+    sleep:true, use:'Egnet til søvn, lounge og hverdag.', pom:POM_TOP, note:'Referencebilledet viser maven – længden forlænges, så den kan dække maven. Packshot-billederne er fra et tidligere board med samme top; bekræft dem.' }),
+  IO({ id:'soft-fit-wide-pants', set:'soft-fit', part:'Bukser', name:'Soft Fit Wide Pants', type:'Ekstra vide bukser', cat:'bukser', order:14, lengths:true,
+    front:null, refImg:'io2-l2pants', detail:[['io2-d-piping','Piping langs ydersømmen'],['io2-d-hiplogo2','Logo ved hoften']], colors:['Chocolate Brown','Cream'], colorway:'Chocolate Brown med tynd cream-piping',
+    desc:'Ekstra vide bukser i Chocolate Brown med tynd cremefarvet piping langs ydersømmen – vores sidelinje-signatur.',
+    details:['Ekstra vide ben med eksklusivt fald','Tynd cream-piping langs ydersømmen','Blød elastisk talje','Skjult justering','Sidelommer'],
+    signature:['Sidelinjen: piping samme sted som blonden på Noir Edit','Lille DUO STUDIO-logo ved hoften'],
+    fit:'Skræddersyet wide-leg fald, men blød og strækbar som loungewear.',
+    mat:{ comp:'Let double-knit / ponte-blanding i modal og bomuld', weight:'280–310 GSM', stretch:'Let stræk', comfort:'Tungt nok til et eksklusivt fald, stadig blødt', durability:'Double-knit er ikke gennemsigtigt og holder faconen', care:'30 °C på vrangen (forslag)', construction:'Piping lagt ind i ydersømmen, linning med skjult snøre' },
+    sleep:true, use:'Egnet til søvn, lounge og hverdag.', pom:POM_PANT, note:'Nærbilledet af piping i referencen er bordeaux – bukserne skal være Chocolate Brown.' }),
+  IO({ id:'off-duty-zip', set:'off-duty', part:'Overdel', name:'Off-Duty Zip Jacket', type:'Oversized boxy ziptrøje', cat:'overdele', order:15,
+    front:null, refImg:'io2-l3top', detail:[['io2-d-zip','Høj krave + tonal lynlås'],['io2-d-rib3','Ribkant ved ærmet']], colors:['Sage Green'], colorway:'Sage Green med tonal lynlås',
+    desc:'Oversized, boxy ziptrøje i Sage Green med høj, blød krave, tonal lynlås hele vejen og ribkanter.',
+    details:['Høj, blød krave','Tonal lynlås hele vejen foran','Sænkede skuldre','Lidt voluminøse ærmer','Strukturerede ribkanter ved ærmer og nederst','Afslappet boxy pasform'],
+    signature:['Lille DUO STUDIO-logo på venstre bryst','Lynlåstræk med DUO-gravering (forslag)','Vævet label'],
+    fit:'Boxy og afslappet. Bæres åben eller lukket.',
+    mat:{ comp:'Diagonal- eller loopback-fleece i økologisk bomuld/modal, uden børstet inderside', weight:'360–400 GSM', stretch:'Minimal – stræk kun i ribkanterne', comfort:'Luksuriøs og struktureret ude, åndbar inde', durability:'Formstabil – testes for krympning', care:'30 °C på vrangen, lynlås lukket (forslag)', construction:'Tonal metal- eller nylonlynlås med belægning, ribkanter i 2×2 rib' },
+    sleep:false, use:'Primært til afslapning på sofaen, rejser og hverdag ude. Blød nok til en lur, men den høje krave og frontlynlåsen gør den mindre egnet til en hel nats søvn.', pom:POM_TOP, note:'' }),
+  IO({ id:'off-duty-stripe-pants', set:'off-duty', part:'Bukser', name:'Off-Duty Stripe Pants', type:'Ekstra vide bukser', cat:'bukser', order:16, lengths:true,
+    front:null, refImg:'io2-l3pants', detail:[['io2-d-stripe3','Tynde mørkere striber']], colors:['Sage Green','Cream'], colorway:'Light Sage/Cream med tynde mørkere striber',
+    desc:'Ekstra vide bukser i Light Sage/Cream med tynde mørkere striber. Blød elastisk talje uden synlig snøre.',
+    details:['Ekstra vide ben','Light Sage/Cream med tynde mørkere striber','Blød elastisk talje','Skjult justering','Diskrete lommer','Flot fald'],
+    signature:['Diskret DUO STUDIO-logo ved hoften','Vævet label i linningen'],
+    fit:'Løs og ekstra vid – samme benbredde som Everywhere Stripe Pants.',
+    mat:{ comp:'Samme Tencel™ Lyocell / bomuldskvalitet som Look 01', weight:'210–240 GSM', stretch:'Let mekanisk stræk', comfort:'Fuld bevægelsesfrihed, køligt mod huden', durability:'Indvævede striber', care:'30 °C på vrangen (forslag)', construction:'Linning med indvendig elastik og skjult snøre' },
+    sleep:true, use:'Egnet til søvn, lounge og hverdag.', pom:POM_PANT, note:'' })
 );
-const SETS = [
-  { name:'Butter + Cobalt', a:['signature-hoodie','Butter Yellow'], b:['signature-wide-pants','Cobalt Blue'] },
-  { name:'Cherry + Cream', a:['everyday-tee','Warm Cream'], b:['signature-wide-pants','Cherry Red'] },
-  { name:'Chocolate + Lilac', a:['soft-fit-long-sleeve','Soft Lilac'], b:['everyday-straight-pants','Chocolate Brown'] },
-  { name:'Sage + Cream', a:['half-zip-sweat','Sage Green'], b:['relaxed-stripe-pants','Warm Cream'] },
-  { name:'Grey + Cherry', a:['half-zip-sweat','Washed Grey'], b:['everyday-straight-pants','Cherry Red'] }
+const SETS_IO = [
+  { id:'everywhere', no:'01', name:'The Everywhere Set', ref:'io2-l1', top:'everywhere-tee', bottom:'everywhere-stripe-pants', colors:['Butter Yellow','Burgundy','Cream'],
+    line:'Smørgul tee mod creme bukser med bordeaux striber. Kontrasten mellem ensfarvet og stribet er hele idéen.' },
+  { id:'soft-fit', no:'02', name:'The Soft Fit Set', ref:'io2-l2', top:'soft-fit-top', bottom:'soft-fit-wide-pants', colors:['Burgundy','Chocolate Brown','Cream'],
+    line:'Fitted bordeaux top mod meget vide chokoladebrune bukser med lys piping.' },
+  { id:'off-duty', no:'03', name:'The Off-Duty Set', ref:'io2-l3', top:'off-duty-zip', bottom:'off-duty-stripe-pants', colors:['Sage Green','Cream'],
+    line:'Oversized ziptrøje med høj krave over løse, stribede bukser.' }
 ];
+const setBy = id => SETS_IO.find(s => s.id===id);
 const DETAILS = [
-  ['io-d-zip','DUO-lynlås','Lynlåstræk med graveret DUO.'],
-  ['io-d-piping','Sidelinjen','Kontrastpiping langs ydersømmen – kollektionens signatur.'],
-  ['io-d-logo','Tone-i-tone broderi','Lille DUO STUDIO-broderi i samme farve som stoffet.'],
-  ['io-d-label','Vævet label','Nakkelabel med størrelse og kollektionsnavn.'],
-  ['io-d-rib','Ribkanter','Kraftige, bløde ribkanter, der holder formen.'],
-  ['io-d-fabric','Præget logo','Forslag fra boardet: DUO STUDIO præget i stoffet. Kræver test.']
+  ['io2-d-stripe','Striber + broderi','Tynde bordeaux striber og et lille DUO STUDIO-broderi ved hoften.'],
+  ['io2-d-piping','Piping','Tynd cream-piping langs ydersømmen. Nærbilledet er bordeaux; bukserne er chokoladebrune.'],
+  ['io2-d-neck','Kontrastkant','Bordeaux halskant på den smørgule tee.'],
+  ['io2-d-zip','Høj krave + lynlås','Blød høj krave og lynlås hele vejen på ziptrøjen.'],
+  ['io-d-logo','Tone-i-tone broderi','Brandingforslag: lille broderet logo. Tidligere board.'],
+  ['io-d-label','Vævet label','Brandingforslag: nakkelabel med størrelse. Tidligere board.']
 ];
-const LOOKS_IO = ['io-look1','io-look2','io-look3','io-look4','io-look5','io-look6'];
 
 
 /* ================= Hjælpere ================= */
@@ -948,7 +1033,7 @@ document.addEventListener('click', e => {
   const c = e.target.closest('[data-close]'); if(c){ closeAll(c.tagName==='A'); return; }
   if(e.target.closest('#sheet a')) closeAll(true);
 });
-$('#sheetTiles').innerHTML = [['noir-edit','Noir Edit','alma-front','Kollektion 01'],['in-out','In / Out','io-hoodie','Koncept'],['women','Alle styles','freja-front','Women']].map(([h,n,k,t]) => `<a href="#${h}"><img src="${img(k)}" alt="" loading="lazy"><b>${n}</b><span class="mono mute">${t}</span></a>`).join('');
+$('#sheetTiles').innerHTML = [['noir-edit','Noir Edit','alma-front','Kollektion 01'],['in-out','In / Out','io2-l1top','Koncept'],['women','Alle styles','freja-front','Women']].map(([h,n,k,t]) => `<a href="#${h}"><img src="${img(k)}" alt="" loading="lazy"><b>${n}</b><span class="mono mute">${t}</span></a>`).join('');
 
 /* Nyhedsbrev – ikke forbundet */
 document.addEventListener('submit', e => {
@@ -966,7 +1051,7 @@ function card(p){
   const c = p.status==='concept';
   return `<a class="card${c?' is-concept':''}" href="#produkt-${p.id}">
     <div class="m">${c?'<span class="ctag">Koncept</span>':'<span class="tag mono">Nyhed</span>'}
-      <img src="${img(p.front)}" alt="${esc(p.name)} – ${esc(p.type.toLowerCase())}" loading="lazy">
+      <img src="${img(p.front||p.refImg)}" alt="${esc(p.name)} – ${esc(p.type.toLowerCase())}" loading="lazy">
       ${p.back?`<img class="b" src="${img(p.back)}" alt="" loading="lazy">`:''}</div>
     <div class="t"><b>${esc(p.name)}</b>${c?'<span class="tbd">Under udvikling</span>':price(p)}</div>
     <span class="s">${c?`${esc(p.type)} · <span class="mm-sw">${p.colors.map(x=>sw(x)).join('')}</span>`:`${esc(p.type)} · Sort`}</span>
@@ -1079,7 +1164,7 @@ function viewNoir(){
       <div style="display:grid;gap:18px">
         <span class="mono">Næste kapitel · Kollektion 02</span>
         <h2 class="cond">In <span class="o">/ Out</span></h2>
-        <p class="mute" style="max-width:40ch">Elevated loungewear i farver. Konceptet er klar til gennemgang. <a class="ulink" href="#in-out">Se In / Out</a></p>
+        <p class="mute" style="max-width:40ch">Hjemme. Ude. Helt dig. Tre sæt i farver – konceptet er klar til gennemgang. <a class="ulink" href="#in-out">Se In / Out</a></p>
       </div>
       <form class="form" data-notify>
         <label class="mono" for="newsEmail">Nyhedsbrev</label>
@@ -1157,7 +1242,7 @@ function wireShop(){
 }
 
 function viewProduct(p){
-  if(p.status==='concept') return viewConcept(p);
+  if(p.status==='concept') return viewSet(setBy(p.set));
   state.size = null;
   const others = PRODUCTS.filter(x=>x.id!==p.id);
   const sizeBlock = p.sizes
@@ -1201,7 +1286,7 @@ function viewProduct(p){
   </div>`;
 }
 function wireProduct(p){
-  if(p.status==='concept') return wireConcept(p);
+  if(p.status==='concept') return wireSet();
   const add = $('#addBtn'), mb = $('#mbar');
   const needsSize = () => p.sizes && !state.size;
   const sync = () => {
@@ -1245,7 +1330,7 @@ function viewCheckout(){
       <aside class="co-sum" aria-label="Din ordre">
         <span class="mono">Din ordre · ${cartCount()} ${cartCount()===1?'vare':'varer'}</span>
         ${cart.map(l=>{const p=byId(l.id);return `<div class="li" style="grid-template-columns:64px 1fr"><div class="ph"><img src="${img(p.imgs[0][0])}" alt=""></div><div><div class="li-top"><b style="font-size:22px">${esc(p.name)}</b>${p.price==null?'<span class="tbd">Følger</span>':`<span class="mono">${kr(p.price*l.qty)}</span>`}</div><p class="li-meta">${esc(p.type)} · ${lineSize(l)} · Antal ${l.qty}</p></div></div>`}).join('')}
-        <div style="border-top:1.5px solid var(--ink);padding-top:12px;display:grid;gap:8px">
+        <div style="border-top:1px solid var(--grey);padding-top:12px;display:grid;gap:8px">
           <div class="sum"><span>Subtotal</span>${allPriced()?`<span class="mono">${kr(cartTotal())}</span>`:'<span class="tbd">Følger</span>'}</div>
           <div class="sum"><span>Fragt</span><span class="tbd">Følger</span></div>
           <div class="sum tot"><span>I alt</span><span class="tbd">Følger</span></div>
@@ -1278,7 +1363,7 @@ const notifyForm = (id, label) => `<form class="form" data-notify>
 
 function viewHome(){
   const noir = collBy('noir-edit'), io = collBy('in-out');
-  const feat = ['alma','freja','signature-hoodie','signature-wide-pants'].map(byId);
+  const feat = ['alma','freja','everywhere-tee','soft-fit-wide-pants'].map(byId);
   return `
   <section class="bh wrap" aria-label="DUO STUDIO">
     <div class="bh-top"><span class="mono">Dansk modebrand · Women · Men snart</span><span class="mono bh-right">01 Noir Edit — 02 In / Out</span></div>
@@ -1290,10 +1375,10 @@ function viewHome(){
       <div class="bh-mid">
         <p>Skarp tailoring og blød streetwear. Fest og hverdag. DUO STUDIO laver tøj, der kan være afslappet og stadig se gennemtænkt ud.</p>
         <a class="btn" href="#women">Shop Women <span class="arr">→</span></a>
-        <a class="ulink" href="#collections">Se kollektionerne</a>
+        <div class="bh-uni"><a class="ulink" href="#noir-edit">Noir Edit · aften</a><a class="ulink" href="#in-out">In / Out · dag</a></div>
       </div>
-      <a class="bh-b" href="#in-out"><figure class="bh-img">${PREVIEW?'<span class="review">AI-koncept · til gennemgang</span>':''}<img src="${img(io.hero)}" alt="Konceptkampagne for In / Out" style="object-position:50% 20%"></figure>
-        <span class="bh-cap"><b class="cond">In / Out</b><span class="mono">02 · Koncept · elevated loungewear</span></span></a>
+      <a class="bh-b" href="#in-out"><figure class="bh-img">${PREVIEW?'<span class="review">AI-koncept · til gennemgang</span>':''}<img src="${img(io.hero)}" alt="Konceptreference for In / Out med tre looks" style="object-position:50% 15%"></figure>
+        <span class="bh-cap"><b class="cond">In / Out</b><span class="mono">02 · Koncept · 3 looks</span></span></a>
     </div>
   </section>
 
@@ -1301,7 +1386,7 @@ function viewHome(){
     <div class="wrap dept-grid">
       <a class="dept-t" href="#women"><img src="${img('alma-front')}" alt="" loading="lazy"><span><b class="cond">Women</b><span class="mono">Noir Edit · In / Out</span><span class="ulink">Shop Women</span></span></a>
       <a class="dept-t" href="#men"><span class="dept-ph cond" aria-hidden="true">M</span><span><b class="cond">Men</b><span class="mono">Under udvikling</span><span class="ulink">Hør nyt</span></span></a>
-      <a class="dept-t" href="#collections"><img src="${img('io-look2')}" alt="" loading="lazy"><span><b class="cond">Collections</b><span class="mono">2 universer</span><span class="ulink">Udforsk</span></span></a>
+       <a class="dept-t" href="#collections"><img src="${img('io2-l3top')}" alt="" loading="lazy"><span><b class="cond">Collections</b><span class="mono">2 universer</span><span class="ulink">Udforsk</span></span></a>
     </div>
   </section>
 
@@ -1310,19 +1395,24 @@ function viewHome(){
     <div class="unis-grid">
       <a class="uni uni-noir rv" href="#noir-edit">
         <div class="uni-img">${reviewTag('look-red')}<img src="${img('look-red')}" alt="Noir Edit kampagne" loading="lazy"></div>
-        <div class="uni-txt"><span class="mono">Kollektion 01 · Women</span><b class="cond">Noir Edit</b><p class="serif">Elegant. Sort. Blonde.</p><p>Skræddersyet sort med blomsterblonder langs siderne. Alma, Freja og Cleo.</p><span class="ulink">Udforsk Noir Edit</span></div>
+        <div class="uni-txt"><span class="mono">Collection 01 · Aften · Blonde-signatur</span><b class="cond">Noir Edit</b><p class="serif">Elegant. Sort. Blonde.</p><p>Skræddersyet sort med blomsterblonder langs siderne. Alma, Freja og Cleo.</p><span class="ulink">Udforsk Noir Edit</span></div>
       </a>
       <a class="uni uni-io rv" href="#in-out">
         <div class="uni-bar" aria-hidden="true">${Object.keys(COLORS).map(c=>`<i style="background:${COLORS[c]}"></i>`).join('')}</div>
-        <div class="uni-img">${PREVIEW?'<span class="review">AI-koncept</span>':''}<img src="${img('io-look4')}" alt="In / Out koncept" loading="lazy"></div>
-        <div class="uni-txt"><span class="mono">Kollektion 02 · Women · Koncept</span><b class="cond">In / Out</b><p class="serif">IN for comfort. OUT for everything.</p><p>Elevated loungewear i farver. Otte styles til mix &amp; match.</p><span class="ulink">Udforsk In / Out</span></div>
+        <div class="uni-img">${PREVIEW?'<span class="review">AI-koncept</span>':''}<img src="${img('io2-l1')}" alt="In / Out – The Everywhere Set" loading="lazy" style="object-position:50% 20%"></div>
+        <div class="uni-txt"><span class="mono">Collection 02 · Dag · Piping &amp; striber-signatur</span><b class="cond">In / Out</b><p class="serif">IN for comfort. OUT for everything.</p><p>Hjemme. Ude. Helt dig. Tre sæt i farver – seks dele til mix &amp; match.</p><span class="ulink">Udforsk In / Out</span></div>
       </a>
     </div>
   </section>
 
   <section class="feat wrap" aria-labelledby="featTitle">
-    <div class="sec-h"><h2 class="cond" id="featTitle">Udvalgt</h2><a class="ulink" href="#women">Se alle styles</a></div>
-    <div class="grid g4">${feat.map(card).join('')}</div>
+    <div class="sec-h"><h2 class="cond" id="featTitle">New In · Sæt</h2><p class="mono mute">Hold musen over: model ↔ packshot</p></div>
+    <div class="sets4">${[
+      ['noir-edit','Noir Edit','Alma · Freja · Cleo','look-curls','alma-front','Collection 01'],
+      ['produkt-everywhere-tee','The Everywhere Set','Look 01','io2-l1','io2-l1top','In / Out · koncept'],
+      ['produkt-soft-fit-top','The Soft Fit Set','Look 02','io2-l2','io-softls','In / Out · koncept'],
+      ['produkt-off-duty-zip','The Off-Duty Set','Look 03','io2-l3','io2-l3top','In / Out · koncept']
+    ].map(([h,n,sub,a,b,tag])=>`<a class="set4" href="#${h}"><div class="set4-m"><img src="${img(a)}" alt="${esc(n)} på model" loading="lazy"><img class="b" src="${img(b)}" alt="" loading="lazy">${tag.includes('koncept')?conceptTag:''}</div><span class="mono mute">${tag}</span><b class="cond">${n}</b><span class="mute">${sub}</span></a>`).join('')}</div>
   </section>
 
   <section class="dn" id="dn" aria-label="Styling dag og aften">
@@ -1360,8 +1450,8 @@ function viewHome(){
 }
 function wireHome(){
   const modes = {
-    dag:{ title:'Om dagen: In / Out. Blødt, farverigt og pænt nok til at gå ud.', imgs:[['io-look1','in-out','In / Out koncept'],['io-hoodie','signature-hoodie','Signature Hoodie']],
-      list:[['Signature Hoodie','Butter Yellow'],['Signature Wide Pants','Cobalt Blue'],['Sneakers','Hvide']] },
+    dag:{ title:'Om dagen: In / Out. Blødt, farverigt og pænt nok til at gå ud.', imgs:[['io2-l1','everywhere-tee','The Everywhere Set'],['io2-l3','off-duty-zip','The Off-Duty Set']],
+      list:[['Everywhere Tee','Butter Yellow'],['Everywhere Stripe Pants','Cream / Burgundy'],['Off-Duty Zip Jacket','Sage Green']] },
     aften:{ title:'Om aftenen: Noir Edit. Sort, skræddersyet, blonde.', imgs:[['look-bob','alma','Model i Alma og Freja'],['cleo-pair','cleo','Cleo']],
       list:[['Alma','Vest'],['Freja','Bukser'],['Cleo','Slingback heels']] }
   };
@@ -1373,7 +1463,7 @@ function wireHome(){
     const paint = () => {
       $('#dnTitle').textContent = d.title;
       $('#dnList').innerHTML = d.list.map(([a,b])=>`<li><b>${a}</b><span>${b}</span></li>`).join('');
-      box.innerHTML = d.imgs.map(([k,id,alt])=>`<a href="#${id==='in-out'?'in-out':'produkt-'+id}" style="position:relative">${reviewTag(k)}${k.startsWith('io-look')&&PREVIEW?'<span class="review">AI-koncept</span>':''}${k==='io-hoodie'?conceptTag:''}<img src="${img(k)}" alt="${alt}"></a>`).join('');
+      box.innerHTML = d.imgs.map(([k,id,alt])=>`<a href="#produkt-${id}" style="position:relative">${reviewTag(k)}${k.startsWith('io2-')&&PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img(k)}" alt="${alt}" style="${k.startsWith('io2-')?'object-position:50% 15%':''}"></a>`).join('');
       requestAnimationFrame(()=>box.classList.remove('swap'));
     };
     if(anim && !reduce()){ box.classList.add('swap'); setTimeout(paint, 300); } else paint();
@@ -1387,7 +1477,7 @@ function viewCollections(){
     <div class="shop-head"><h1 class="cond">Collections</h1><span class="mono mute" style="padding-bottom:10px">${COLLECTIONS.length} universer</span></div>
     <div class="colls">
       ${COLLECTIONS.map(c=>`<a class="coll-row rv ${c.id==='in-out'?'is-io':''}" href="#${c.id}">
-        <div class="cr-img">${c.id==='in-out'?(PREVIEW?'<span class="review">AI-koncept</span>':''):reviewTag(c.hero)}<img src="${img(c.id==='in-out'?'io-look2':c.hero)}" alt="${esc(c.name)}" loading="lazy"></div>
+        <div class="cr-img">${c.id==='in-out'?(PREVIEW?'<span class="review">AI-koncept</span>':''):reviewTag(c.hero)}<img src="${img(c.id==='in-out'?'io2-l2':c.hero)}" alt="${esc(c.name)}" loading="lazy"></div>
         <div class="cr-txt"><span class="mono">Kollektion ${c.no} · ${deptName(c.dept)}${c.status==='concept'?' · Koncept':''}</span><b class="cond">${esc(c.name)}</b><p class="serif">${esc(c.tagline)}</p><p>${esc(c.text)}</p><span class="ulink">Udforsk</span></div>
       </a>`).join('')}
     </div>
@@ -1420,7 +1510,7 @@ function viewAbout(){
       <div class="sec-h"><h2 class="cond">Sidelinjen</h2><p class="serif">Vores signatur.</p></div>
       <div class="ab-sig-grid">
         <figure><img src="${img('freja-lace')}" alt="Blonde langs Frejas sidesøm" loading="lazy"><figcaption><b>Noir Edit</b><span class="mute">Blomsterblonde langs sidesømmen.</span></figcaption></figure>
-        <figure><img src="${img('io-d-piping')}" alt="Piping langs sidesømmen" loading="lazy">${conceptTag}<figcaption><b>In / Out</b><span class="mute">Kontrastpiping samme sted.</span></figcaption></figure>
+        <figure><img src="${img('io2-d-piping')}" alt="Piping langs sidesømmen" loading="lazy">${conceptTag}<figcaption><b>In / Out</b><span class="mute">Cream-piping samme sted.</span></figcaption></figure>
         <div class="ab-sig-txt"><p>Én linje langs siden går igen i hver kollektion – i blonde, piping eller sømme. Sammen med tone-i-tone broderier, vævede labels og gennemtænkte lynlåse gør den tøjet genkendeligt uden et stort logo.</p></div>
       </div>
     </section>
@@ -1428,85 +1518,92 @@ function viewAbout(){
 }
 
 function viewInOut(){
-  const ps = ioProducts(), tops = ps.filter(p=>p.cat==='overdele'), bots = ps.filter(p=>p.cat!=='overdele');
   return `<div class="io">
   <section class="io-hero">
     <div class="wrap io-hero-in">
       <div class="io-title">
-        <span class="mono">DUO STUDIO — Kollektion 02 · Women · Elevated loungewear</span>
+        <span class="mono">DUO STUDIO — Collection 02 · Women · Elevated loungewear</span>
         <h1 class="cond"><span class="line"><span>In</span></span><span class="slash" aria-hidden="true">/</span><span class="line l2"><span>Out</span></span></h1>
+        <p class="io-claim">Hjemme. Ude. Helt dig.</p>
         <p class="serif io-tag">IN for comfort. OUT for everything.</p>
-        <div class="io-status"><span class="ctag">Koncept</span><span>Under udvikling. Ingen priser, størrelser eller køb endnu.</span></div>
-        <a class="btn" href="#io-shop">Se de 8 styles <span class="arr">→</span></a>
+        <div class="io-status"><span class="ctag">Koncept</span><span>Tre sæt under udvikling. Ingen priser, størrelser eller køb endnu.</span></div>
+        <a class="btn" href="#io-looks">Se de tre looks <span class="arr">→</span></a>
       </div>
-      <figure class="io-hero-img">${PREVIEW?'<span class="review">AI-koncept · til gennemgang</span>':''}<img src="${img('io-camp')}" alt="Konceptkampagne for In / Out med tre modeller" fetchpriority="high"></figure>
+      <figure class="io-hero-img">${PREVIEW?'<span class="review">AI-reference · til gennemgang</span>':''}<img src="${img('io2-hero')}" alt="Tre modeller i The Everywhere Set, The Soft Fit Set og The Off-Duty Set" fetchpriority="high"></figure>
     </div>
     <div class="io-bar" aria-hidden="true">${Object.keys(COLORS).map(c=>`<i style="background:${COLORS[c]}"></i>`).join('')}</div>
   </section>
 
   <section class="wrap io-story" aria-label="Kollektionens idé">
-    <div><b class="cond io-big">In</b><p>Behageligt nok til at slappe af i derhjemme. Bløde materialer, rummelige silhuetter og ingen stramme kanter.</p></div>
-    <div><b class="cond io-big">Out</b><p>Pænt nok til at handle ind, hente kaffe, møde venner eller åbne døren for gæster. Ikke nattøj – loungewear med silhuet og attitude.</p></div>
+    <div><b class="cond io-big">In</b><p>Behageligt nok til at slappe af og sove i, hvor stoffet egner sig til det. Bløde materialer og rummelige silhuetter.</p></div>
+    <div><b class="cond io-big">Out</b><p>Pænt nok til at handle, hente kaffe, mødes med venner eller have gæster. Ikke pyjamas – loungewear med silhuet og attitude.</p></div>
   </section>
 
-  <section class="wrap io-shop" id="io-shop" aria-labelledby="ioShopT">
-    <div class="sec-h"><h2 class="cond" id="ioShopT">Shop the collection</h2><p class="mono mute">8 styles · koncept</p></div>
-    <h3 class="mono io-sub">Tops — overdele</h3>
-    <div class="grid g4">${tops.map(card).join('')}</div>
-    <h3 class="mono io-sub">Bottoms — underdele</h3>
-    <div class="grid g4">${bots.map(card).join('')}</div>
+  <section class="io-looks3" id="io-looks" aria-labelledby="ioLooksT">
+    <div class="wrap"><div class="sec-h"><h2 class="cond" id="ioLooksT">The three looks</h2><p class="mono mute">3 sæt · 6 dele · koncept</p></div></div>
+    ${SETS_IO.map((s,i)=>{const t=byId(s.top),b=byId(s.bottom);return `<article class="wrap look3 ${i%2?'rev':''} rv" id="look-${s.id}">
+      <a class="look3-img" href="#produkt-${t.id}">${PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img(s.ref)}" alt="${esc(s.name)} på model" loading="lazy"></a>
+      <div class="look3-txt">
+        <span class="mono">Look ${s.no}</span>
+        <h3 class="cond">${esc(s.name)}</h3>
+        <div class="look3-sw">${s.colors.map(c=>`<span>${sw(c,'lg')}<span class="mono">${c}</span></span>`).join('')}</div>
+        <p class="look3-line">${esc(s.line)}</p>
+        <div class="look3-parts">${[t,b].map(p=>`<a href="#produkt-${p.id}"><img src="${img(p.front||p.refImg)}" alt="" loading="lazy"><span><span class="mono mute">${p.part}</span><b>${esc(p.name)}</b><span class="mute">${esc(p.colorway)}</span><span class="tbd">Under udvikling</span></span></a>`).join('')}</div>
+        <a class="ulink" href="#produkt-${t.id}">Se sættet</a>
+      </div>
+    </article>`}).join('')}
   </section>
 
   <section class="io-mm" aria-labelledby="mmT">
     <div class="wrap">
-      <div class="sec-h"><h2 class="cond" id="mmT">Mix &amp; match</h2><p class="serif">Vælg en top og en bund.</p></div>
+      <div class="sec-h"><h2 class="cond" id="mmT">Mix &amp; match</h2><p class="serif">Tre overdele. Tre par bukser.</p></div>
       <div class="mm">
         <div class="mm-pick">
-          <span class="mono">Top</span><div class="mm-opts" data-mm="top">${tops.map((p,i)=>`<button type="button" data-id="${p.id}" aria-pressed="${i===0}">${esc(p.name)}</button>`).join('')}</div>
-          <span class="mono">Bund</span><div class="mm-opts" data-mm="bot">${bots.map((p,i)=>`<button type="button" data-id="${p.id}" aria-pressed="${i===1}">${esc(p.name)}</button>`).join('')}</div>
-          <p class="mute mm-note">Overdele og underdele skal kunne købes hver for sig og i forskellige størrelser. Billederne viser én farve pr. style.</p>
+          <span class="mono">Overdel</span><div class="mm-opts" data-mm="top">${SETS_IO.map((s,i)=>`<button type="button" data-id="${s.top}" aria-pressed="${i===0}">${esc(byId(s.top).name)}</button>`).join('')}</div>
+          <span class="mono">Bukser</span><div class="mm-opts" data-mm="bot">${SETS_IO.map((s,i)=>`<button type="button" data-id="${s.bottom}" aria-pressed="${i===2}">${esc(byId(s.bottom).name)}</button>`).join('')}</div>
+          <p class="mute mm-note">Overdele og bukser skal kunne købes hver for sig og i forskellige størrelser. Billederne er udsnit af referencebilledet, indtil der findes produktbilleder.</p>
         </div>
         <div class="mm-stage" id="mmStage"></div>
       </div>
-      <h3 class="mono io-sub">Matching sets — forslag</h3>
-      <div class="sets">${SETS.map(s=>{const a=byId(s.a[0]),b=byId(s.b[0]);return `<div class="set"><div class="set-sw">${sw(s.a[1],'lg')}${sw(s.b[1],'lg')}</div><b class="cond">${s.name}</b><span><a href="#produkt-${a.id}">${a.name}</a> · ${s.a[1]}</span><span><a href="#produkt-${b.id}">${b.name}</a> · ${s.b[1]}</span></div>`}).join('')}</div>
     </div>
-  </section>
-
-  <section class="wrap io-cm" aria-labelledby="cmT">
-    <div class="sec-h"><h2 class="cond" id="cmT">Colors &amp; materials</h2><p class="mono mute">Forslag · kræver stofprøver</p></div>
-    <div class="palette">${Object.keys(COLORS).map(c=>`<div><i style="background:${COLORS[c]}"></i><span class="mono">${c}</span></div>`).join('')}</div>
-    <div class="mats">${Object.values(MATERIALS).map(m=>`<div class="mat">${m.img?`<img src="${img(m.img)}" alt="" loading="lazy">`:'<div class="mat-ph mono">Stofprøve mangler</div>'}<b>${m.name}</b><span class="mono">${m.comp}</span><span class="mono">${m.weight}</span><p>${m.text}</p><span class="tbd">Forslag – ikke godkendt specifikation</span></div>`).join('')}</div>
   </section>
 
   <section class="io-det" aria-labelledby="detT">
     <div class="wrap">
       <div class="sec-h"><h2 class="cond" id="detT">The details</h2><p class="serif">Genkendelig uden store logoer.</p></div>
       <div class="det-grid">${DETAILS.map(([k,t,d])=>`<figure class="rv"><img src="${img(k)}" alt="${t}" loading="lazy"><figcaption><b>${t}</b><span>${d}</span></figcaption></figure>`).join('')}</div>
-      <p class="mono" style="margin-top:18px;opacity:.7">Alle detaljebilleder er konceptvisualiseringer fra designboardet – ikke producerede varer.</p>
+      <p class="mono" style="margin-top:18px;opacity:.7">Detaljebilleder er udsnit af AI-referencer – ikke producerede varer.</p>
     </div>
+  </section>
+
+  <section class="wrap io-cm" aria-labelledby="cmT">
+    <div class="sec-h"><h2 class="cond" id="cmT">Colors &amp; materials</h2><p class="mono mute">Kun de originale farver · forslag · kræver stofprøver</p></div>
+    <div class="palette p5">${Object.keys(COLORS).map(c=>`<div><i style="background:${COLORS[c]}"></i><span class="mono">${c}</span></div>`).join('')}</div>
+    <div class="mtable-x"><table class="mtable">
+      <thead><tr><th>Del</th><th>Materiale (afventer stofprøve)</th><th>Vægt</th><th>Stræk</th><th>Søvn</th></tr></thead>
+      <tbody>${ioProducts().map(p=>`<tr><td><a href="#produkt-${p.id}"><b>${esc(p.name)}</b></a></td><td>${esc(p.mat.comp)}</td><td class="num">${esc(p.mat.weight)}</td><td>${esc(p.mat.stretch)}</td><td>${p.sleep?'Egnet':'Lur – ikke hel nat'}</td></tr>`).join('')}</tbody>
+    </table></div>
+    <p class="mute" style="margin-top:14px;max-width:70ch">Alle materialer skal testes med stofprøver: opacitet (ikke gennemsigtigt i lyse farver), krympning og formstabilitet efter 5 vaske, fnuller, farveægthed på striber og piping, samt stræk og tilbagefjedring.</p>
   </section>
 
   <section class="wrap io-fit" aria-labelledby="fitT">
-    <div class="sec-h"><h2 class="cond" id="fitT">Fit for flere kroppe</h2><p class="mono mute">Foreløbigt · ikke produktionsklart</p></div>
+    <div class="sec-h"><h2 class="cond" id="fitT">Fit for flere kroppe</h2><p class="mono mute">Foreløbigt · ikke testet</p></div>
     <div class="fit-grid">
-      <div><span class="mono mute">Størrelser (foreløbigt)</span><div class="chips-row">${SIZE_RANGE.map(s=>`<span class="chip-s">${s}</span>`).join('')}</div>
-        <span class="mono mute" style="margin-top:14px;display:block">Bukselængder (udvalgte bukser)</span><div class="chips-row">${LENGTHS.map(s=>`<span class="chip-s">${s}</span>`).join('')}</div>
-        <p class="mute" style="margin-top:14px">Top og bukser købes hver for sig, så man kan vælge forskellige størrelser.</p></div>
-      <div><span class="mono mute">Sådan tester vi pasformen</span><ol class="steps">
-        <li>Målskema udvikles fra en basisstørrelse.</li>
-        <li>Prøver sys i flere størrelser – fx S, L og 2XL – for at teste graderingen.</li>
-        <li>Prøverne testes på mindst fem kropstyper: petite, tall, kurvet hofte, større buste og lige figur.</li>
-        <li>Bevægelsestest: sidde, bukke sig, gå og løfte armene.</li>
-        <li>Vasketest: krympning, fnuller, farveægthed – og om lyse farver er gennemsigtige.</li>
-        <li>Rettelser, ny gradering og ny test, før målskemaet godkendes.</li>
+      <div>
+        <span class="mono mute">Foreløbigt kropsmålskema (cm)</span>
+        <div class="mtable-x"><table class="mtable sz"><thead><tr><th></th>${SIZE_CHART.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+        <tbody>${SIZE_CHART.rows.map(([n,v])=>`<tr><td>${n}</td>${v.map(x=>`<td class="num">${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+        <p class="mute" style="margin-top:10px">Indvendig benlængde (forslag): Petite ${INSEAM.Petite} cm · Regular ${INSEAM.Regular} cm · Tall ${INSEAM.Tall} cm. Overdele og bukser købes hver for sig, så størrelsen kan vælges separat.</p>
+      </div>
+      <div><span class="mono mute">Fittingtest</span><ol class="steps">
+        <li>Målskema udvikles fra basisstørrelse M.</li>
+        <li>Prøver sys i S, L og 2XL for at teste graderingen.</li>
+        <li>Test på mindst fem kropstyper: petite, tall, kurvet hofte, større buste og lige figur.</li>
+        <li>Bevægelse: sidde, bukke sig, gå, løfte armene – og ligge ned for de dele, der skal kunne bruges til søvn.</li>
+        <li>Tjek at oversized dele falder flot, og at fitted dele ikke strammer.</li>
+        <li>Vasketest, rettelser, ny gradering – først derefter godkendes målskemaet.</li>
       </ol></div>
     </div>
-  </section>
-
-  <section class="io-looks" aria-labelledby="ioLbT">
-    <div class="wrap"><div class="sec-h"><h2 class="cond" id="ioLbT">Looks</h2><p class="mono">Konceptbilleder · AI · til gennemgang</p></div></div>
-    <div class="lb-track io-track">${LOOKS_IO.map((k,i)=>`<figure class="lb-item"><div class="ph">${PREVIEW?'<span class="review">AI-koncept</span>':''}<img src="${img(k)}" alt="In / Out konceptlook ${i+1}" draggable="false"></div><figcaption class="mono"><b>Look 0${i+1}</b><span>In / Out</span></figcaption></figure>`).join('')}</div>
   </section>
   </div>`;
 }
@@ -1514,80 +1611,107 @@ function wireInOut(){
   const stage = $('#mmStage'); if(!stage) return;
   const paint = () => {
     const t = byId($('[data-mm="top"] [aria-pressed="true"]').dataset.id), b = byId($('[data-mm="bot"] [aria-pressed="true"]').dataset.id);
-    stage.innerHTML = [t,b].map(p=>`<a class="mm-item" href="#produkt-${p.id}"><img src="${img(p.front)}" alt="${esc(p.name)}">${conceptTag}<span class="mm-cap"><b>${esc(p.name)}</b><span class="mm-sw">${p.colors.map(c=>sw(c)).join('')}</span></span></a>`).join('');
+    stage.innerHTML = [t,b].map(p=>`<a class="mm-item" href="#produkt-${p.id}"><img src="${img(p.front||p.refImg)}" alt="${esc(p.name)}">${conceptTag}<span class="mm-cap"><b>${esc(p.name)}</b><span class="mm-sw">${p.colors.map(c=>sw(c)).join('')}</span></span></a>`).join('');
   };
   $$('.mm-opts').forEach(g => g.addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; $$('button', g).forEach(x=>x.setAttribute('aria-pressed', x===b)); paint(); }));
   paint();
 }
 
-function viewConcept(p){
-  const m = MATERIALS[p.mat], others = (p.with||[]).map(byId).filter(Boolean);
-  const gal = [...p.imgs]; if(!p.back) gal.splice(1,0,[null,'Bagside mangler']);
-  return `<div class="wrap io-pdp">
-    <nav class="crumbs mono" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>/</span><a href="#in-out">In / Out</a><span>/</span><span style="color:var(--ink)">${esc(p.name)}</span></nav>
-    <div class="pdp">
-      <div style="min-width:0">
-        <div class="gal" id="gal">${gal.map(([k,cap],i)=>k?`<figure><img src="${img(k)}" alt="${esc(p.name)} – ${cap.toLowerCase()}" ${i?'loading="lazy"':''}><figcaption class="mono">${cap}</figcaption></figure>`:`<figure class="gal-ph"><div><span class="mono">Bagside</span><p>Mangler. Skal tegnes eller fotograferes, før produktet kan vises bagfra.</p></div></figure>`).join('')}</div>
-        <div class="gal-bar"><span class="mono" id="galN">1 / ${gal.length}</span><span class="track"><i id="galI" style="width:${100/gal.length}%"></i></span></div>
+/* Konceptside pr. sæt – begge dele med hver sin sektion (sælges senere hver for sig) */
+function partBlock(p){
+  const pend = '<span class="pend">Afventer stofprøve og pasformstest</span>';
+  const gal = [
+    [p.refImg,'Model · reference (AI)','ref'],
+    ...p.detail.map(([k,c])=>[k,'Detalje · '+c,'zoom']),
+    [p.front,'Ghost mannequin · forfra','pack'],
+    [p.back,'Ghost mannequin · bagfra','pack']
+  ];
+  const tabs = {
+    'Mål':`<p class="mute">Målepunkter, der skal måles og testes på prøver. Ingen mål er fastlagt endnu.</p><ul class="tp-list">${p.pom.map(x=>`<li><span>${esc(x)}</span><span class="tbd">ikke målt</span></li>`).join('')}</ul>
+      <p class="mono mute" style="margin-top:12px">Foreløbigt kropsmålskema og bukselængder: se Størrelsesguide.</p>`,
+    'Materiale':`<dl class="tp-dl"><div><dt>Kvalitet</dt><dd>${esc(p.mat.comp)}</dd></div><div><dt>Vægt</dt><dd>${esc(p.mat.weight)}</dd></div><div><dt>Stræk</dt><dd>${esc(p.mat.stretch)}</dd></div><div><dt>Komfort</dt><dd>${esc(p.mat.comfort)}</dd></div><div><dt>Holdbarhed</dt><dd>${esc(p.mat.durability)}</dd></div><div><dt>Vask</dt><dd>${esc(p.mat.care)}</dd></div></dl>${pend}`,
+    'Konstruktion':`<ul class="tp-list plain">${[p.mat.construction,...p.details].map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`,
+    'Branding':`<ul class="tp-list plain">${p.signature.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p class="mute" style="margin-top:10px">Logoet laves med det originale DUO STUDIO-logo. Logoerne i referencebilledet er AI-genererede og ikke korrekte.</p>`,
+    'Brug & søvn':`<p><b>${p.sleep?'Egnet til søvn, lounge og hverdag':'Primært lounge og ude'}</b></p><p>${esc(p.use)}</p>${pend}`,
+    'Test':`<ol class="steps"><li>Opacitet – ikke gennemsigtig i lyse farver.</li><li>Krympning og form efter 5 vaske.</li><li>Fnuller (pilling).</li><li>Farveægthed – striber, ribkant og piping må ikke smitte.</li><li>Stræk og tilbagefjedring.</li><li>Pasform på mindst fem kropstyper, inkl. Petite og Tall.</li></ol>`
+  };
+  const tk = Object.keys(tabs);
+  return `<section class="part" id="del-${p.id}" aria-labelledby="h-${p.id}">
+    <div class="part-gal">${gal.map(([k,cap,kind])=>k?`<figure class="${kind==='zoom'?'zoomable':''}"><div class="zf">${kind==='ref'&&PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img(k)}" alt="${esc(p.name)} – ${cap.toLowerCase()}" loading="lazy"></div><figcaption class="mono">${cap}${kind==='zoom'?' · klik for zoom':''}</figcaption></figure>`
+      :`<figure class="gal-ph"><div><span class="mono">${cap}</span><p>Packshot mangler – afventer godkendt billedgenerering.</p></div></figure>`).join('')}</div>
+    <div class="part-info">
+      <span class="mono mute">${p.part} · ${esc(p.type)}</span>
+      <h2 class="cond" id="h-${p.id}">${esc(p.name)}</h2>
+      <div class="buy-row"><span class="swrow">${p.colors.map(c=>sw(c,'lg')).join('')}<span>${esc(p.colorway)}</span></span><span class="tbd">Under udvikling</span></div>
+      <p>${esc(p.desc)}</p>
+      <div>
+        <div class="sizes-head"><span class="mono">Størrelse · XXS–4XL (foreløbig)</span><button type="button" class="ulink" data-open="sizeguide" style="font-size:12px">Størrelsesguide</button></div>
+        <div class="sizes" role="group" aria-label="Vælg størrelse til ${esc(p.name)}">${SIZE_RANGE.map(s=>`<button type="button" data-psize="${s}" aria-pressed="false">${s}</button>`).join('')}</div>
+        ${p.lengths?`<div class="sizes-head" style="margin-top:12px"><span class="mono">Længde</span></div><div class="sizes" role="group" aria-label="Vælg længde" style="grid-template-columns:repeat(3,1fr)">${LENGTHS.map(s=>`<button type="button" data-plen="${s}" aria-pressed="${s==='Regular'}">${s}</button>`).join('')}</div>`:''}
       </div>
-      <div class="buy">
-        <div class="buy-top">
-          <span class="mono mute">In / Out — ${p.no} · ${esc(p.type)}</span>
-          <h1 class="cond">${esc(p.name)}</h1>
-          <div class="buy-row"><span>${esc(p.type)}</span><span class="tbd">Under udvikling</span></div>
-        </div>
-        <div class="closed io-closed" role="status"><i aria-hidden="true"></i><span><b>Koncept · under udvikling</b>Kan ikke købes. Ingen pris, størrelser eller lager endnu.</span></div>
-        <div>
-          <div class="sizes-head"><span class="mono">Farve: <span id="colName">${esc(p.colors[0])}</span></span><span class="mono mute">${p.colors.length} farver</span></div>
-          <div class="colors" role="group" aria-label="Vælg farve">${p.colors.map((c,i)=>`<button type="button" data-col="${esc(c)}" aria-pressed="${i===0}" aria-label="${esc(c)}">${sw(c,'lg')}</button>`).join('')}</div>
-          ${p.combos?`<p class="mute" style="font-size:13px;margin-top:8px">${esc(p.combos)}</p>`:''}
-          <p class="mono mute" style="margin-top:8px">Billedet viser én farve.</p>
-        </div>
-        <div>
-          <div class="sizes-head"><span class="mono">Størrelse · foreløbigt interval</span><button type="button" class="ulink" data-open="sizeguide" style="font-size:12px">Størrelsesguide</button></div>
-          <div class="sizes">${SIZE_RANGE.map(s=>`<button type="button" disabled>${s}</button>`).join('')}</div>
-          ${p.lengths?`<div class="sizes-head" style="margin-top:14px"><span class="mono">Længde</span></div><div class="sizes" style="grid-template-columns:repeat(3,1fr)">${LENGTHS.map(s=>`<button type="button" disabled>${s}</button>`).join('')}</div>`:''}
-          <p class="mono mute" style="margin-top:8px">XXS–4XL er et forslag. Ikke valgbart før målskemaer er testet.</p>
-        </div>
-        <button type="button" class="btn block" disabled>Under udvikling</button>
-        <div class="acc">
-          <details open><summary>Beskrivelse</summary><div class="body"><p>${esc(p.desc)}</p></div></details>
-          <details><summary>Pasform</summary><div class="body"><p>${esc(p.fit)}</p></div></details>
-          <details><summary>Materiale (forslag)</summary><div class="body"><p><b>${m.name}</b> · ${m.comp} · ${m.weight}</p><p>${m.text}</p>${p.sleep?`<p>Også egnet til søvn: ${MATERIALS.sleep.comp}, ${MATERIALS.sleep.weight} – undersøges.</p>`:''}<p><span class="tbd">Kræver stofprøve og test</span></p></div></details>
-          <details><summary>Detaljer</summary><div class="body"><ul>${p.details.map(d=>`<li>${esc(d)}</li>`).join('')}</ul></div></details>
-          <details><summary>Styling</summary><div class="body"><p>${others.map(o=>`<a class="ulink" href="#produkt-${o.id}" style="text-transform:none;letter-spacing:0">${esc(o.name)}</a>`).join(' · ')}</p></div></details>
-        </div>
-        <div style="margin-top:6px">${notifyForm('pEmail','Få besked, når den er klar')}</div>
+      <div class="drop">
+        <button type="button" class="btn block preview" data-drop>Under udvikling – Skriv mig op til drop <span class="arr">→</span></button>
+        <form class="form drop-form" data-notify hidden><div class="field-line"><label class="sr" for="d-${p.id}">E-mail</label><input id="d-${p.id}" type="email" placeholder="Din e-mail" required autocomplete="email"><button type="submit">Skriv mig op</button></div>
+          <p class="hint">Forhåndsvisning: e-mails gemmes ikke endnu. Valgt: <span data-sel>ingen størrelse</span>.</p><p class="note" aria-live="polite"></p></form>
       </div>
+      <div class="techpack">
+        <div class="tp-head"><span class="mono">Teknisk designark · tech pack</span><span class="ctag">Foreløbigt</span></div>
+        <div class="tp-tabs" role="tablist" aria-label="Tech pack for ${esc(p.name)}">${tk.map((t,i)=>`<button type="button" role="tab" id="tab-${p.id}-${i}" aria-controls="tp-${p.id}-${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}">${t}</button>`).join('')}</div>
+        ${tk.map((t,i)=>`<div class="tp-panel" role="tabpanel" id="tp-${p.id}-${i}" aria-labelledby="tab-${p.id}-${i}" ${i?'hidden':''}>${tabs[t]}</div>`).join('')}
+      </div>
+      ${p.note?`<div class="ds-warn tp-note"><span class="mono">Til afklaring</span><p>${esc(p.note)}</p></div>`:''}
     </div>
-    <section class="sheet-d" aria-labelledby="dsT">
-      <div class="sec-h"><h2 class="cond" id="dsT">Designark</h2><span class="ctag">Koncept</span></div>
-      <div class="ds">
-        <div class="ds-views">
-          <figure><img src="${img(p.front)}" alt="${esc(p.name)} forfra" loading="lazy"><figcaption class="mono">Front</figcaption></figure>
-          ${p.back?`<figure><img src="${img(p.back)}" alt="${esc(p.name)} bagfra" loading="lazy"><figcaption class="mono">Back</figcaption></figure>`:`<figure class="gal-ph"><div><span class="mono">Back</span><p>Mangler</p></div></figure>`}
-        </div>
-        <dl class="ds-spec">
-          <div><dt class="mono">Pasform</dt><dd>${esc(p.fit)}</dd></div>
-          <div><dt class="mono">Materiale</dt><dd>${m.name} · ${m.comp} · ${m.weight} <span class="tbd">forslag</span></dd></div>
-          <div><dt class="mono">Farver</dt><dd class="ds-sw">${p.colors.map(c=>`<span>${sw(c)} ${c}</span>`).join('')}</dd></div>
-          <div><dt class="mono">Logo og signatur</dt><dd><ul>${p.signature.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></dd></div>
-          <div><dt class="mono">Konstruktion</dt><dd><ul>${p.details.map(s=>`<li>${esc(s)}</li>`).join('')}</ul></dd></div>
-          <div><dt class="mono">Målepunkter – skal testes</dt><dd><ul>${p.pom.map(s=>`<li>${esc(s)}</li>`).join('')}</ul><span class="tbd">Ingen mål fastlagt endnu</span></dd></div>
-          ${p.note?`<div class="ds-warn"><dt class="mono">Afvigelse på boardet</dt><dd>${esc(p.note)}</dd></div>`:''}
-        </dl>
+  </section>`;
+}
+function wireSet(){
+  $$('.part').forEach(part => {
+    const sel = { size:null, len: part.querySelector('[data-plen][aria-pressed="true"]')?.dataset.plen || null };
+    const upd = () => { const t = part.querySelector('[data-sel]'); if(t) t.textContent = (sel.size ? 'str. '+sel.size : 'ingen størrelse') + (sel.len ? ' · '+sel.len : ''); };
+    part.querySelectorAll('[data-psize]').forEach(b => b.onclick = () => { sel.size = b.dataset.psize; part.querySelectorAll('[data-psize]').forEach(x=>x.setAttribute('aria-pressed', x===b)); upd(); });
+    part.querySelectorAll('[data-plen]').forEach(b => b.onclick = () => { sel.len = b.dataset.plen; part.querySelectorAll('[data-plen]').forEach(x=>x.setAttribute('aria-pressed', x===b)); upd(); });
+    const dropBtn = part.querySelector('[data-drop]'), form = part.querySelector('.drop-form');
+    dropBtn.onclick = () => { form.hidden = false; dropBtn.setAttribute('aria-expanded','true'); upd(); form.querySelector('input').focus(); };
+    const tabs = [...part.querySelectorAll('[role="tab"]')];
+    const show = (t) => { tabs.forEach(x => { const on = x===t; x.setAttribute('aria-selected', on); x.tabIndex = on?0:-1; $('#'+x.getAttribute('aria-controls')).hidden = !on; }); };
+    tabs.forEach((t,i) => { t.onclick = () => show(t); t.onkeydown = e => { if(e.key==='ArrowRight'||e.key==='ArrowLeft'){ e.preventDefault(); const n = tabs[(i + (e.key==='ArrowRight'?1:-1) + tabs.length) % tabs.length]; show(n); n.focus(); } }; });
+    part.querySelectorAll('.zoomable .zf').forEach(z => {
+      z.onclick = () => z.classList.toggle('on');
+      z.onmousemove = e => { const r = z.getBoundingClientRect(); z.style.setProperty('--zx', ((e.clientX-r.left)/r.width*100)+'%'); z.style.setProperty('--zy', ((e.clientY-r.top)/r.height*100)+'%'); };
+    });
+  });
+}
+function viewSet(s){
+  const t = byId(s.top), b = byId(s.bottom), others = SETS_IO.filter(x=>x.id!==s.id);
+  const spec = p => `<div class="ds-col"><h3 class="mono">${esc(p.name)}</h3><dl class="ds-spec">
+    <div><dt class="mono">Farve</dt><dd>${esc(p.colorway)}</dd></div>
+    <div><dt class="mono">Pasform</dt><dd>${esc(p.fit)}</dd></div>
+    <div><dt class="mono">Materiale</dt><dd>${esc(p.mat.comp)} · ${esc(p.mat.weight)}</dd></div>
+    <div><dt class="mono">Holdbarhed</dt><dd>${esc(p.mat.durability)}</dd></div>
+    <div><dt class="mono">Vask</dt><dd>${esc(p.mat.care)}</dd></div>
+    <div><dt class="mono">Konstruktion</dt><dd>${esc(p.mat.construction)}</dd></div>
+    <div><dt class="mono">Branding</dt><dd>${p.signature.map(esc).join(' · ')}</dd></div>
+    <div><dt class="mono">Målepunkter – testes</dt><dd>${p.pom.map(esc).join(' · ')}</dd></div>
+    ${p.note?`<div class="ds-warn"><dt class="mono">Til afklaring</dt><dd>${esc(p.note)}</dd></div>`:''}
+  </dl></div>`;
+  return `<div class="wrap io-set">
+    <nav class="crumbs mono" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>/</span><a href="#in-out">In / Out</a><span>/</span><span style="color:var(--ink)">${esc(s.name)}</span></nav>
+    <header class="set-hero">
+      <figure>${PREVIEW?'<span class="review">AI-reference · til gennemgang</span>':''}<img src="${img(s.ref)}" alt="${esc(s.name)} på model"></figure>
+      <div class="set-hero-txt">
+        <span class="mono">In / Out · Look ${s.no}</span>
+        <h1 class="cond">${esc(s.name)}</h1>
+        <div class="look3-sw">${s.colors.map(c=>`<span>${sw(c,'lg')}<span class="mono">${c}</span></span>`).join('')}</div>
+        <p class="look3-line">${esc(s.line)}</p>
+        <div class="closed io-closed" role="status"><i aria-hidden="true"></i><span><b>Koncept · under udvikling</b>To dele, der senere kan købes hver for sig. Ingen pris, størrelser eller lager endnu.</span></div>
+        <div class="set-jump"><a class="ulink" href="#produkt-${t.id}">${esc(t.name)}</a><a class="ulink" href="#produkt-${b.id}">${esc(b.name)}</a></div>
       </div>
-    </section>
-    <section class="related" aria-label="Matcher med">
-      <h2 class="cond">Matcher med</h2>
-      <div class="grid">${others.map(card).join('')}</div>
+    </header>
+    ${partBlock(t)}${partBlock(b)}
+    <section class="related" aria-label="Andre looks">
+      <h2 class="cond">Andre looks</h2>
+      <div class="other-looks">${others.map(o=>`<a href="#produkt-${o.top}"><img src="${img(o.ref)}" alt="${esc(o.name)}" loading="lazy"><span class="mono">Look ${o.no}</span><b class="cond">${esc(o.name)}</b></a>`).join('')}</div>
     </section>
   </div>`;
-}
-function wireConcept(p){
-  $$('[data-col]').forEach(b => b.onclick = () => { $$('[data-col]').forEach(x=>x.setAttribute('aria-pressed', x===b)); $('#colName').textContent = b.dataset.col; });
-  const g = $('#gal'), n = $$('figure', g).length;
-  g.addEventListener('scroll', () => { if(g.scrollWidth <= g.clientWidth + 2) return; const i = Math.round(g.scrollLeft / g.clientWidth); $('#galN').textContent = (i+1) + ' / ' + n; $('#galI').style.transform = `translateX(${i*100}%)`; }, {passive:true});
 }
 
 /* ================= Scroll-reveal ================= */
@@ -1612,7 +1736,7 @@ function render(){
   else if(h==='kassen'){ app.innerHTML = viewCheckout(); wireCheckout(); document.title='Kasse — DUO STUDIO'; }
   else if(h==='collections'){ app.innerHTML = viewCollections(); document.title='Collections — DUO STUDIO'; nav='collections'; }
   else if(h==='about'){ app.innerHTML = viewAbout(); document.title='About — DUO STUDIO'; nav='about'; }
-  else if(h==='in-out' || h==='io-shop'){ app.innerHTML = viewInOut(); wireInOut(); document.title='In / Out — DUO STUDIO'; nav='collections'; coll='in-out'; }
+  else if(h==='in-out' || h==='io-shop' || h==='io-looks'){ app.innerHTML = viewInOut(); wireInOut(); document.title='In / Out — DUO STUDIO'; nav='collections'; coll='in-out'; }
   else if(h==='noir-edit' || h==='kollektionen' || h==='lookbook'){ app.innerHTML = viewNoir(); wireNoir(); document.title='Noir Edit — DUO STUDIO'; nav='collections'; coll='noir-edit'; }
   else { app.innerHTML = viewHome(); wireHome(); document.title='DUO STUDIO'; nav='forside'; }
   coll ? app.setAttribute('data-coll', coll) : app.removeAttribute('data-coll');
@@ -1624,7 +1748,8 @@ function render(){
 function route(scroll=true){
   const h = render();
   if(!scroll) return;
-  const target = h==='kollektionen' ? $('#sec-kollektionen') : h==='lookbook' ? $('#sec-lookbook') : h==='io-shop' ? $('#io-shop') : null;
+  const cp = h.startsWith('produkt-') && byId(h.slice(8));
+  const target = h==='kollektionen' ? $('#sec-kollektionen') : h==='lookbook' ? $('#sec-lookbook') : (h==='io-shop'||h==='io-looks') ? $('#io-looks') : (cp && cp.status==='concept' && cp.part==='Bukser') ? $('#del-'+cp.id) : null;
   const off = innerWidth >= 1000 ? 70 : 60;
   if(target) scrollTo({top: target.getBoundingClientRect().top + scrollY - off, behavior:'auto'});
   else scrollTo({top:0, behavior:'auto'});
