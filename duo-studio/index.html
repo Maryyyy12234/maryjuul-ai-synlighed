@@ -900,6 +900,40 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
 .f-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (min-width:1000px){.f-cols{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .cx-penny .cx-title{font-size:clamp(72px,19vw,128px)}@media (min-width:1000px){.cx-penny .cx-title{font-size:clamp(96px,9vw,150px)}}
+
+/* ================= v5: tokens + finish ================= */
+:root{
+  --color-ink:#171411;--color-paper:#F7F2EC;--color-ivory:#F2EBE3;--color-taupe:#D8C5B8;--color-noir:#171411;
+  --color-penny:#F4DC88;--color-holly:#E8B4C8;--color-burgundy:#682C3B;--color-navy:#192744;
+  --gutter:clamp(16px,3.5vw,64px);--section-gap:clamp(56px,8vw,128px);--ease-editorial:cubic-bezier(.22,1,.36,1);
+  --ink:var(--color-ink);--ivory:var(--color-paper);--taupe:var(--color-taupe);--butter:var(--color-penny);--pink:var(--color-holly);--burg:var(--color-burgundy);--navy:var(--color-navy);--ease:var(--ease-editorial)}
+.ed{padding-block:var(--section-gap)}.sp{padding-block:calc(var(--section-gap)*.4) var(--section-gap)}.dw{padding-block:var(--section-gap)}.cx{padding-top:var(--section-gap)}
+.io-bodies,.noir-bodies{padding-block:var(--section-gap)}
+.sp-track{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-columns:auto;overflow:visible;gap:28px 10px;scroll-snap-type:none}
+@media (min-width:700px){.sp-track{grid-template-columns:repeat(3,minmax(0,1fr));gap:36px 14px}}
+@media (min-width:1100px){.sp-track{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sp-track .pc{margin-top:0!important}
+.pc-t b{font-size:13px}
+@media (max-width:420px){.pc-t .mono{font-size:10.5px}.pc-t b{font-size:12px;letter-spacing:.03em}}
+.csel{display:flex;gap:8px;flex-wrap:wrap}
+.csel button{padding:3px;border:1px solid transparent;border-radius:50%;line-height:0;position:relative}
+.csel button[aria-checked="true"]{border-color:var(--ink)}
+.csel button[data-ok="0"]::after{content:"";position:absolute;left:50%;top:4px;bottom:4px;width:1px;background:var(--ivory);transform:rotate(45deg);opacity:.9}
+.csel-note{margin-top:6px}
+.swrow{display:inline-flex;gap:6px 14px;align-items:center;flex-wrap:wrap}
+.holly-hero-col{position:relative;min-width:0}
+.hh-d1,.hh-d2{position:absolute;margin:0;width:34%;aspect-ratio:4/5;overflow:hidden;border:6px solid var(--ivory);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.hh-d1{left:-8%;bottom:12%;transform:rotate(-4deg)}
+.hh-d2{right:-4%;top:8%;transform:rotate(3deg)}
+.hh-d1 img,.hh-d2 img{width:100%;height:100%;object-fit:cover}
+@media (max-width:999px){.hh-d1{left:4%}.hh-d2{right:4%}}
+@media (max-width:999px){.hx-big{font-size:clamp(96px,28vw,180px);bottom:-.22em}.hx-logo .logo{width:min(100%,440px)}.hx-cta{gap:12px}}
+
+.hx-big{left:.06em!important;right:auto!important;bottom:-.2em!important}
+@media (max-width:999px){.hx-big{font-size:clamp(88px,30vw,170px)!important}}
+@media (min-width:1000px){.hx-big{font-size:clamp(170px,15vw,280px)!important}}
+.hx-now b{font-family:var(--editorial);font-style:italic;font-weight:400;font-stretch:100%;text-transform:none;letter-spacing:-.02em;line-height:.9}
+.hh-d1{left:4%!important}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -1186,7 +1220,8 @@ function viewHolly(){
       <div class="io-status"><span class="ctag">Koncept</span><span>Under udvikling. Ingen priser, størrelser eller køb endnu.</span></div>
       <a class="btn" href="#produkt-bow-hoodie">Se The Bow Set <span class="arr">→</span></a>
     </div>
-    <figure class="holly-hero-img">${PREVIEW?'<span class="review">AI-reference · til gennemgang</span>':''}<img src="${img('holly-wine')}" alt="The Bow Set i Cherry Wine" fetchpriority="high"></figure>
+    <div class="holly-hero-col"><figure class="holly-hero-img">${PREVIEW?'<span class="review">AI-reference · til gennemgang</span>':''}<img src="${img('holly-wine')}" alt="The Bow Set i Cherry Wine" fetchpriority="high"></figure>
+      <figure class="hh-d1"><img src="${img('holly-d-bows-white')}" alt="Sløjfer i Soft White"></figure><figure class="hh-d2"><img src="${img('holly-d-back-blue')}" alt="Bagside i Powder Blue"></figure></div>
   </section>
   <section class="wrap io-looks3" aria-labelledby="hSetT">
     <div class="sec-h"><h2 class="cond" id="hSetT">The Bow Set</h2><p class="mono mute">1 sæt · 2 dele · 3 farver</p></div>
@@ -1416,9 +1451,9 @@ function viewNoir(){
   </section>
 
   <section class="wrap noir-bodies" aria-labelledby="nbT">
-    <div class="sec-h"><h2 class="cond" id="nbT">Fem kroppe · tre farver</h2><p class="serif">Black, Chocolate og Navy.</p></div>
-    ${bodyRow('noir-body1','Black')}${bodyRow('noir-body2','Chocolate · ny farve · koncept')}${bodyRow('noir-body3','Navy · ny farve · koncept')}${bodyNote}
-    <p class="mute" style="margin-top:8px;max-width:60ch">Alma, Freja og Cleo i shoppen vises i Black. Chocolate og Navy er nye farver fra designboardet og er endnu ikke oprettet som varer.</p>
+    <div class="sec-h"><h2 class="cond" id="nbT">Fem kroppe · tre farver</h2><p class="serif">Black, Chocolate og Midnight Navy.</p></div>
+    ${bodyRow('noir-body1','Black')}${bodyRow('noir-body2','Chocolate · ny farve · koncept')}${bodyRow('noir-body3','Midnight Navy · ny farve · koncept')}${bodyNote}
+    <p class="mute" style="margin-top:8px;max-width:60ch">Alma, Freja og Cleo i shoppen vises i Black. Chocolate og Midnight Navy er nye farver fra designboardet og er endnu ikke oprettet som varer.</p>
   </section>
   <section class="next wrap" aria-label="Næste kollektion">
     <div class="next-grid">
@@ -1522,7 +1557,9 @@ function viewProduct(p){
           <h1 class="cond">${esc(p.name)}</h1>
           <div class="buy-row"><span>${esc(p.type)}</span>${price(p)}</div>
         </div>
-        <div class="swatch"><i aria-hidden="true"></i><span>Farve: Sort</span></div>
+        <div><div class="sizes-head"><span class="mono">Farve: <span id="ncol">Black</span></span><span class="mono mute">1 tilgængelig · 2 koncept</span></div>
+          <div class="csel" role="radiogroup" aria-label="Vælg farve">${[['Black',1],['Chocolate Brown',0],['Midnight Navy',0]].map(([c,ok],k)=>`<button type="button" role="radio" data-ncol="${c}" data-ok="${ok}" aria-checked="${k===0}">${sw(c,'lg')}<span class="sr">${c}</span></button>`).join('')}</div>
+          <p class="mono mute csel-note" id="ncolNote">Vist på billederne.</p></div>
         <div>
           <div class="sizes-head"><span class="mono">Størrelse</span><button type="button" class="ulink" data-open="sizeguide" style="font-size:11.5px">Størrelsesguide</button></div>
           ${sizeBlock}
@@ -1547,6 +1584,8 @@ function viewProduct(p){
   </div>`;
 }
 function wireProduct(p){
+  $$('[data-ncol]').forEach(b => b.onclick = () => { $$('[data-ncol]').forEach(x=>x.setAttribute('aria-checked', x===b)); $('#ncol').textContent = b.dataset.ncol==='Chocolate Brown'?'Chocolate':b.dataset.ncol;
+    $('#ncolNote').textContent = b.dataset.ok==='1' ? 'Vist på billederne.' : 'Ny farve – koncept. Kan ikke lægges i kurv endnu; billederne viser Black.'; });
   if(p.status==='concept') return wireSet();
   const add = $('#addBtn'), mb = $('#mbar');
   const needsSize = () => p.sizes && !state.size;
@@ -1665,7 +1704,7 @@ function viewHome(){
         <figure class="cx-img">${reviewTag('look-red')}<img src="${img('look-red')}" alt="Noir kampagne" loading="lazy"></figure>
         <div class="cx-txt"><span class="mono">Collection 01 · Aften</span><b class="serif cx-title">Noir</b>
           <p>Skræddersyet sort med blomsterblonder langs siderne. Vest, vide bukser og slingbacks.</p>
-          <div class="cx-sw">${['Black','Chocolate Brown','Navy'].map(c=>`<span>${sw(c)}<span class="mono">${c==='Chocolate Brown'?'Chocolate':c}</span></span>`).join('')}</div>
+          <div class="cx-sw">${['Black','Chocolate Brown','Midnight Navy'].map(c=>`<span>${sw(c)}<span class="mono">${c==='Chocolate Brown'?'Chocolate':c}${c==='Black'?'':' · koncept'}</span></span>`).join('')}</div>
           <span class="ulink">Udforsk Noir</span></div>
         <figure class="cx-detail"><img src="${img('freja-lace')}" alt="Blonde langs Frejas sidesøm" loading="lazy"></figure>
       </div>
@@ -1743,7 +1782,7 @@ function wireHome(){
     $('#hxNo').textContent = 'Collection ' + s.no; $('#hxName').textContent = s.name; $('#hxLine').textContent = s.line;
     $('#hxBig').textContent = s.name; $('#hxCta').href = '#' + s.coll;
   };
-  const auto = () => { clearInterval(t); if(!reduce()) t = setInterval(()=>go(i+1), 6000); };
+  const auto = () => { clearInterval(t); }; /* bevidst ingen autoplay: Noir er hovedkampagnen */
   dots.forEach((d,k)=>d.onclick = () => { go(k); auto(); });
   hx.addEventListener('mouseenter', ()=>clearInterval(t)); hx.addEventListener('mouseleave', auto);
   hx.addEventListener('focusin', ()=>clearInterval(t));
@@ -1924,7 +1963,10 @@ function partBlock(p){
     <div class="part-info">
       <span class="mono mute">${p.part} · ${esc(p.type)}</span>
       <h2 class="cond" id="h-${p.id}">${esc(p.name)}</h2>
-      <div class="buy-row"><span class="swrow">${p.colors.map(c=>sw(c,'lg')).join('')}<span>${esc(p.colorway)}</span></span><span class="tbd">Under udvikling</span></div>
+      <div class="buy-row"><span>${esc(p.colorway)}</span><span class="tbd">Under udvikling</span></div>
+      ${p.coll==='holly'?`<div><div class="sizes-head"><span class="mono">Farve: <span data-pcolname>${esc(p.colors[0])}</span></span></div>
+        <div class="csel" role="radiogroup" aria-label="Vælg farve til ${esc(p.name)}">${p.colors.map((c,k)=>`<button type="button" role="radio" data-pcol="${esc(c)}" aria-checked="${k===0}">${sw(c,'lg')}<span class="sr">${esc(c)}</span></button>`).join('')}</div></div>`
+      :`<div class="swrow">${p.colors.map(c=>`<span class="swrow">${sw(c,'lg')}<span class="mono">${esc(c)}</span></span>`).join('')}</div>`}
       <p>${esc(p.desc)}</p>
       <div>
         <div class="sizes-head"><span class="mono">Størrelse · XXS–4XL (foreløbig)</span><button type="button" class="ulink" data-open="sizeguide" style="font-size:12px">Størrelsesguide</button></div>
@@ -1951,6 +1993,7 @@ function wireSet(){
     const upd = () => { const t = part.querySelector('[data-sel]'); if(t) t.textContent = (sel.size ? 'str. '+sel.size : 'ingen størrelse') + (sel.len ? ' · '+sel.len : ''); };
     part.querySelectorAll('[data-psize]').forEach(b => b.onclick = () => { sel.size = b.dataset.psize; part.querySelectorAll('[data-psize]').forEach(x=>x.setAttribute('aria-pressed', x===b)); upd(); });
     part.querySelectorAll('[data-plen]').forEach(b => b.onclick = () => { sel.len = b.dataset.plen; part.querySelectorAll('[data-plen]').forEach(x=>x.setAttribute('aria-pressed', x===b)); upd(); });
+    part.querySelectorAll('[data-pcol]').forEach(b => b.onclick = () => { part.querySelectorAll('[data-pcol]').forEach(x=>x.setAttribute('aria-checked', x===b)); part.querySelector('[data-pcolname]').textContent = b.dataset.pcol; });
     const dropBtn = part.querySelector('[data-drop]'), form = part.querySelector('.drop-form');
     dropBtn.onclick = () => { form.hidden = false; dropBtn.setAttribute('aria-expanded','true'); upd(); form.querySelector('input').focus(); };
     const tabs = [...part.querySelectorAll('[role="tab"]')];
