@@ -1,8 +1,13 @@
 // Pakker index.html (Artifact-format uden <html>/<head>) til en selvstændig side i dist/.
+// Opdaterer også listen over billedfiler i index.html, så nye produktbilleder vises automatisk.
 const fs = require('node:fs');
 const path = require('node:path');
 const root = __dirname;
-const body = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const srcPath = path.join(root, 'index.html');
+const assets = fs.readdirSync(path.join(root, 'assets')).filter(f => /\.(jpe?g|png)$/i.test(f)).sort();
+let body = fs.readFileSync(srcPath, 'utf8');
+const listed = body.replace(/\/\*ASSETS\*\/[\s\S]*?\/\*\/ASSETS\*\//, '/*ASSETS*/' + JSON.stringify(assets) + '/*/ASSETS*/');
+if (listed !== body) { body = listed; fs.writeFileSync(srcPath, body); }
 const html = `<!doctype html>
 <html lang="da">
 <head>
@@ -18,4 +23,4 @@ ${body}
 fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist', 'index.html'), html);
 fs.cpSync(path.join(root, 'assets'), path.join(root, 'dist', 'assets'), { recursive: true });
-console.log('DUO STUDIO bygget til duo-studio/dist/');
+console.log(`DUO STUDIO bygget til duo-studio/dist/ (${assets.length} billedfiler registreret)`);

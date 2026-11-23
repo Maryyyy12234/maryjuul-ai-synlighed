@@ -934,6 +934,22 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
 @media (min-width:1000px){.hx-big{font-size:clamp(170px,15vw,280px)!important}}
 .hx-now b{font-family:var(--editorial);font-style:italic;font-weight:400;font-stretch:100%;text-transform:none;letter-spacing:-.02em;line-height:.9}
 .hh-d1{left:4%!important}
+
+/* ================= v6: produktbilleder først ================= */
+.hx-trip{display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:1fr 1fr;gap:6px;height:100%;background:var(--ink)}
+.hx-trip img{width:100%;height:100%;object-fit:cover;transform:none!important}
+.hx-trip img:first-child{grid-row:1 / 3}
+.hx-cap{position:absolute;right:10px;top:10px;background:var(--ivory);color:var(--ink);padding:4px 7px;z-index:3}
+.cx-pack{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--ink)}
+.cx-pack img{aspect-ratio:3/4;height:auto}
+.noir-main img{object-position:50% 30%}
+.part-gal figure.is-ref .zf{opacity:.96}
+.part-gal figure.is-ref figcaption{color:var(--mute)}
+.gal-ph code,.mtable code{font-family:var(--mono);font-size:10.5px;word-break:break-all;opacity:.8}
+.gal-ph div{gap:6px}
+.hx-trip{background:#b8a798}
+.hx-trip img{object-fit:contain;background:#b8a798}
+.hx[data-theme="noir"] .hx-big{color:var(--ivory);text-shadow:0 2px 30px rgba(0,0,0,.35)}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -1037,6 +1053,9 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
 (() => {
 /* Forhåndsvisning: viser "til gennemgang"-mærker på AI-kampagnebilleder. Sæt til false ved lancering. */
 const PREVIEW = true;
+/* Filer i assets/ – opdateres automatisk af build.js. Billeder vises først, når filen findes. */
+const ASSETS = new Set(/*ASSETS*/["alma-back.jpg","alma-front.jpg","alma-lace.jpg","cleo-back.jpg","cleo-front.jpg","cleo-lace.jpg","cleo-pair.jpg","cleo-side.jpg","freja-back.jpg","freja-front.jpg","freja-lace.jpg","holly-blue.jpg","holly-body1.jpg","holly-body2.jpg","holly-body3.jpg","holly-d-back-blue.jpg","holly-d-back-white.jpg","holly-d-back-wine.jpg","holly-d-bows-blue.jpg","holly-d-bows-white.jpg","holly-d-bows-wine.jpg","holly-d-fabric-blue.jpg","holly-d-fabric-white.jpg","holly-d-fabric-wine.jpg","holly-d-waist-blue.jpg","holly-d-waist-white.jpg","holly-d-waist-wine.jpg","holly-white.jpg","holly-wine.jpg","io-camp.jpg","io-d-fabric.jpg","io-d-label.jpg","io-d-logo.jpg","io-d-piping.jpg","io-d-pocket.jpg","io-d-rib.jpg","io-d-zip.jpg","io-halfzip.jpg","io-hoodie.jpg","io-look1.jpg","io-look2.jpg","io-look3.jpg","io-look4.jpg","io-look5.jpg","io-look6.jpg","io-mat-jersey.jpg","io-mat-sweat.jpg","io-sets.jpg","io-shorts.jpg","io-softls-back.jpg","io-softls-front2.jpg","io-softls.jpg","io-straight-back.jpg","io-straight-side.jpg","io-straight.jpg","io-stripe.jpg","io-tech.jpg","io-tee.jpg","io-wide.jpg","io2-d-boat.jpg","io2-d-hiplogo2.jpg","io2-d-logo1.jpg","io2-d-neck.jpg","io2-d-piping.jpg","io2-d-rib3.jpg","io2-d-stripe.jpg","io2-d-stripe3.jpg","io2-d-zip.jpg","io2-hero.jpg","io2-l1.jpg","io2-l1pants.jpg","io2-l1top.jpg","io2-l2.jpg","io2-l2pants.jpg","io2-l2top.jpg","io2-l3.jpg","io2-l3pants.jpg","io2-l3top.jpg","logo.png","look-bob.jpg","look-brunette.jpg","look-curls.jpg","look-red.jpg","noir-allcolors.jpg","noir-body1.jpg","noir-body2.jpg","noir-body3.jpg","penny-body1.jpg","penny-body2.jpg","penny-body3.jpg","penny-d-stripe3.jpg","penny-d-zip.jpg","penny-hero.jpg","penny-l3.jpg","penny-l3pants.jpg","penny-l3top.jpg"]/*/ASSETS*/);
+const has = k => !!k && (ASSETS.has(k + '.jpg') || ASSETS.has(k + '.png'));
 /* Sæt til true, når priser, størrelser og betaling er klar. Indtil da vises købsknapperne som forhåndsvisning. */
 const OPEN_FOR_SALE = false;
 
@@ -1068,7 +1087,7 @@ const DEPARTMENTS = [ { id:'women', name:'Women' }, { id:'men', name:'Men' } ];
 /* Kollektioner. Hver kollektion har sin egen afdeling, kampagnebilleder og evt. farvetema
    (theme kan overskrive sidens farver, fx { ivory:'#EDEBE6', ink:'#0E0E0E' }). */
 const COLLECTIONS = [
-  { id:'noir-edit', no:'01', name:'Noir', dept:'women', status:'preview', hero:'look-curls', rail:'look-bob', theme:{},
+  { id:'noir-edit', no:'01', name:'Noir', dept:'women', status:'preview', hero:'alma-front', rail:'look-bob', theme:{},
     tagline:'Elegant. Sort. Blonde.', text:'Skræddersyet sort med blomsterblonder langs siderne. Alma, Freja og Cleo.' },
   { id:'in-out', no:'02', name:'Penny', dept:'women', status:'concept', hero:'penny-hero', theme:{},
     tagline:'IN for comfort. OUT for everything.', text:'Hjemme. Ude. Helt dig. Tre sæt elevated loungewear – The Everywhere Set, The Soft Fit Set og The Off-Duty Set. Koncept – under udvikling.' },
@@ -1342,7 +1361,7 @@ function card(p){
   const c = p.status==='concept';
   return `<a class="card${c?' is-concept':''}" href="#produkt-${p.id}">
     <div class="m">${c?'<span class="ctag">Koncept</span>':'<span class="tag mono">Nyhed</span>'}
-      <img src="${img(p.front||p.refImg)}" alt="${esc(p.name)} – ${esc(p.type.toLowerCase())}" loading="lazy">
+      <img src="${img(primaryImg(p))}" alt="${esc(p.name)} – ${esc(p.type.toLowerCase())}" loading="lazy">
       ${p.back?`<img class="b" src="${img(p.back)}" alt="" loading="lazy">`:''}</div>
     <div class="t"><b>${esc(p.name)}</b>${c?'<span class="tbd">Under udvikling</span>':price(p)}</div>
     <span class="s">${c?`${esc(p.type)} · <span class="mm-sw">${p.colors.map(x=>sw(x)).join('')}</span>`:`${esc(p.type)} · Sort`}</span>
@@ -1378,7 +1397,7 @@ function viewNoir(){
   <section class="hero wrap" aria-label="${col.name} kampagne" style="${themeStyle(col)}">
     <div class="hero-m">
       <h1 class="cond w1"><span class="line"><span>Noir</span></span><span class="sr"> Edit</span></h1>
-      <div class="img">${reviewTag(col.hero)}<img src="${img(col.hero)}" alt="Model i Alma og Freja fra Noir" fetchpriority="high"></div>
+      <div class="img">${reviewTag(col.hero)}<img src="${img(col.hero)}" alt="Alma vest fra Noir" fetchpriority="high"></div>
       <div class="row">
         <div class="cta"><span class="mono">Kollektion ${col.no} · ${deptName(col.dept)}</span><a class="btn" href="#kollektionen">Shop <span class="arr">→</span></a></div>
         <span class="cond w2" aria-hidden="true"><span class="line l2"><span>Edit</span></span></span>
@@ -1393,7 +1412,7 @@ function viewNoir(){
           <a class="btn" href="#kollektionen" style="justify-self:start">Shop kollektionen <span class="arr">→</span></a>
         </div>
       </div>
-      <div class="main">${reviewTag(col.hero)}<img src="${img(col.hero)}" alt="Model i Alma og Freja fra Noir"></div>
+      <div class="main noir-main"><img src="${img(col.hero)}" alt="Alma vest fra Noir"></div>
       <div class="rail">
         <figure style="position:relative">${reviewTag(col.rail)}<img src="${img(col.rail)}" alt="Model i Alma og Freja fra Noir"><figcaption class="mono mute">Look 03 / 04</figcaption></figure>
         <nav class="idx" aria-label="Produkter i Noir">${[a,f,c].map(p=>`<a href="#produkt-${p.id}"><b>${esc(p.name)}</b><span class="mono mute">${esc(p.type)}</span></a>`).join('')}</nav>
@@ -1663,14 +1682,14 @@ const notifyForm = (id, label) => `<form class="form" data-notify>
 
 /* ================= FORSIDE v4 – editorial ================= */
 const HERO_SLIDES = [
-  { coll:'noir-edit', no:'01', name:'Noir', img:'look-curls', pos:'50% 18%', theme:'noir', line:'Aften. Tailoring. Blonde.', review:true },
+  { coll:'noir-edit', no:'01', name:'Noir', img:'alma-front', trip:['alma-front','freja-front','cleo-pair'], pos:'50% 18%', theme:'noir', line:'Aften. Tailoring. Blonde.', review:false },
   { coll:'in-out',    no:'02', name:'Penny', img:'io2-l1', pos:'50% 14%', theme:'penny', line:'Pyjamas, men pænt nok til at gå ud i.', review:true },
   { coll:'holly',     no:'03', name:'Holly', img:'holly-wine', pos:'50% 12%', theme:'holly', line:'Sløjfer, pufærmer og blød sweat.', review:true }
 ];
 const collName = id => (COLLECTIONS.find(c=>c.id===id)||{}).name || '';
 const swatchesFor = p => (p.colors && p.colors.length ? p.colors : ['Black']);
 function pieceCard(p){
-  const a = p.front || p.refImg, b = p.back || (p.detail && p.detail[0] && p.detail[0][0]) || null, c = p.status==='concept';
+  const a = primaryImg(p), b = (p.coll!=='holly' && PENNY_SLOT[p.id] && has(PENNY_SLOT[p.id]+'-back')) ? PENNY_SLOT[p.id]+'-back' : (p.back || (p.detail && p.detail[0] && p.detail[0][0]) || null), c = p.status==='concept';
   return `<a class="pc rv" href="#produkt-${p.id}">
     <div class="pc-m"><img src="${img(a)}" alt="${esc(p.name)}" loading="lazy">${b?`<img class="pc-b" src="${img(b)}" alt="" loading="lazy">`:''}${c?conceptTag:''}</div>
     <div class="pc-t"><span class="mono mute">${esc(collName(p.coll))}</span><b>${esc(p.name)}</b>
@@ -1692,7 +1711,7 @@ function viewHome(){
         <div class="hx-cta"><a class="btn" id="hxCta" href="#${s0.coll}">Shop kollektionen <span class="arr">→</span></a>
           <div class="hx-dots" role="tablist" aria-label="Vælg kollektion">${HERO_SLIDES.map((s,i)=>`<button type="button" role="tab" data-hx="${i}" aria-selected="${i===0}" aria-label="${s.name}">${s.no}</button>`).join('')}</div></div>
       </div>
-      <div class="hx-stage">${HERO_SLIDES.map((s,i)=>`<figure class="hx-slide${i===0?' on':''}" aria-hidden="${i!==0}">${PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img(s.img)}" alt="${s.name} kampagne" style="object-position:${s.pos}" ${i?'loading="lazy"':'fetchpriority="high"'}></figure>`).join('')}
+      <div class="hx-stage">${HERO_SLIDES.map((s,i)=>`<figure class="hx-slide${i===0?' on':''}" aria-hidden="${i!==0}">${s.trip?`<div class="hx-trip">${s.trip.map((k,n)=>`<img src="${img(k)}" alt="${['Alma vest','Freja bukser','Cleo slingbacks'][n]}" ${n?'':'fetchpriority="high"'}>`).join('')}</div><figcaption class="hx-cap mono">Alma · Freja · Cleo — produktbilleder</figcaption>`:`${PREVIEW&&s.review?'<span class="review">AI-reference</span>':''}<img src="${img(s.img)}" alt="${s.name} kampagne" style="object-position:${s.pos}" loading="lazy">`}</figure>`).join('')}
         <span class="hx-big serif" aria-hidden="true" id="hxBig">${s0.name}</span></div>
     </div>
   </section>
@@ -1701,7 +1720,7 @@ function viewHome(){
     <div class="wrap cx-head"><h2 class="serif" id="cxT">Tre kollektioner</h2><span class="mono">Noir · Penny · Holly</span></div>
     <a class="cx-p cx-noir rv" href="#noir-edit">
       <div class="wrap cx-in">
-        <figure class="cx-img">${reviewTag('look-red')}<img src="${img('look-red')}" alt="Noir kampagne" loading="lazy"></figure>
+        <figure class="cx-img cx-pack"><img src="${img('freja-front')}" alt="Freja bukser med blonde langs siden" loading="lazy"><img src="${img('alma-front')}" alt="Alma vest" loading="lazy"></figure>
         <div class="cx-txt"><span class="mono">Collection 01 · Aften</span><b class="serif cx-title">Noir</b>
           <p>Skræddersyet sort med blomsterblonder langs siderne. Vest, vide bukser og slingbacks.</p>
           <div class="cx-sw">${['Black','Chocolate Brown','Midnight Navy'].map(c=>`<span>${sw(c)}<span class="mono">${c==='Chocolate Brown'?'Chocolate':c}${c==='Black'?'':' · koncept'}</span></span>`).join('')}</div>
@@ -1787,6 +1806,19 @@ function wireHome(){
   hx.addEventListener('mouseenter', ()=>clearInterval(t)); hx.addEventListener('mouseleave', auto);
   hx.addEventListener('focusin', ()=>clearInterval(t));
   auto(); cleanup.push(()=>clearInterval(t));
+}
+
+
+function viewImageStatus(){
+  const rows = [];
+  ['alma','freja','cleo'].forEach(id => byId(id).imgs.forEach(([k,c]) => rows.push(['Noir', byId(id).name, c, k, has(k), 'Rigtigt produktbillede'])));
+  Object.entries(PENNY_SLOT).forEach(([id,base]) => ['front','back'].forEach(v => rows.push(['Penny', byId(id).name, v==='front'?'Front':'Back', base+'-'+v, has(base+'-'+v), 'Packshot'])));
+  ['bow-hoodie','bow-wide-pants'].forEach(id => Object.keys(HOLLY_KEY).forEach(c => ['front','back'].forEach(v => rows.push(['Holly', byId(id).name+' · '+c, v==='front'?'Front':'Back', hollyBase(byId(id),c)+'-'+v, has(hollyBase(byId(id),c)+'-'+v), 'Packshot']))));
+  const miss = rows.filter(r=>!r[4]).length;
+  return `<div class="wrap" style="padding-block:32px 80px"><span class="mono">Intern side · ikke linket</span><h1 class="cond" style="font-size:clamp(56px,10vw,120px)">Billedstatus</h1>
+    <p class="mute" style="margin:10px 0 20px">${rows.length-miss} af ${rows.length} produktbilleder findes. Læg manglende filer i <code>duo-studio/assets/</code> med præcis dette navn, og kør <code>node build.js</code>.</p>
+    <div class="mtable-x"><table class="mtable"><thead><tr><th>Kollektion</th><th>Produkt</th><th>Visning</th><th>Fil</th><th>Status</th></tr></thead><tbody>
+    ${rows.map(([c,n,v,k,ok,t])=>`<tr><td>${c}</td><td>${esc(n)}</td><td>${v}</td><td><code>${k}.jpg</code></td><td>${ok?'✓ findes':'<span class="tbd">mangler</span>'}</td></tr>`).join('')}</tbody></table></div></div>`;
 }
 
 function viewCollections(){
@@ -1938,15 +1970,45 @@ function wireInOut(){
   paint();
 }
 
+
+/* Planlagte produktbilleder (packshot / ghost mannequin). Læg filerne i assets/ med disse navne. */
+const PENNY_SLOT = { 'everywhere-tee':'penny-everywhere-tee', 'everywhere-stripe-pants':'penny-everywhere-pants', 'soft-fit-top':'penny-softfit-top',
+  'soft-fit-wide-pants':'penny-softfit-pants', 'off-duty-zip':'penny-offduty-zip', 'off-duty-stripe-pants':'penny-offduty-pants' };
+const HOLLY_KEY = { 'Soft White':'white', 'Powder Blue':'blue', 'Cherry Wine':'wine' };
+const hollyBase = (p, color) => (p.id==='bow-hoodie' ? 'holly-hoodie-' : 'holly-pants-') + HOLLY_KEY[color];
+function galFor(p, color){
+  // [billede | null, billedtekst, type, planlagt filnavn]
+  if(p.coll==='holly'){
+    const c = HOLLY_KEY[color], base = hollyBase(p, color), hoodie = p.id==='bow-hoodie';
+    return [
+      [has(base+'-front')?base+'-front':null, 'Front · '+color, 'pack', base+'-front.jpg'],
+      has(base+'-back') ? [base+'-back','Back · '+color,'pack'] : (hoodie ? ['holly-d-back-'+c,'Bagside · reference (AI)','ref', base+'-back.jpg'] : [null,'Back · '+color,'pack', base+'-back.jpg']),
+      [hoodie?'holly-d-bows-'+c:'holly-d-waist-'+c, hoodie?'Detalje · sløjfer':'Detalje · sløjfe i taljen', 'zoom'],
+      ['holly-'+c, 'Model · reference (AI)', 'ref']
+    ];
+  }
+  const base = PENNY_SLOT[p.id];
+  const front = has(base+'-front') ? [base+'-front','Front','pack'] : (p.front ? [p.front,'Front · tidligere board – bekræft','pack'] : [null,'Front','pack', base+'-front.jpg']);
+  const back  = has(base+'-back')  ? [base+'-back','Back','pack']   : (p.back  ? [p.back,'Back · tidligere board – bekræft','pack']   : [null,'Back','pack', base+'-back.jpg']);
+  return [front, back, ...p.detail.map(([k,c])=>[k,'Detalje · '+c,'zoom']), [p.refImg,'Model · reference (AI)','ref']];
+}
+function galHTML(p, color){
+  return galFor(p, color).map(([k,cap,kind,file])=>k
+    ? `<figure class="${kind==='zoom'?'zoomable':''}${kind==='ref'?' is-ref':''}"><div class="zf">${kind==='ref'&&PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img(k)}" alt="${esc(p.name)} – ${cap.toLowerCase()}" loading="lazy"></div><figcaption class="mono">${cap}${kind==='zoom'?' · klik for zoom':''}</figcaption></figure>`
+    : `<figure class="gal-ph"><div><span class="mono">${cap}</span><p>Produktbillede mangler.</p><code>${file||''}</code></div></figure>`).join('');
+}
+function zoomWire(root){
+  root.querySelectorAll('.zoomable .zf').forEach(z => {
+    z.onclick = () => z.classList.toggle('on');
+    z.onmousemove = e => { const r = z.getBoundingClientRect(); z.style.setProperty('--zx', ((e.clientX-r.left)/r.width*100)+'%'); z.style.setProperty('--zy', ((e.clientY-r.top)/r.height*100)+'%'); };
+  });
+}
+const primaryImg = p => p.coll==='holly' ? (has(hollyBase(p,p.colors[0])+'-front') ? hollyBase(p,p.colors[0])+'-front' : p.refImg)
+  : (PENNY_SLOT[p.id] && has(PENNY_SLOT[p.id]+'-front')) ? PENNY_SLOT[p.id]+'-front' : (p.front || p.refImg);
+
 /* Konceptside pr. sæt – begge dele med hver sin sektion (sælges senere hver for sig) */
 function partBlock(p){
   const pend = '<span class="pend">Afventer stofprøve og pasformstest</span>';
-  const gal = [
-    [p.refImg,'Model · reference (AI)','ref'],
-    ...p.detail.map(([k,c])=>[k,'Detalje · '+c,'zoom']),
-    [p.front,'Ghost mannequin · forfra','pack'],
-    [p.back,'Ghost mannequin · bagfra','pack']
-  ];
   const tabs = {
     'Mål':`<p class="mute">Målepunkter, der skal måles og testes på prøver. Ingen mål er fastlagt endnu.</p><ul class="tp-list">${p.pom.map(x=>`<li><span>${esc(x)}</span><span class="tbd">ikke målt</span></li>`).join('')}</ul>
       <p class="mono mute" style="margin-top:12px">Foreløbigt kropsmålskema og bukselængder: se Størrelsesguide.</p>`,
@@ -1958,8 +2020,7 @@ function partBlock(p){
   };
   const tk = Object.keys(tabs);
   return `<section class="part" id="del-${p.id}" aria-labelledby="h-${p.id}">
-    <div class="part-gal">${gal.map(([k,cap,kind])=>k?`<figure class="${kind==='zoom'?'zoomable':''}"><div class="zf">${kind==='ref'&&PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img(k)}" alt="${esc(p.name)} – ${cap.toLowerCase()}" loading="lazy"></div><figcaption class="mono">${cap}${kind==='zoom'?' · klik for zoom':''}</figcaption></figure>`
-      :`<figure class="gal-ph"><div><span class="mono">${cap}</span><p>Packshot mangler – afventer godkendt billedgenerering.</p></div></figure>`).join('')}</div>
+    <div class="part-gal" data-gal="${p.id}">${galHTML(p, p.colors[0])}</div>
     <div class="part-info">
       <span class="mono mute">${p.part} · ${esc(p.type)}</span>
       <h2 class="cond" id="h-${p.id}">${esc(p.name)}</h2>
@@ -1993,13 +2054,13 @@ function wireSet(){
     const upd = () => { const t = part.querySelector('[data-sel]'); if(t) t.textContent = (sel.size ? 'str. '+sel.size : 'ingen størrelse') + (sel.len ? ' · '+sel.len : ''); };
     part.querySelectorAll('[data-psize]').forEach(b => b.onclick = () => { sel.size = b.dataset.psize; part.querySelectorAll('[data-psize]').forEach(x=>x.setAttribute('aria-pressed', x===b)); upd(); });
     part.querySelectorAll('[data-plen]').forEach(b => b.onclick = () => { sel.len = b.dataset.plen; part.querySelectorAll('[data-plen]').forEach(x=>x.setAttribute('aria-pressed', x===b)); upd(); });
-    part.querySelectorAll('[data-pcol]').forEach(b => b.onclick = () => { part.querySelectorAll('[data-pcol]').forEach(x=>x.setAttribute('aria-checked', x===b)); part.querySelector('[data-pcolname]').textContent = b.dataset.pcol; });
+    part.querySelectorAll('[data-pcol]').forEach(b => b.onclick = () => { part.querySelectorAll('[data-pcol]').forEach(x=>x.setAttribute('aria-checked', x===b)); part.querySelector('[data-pcolname]').textContent = b.dataset.pcol; const g = part.querySelector('[data-gal]'), pr = byId(g.dataset.gal); g.innerHTML = galHTML(pr, b.dataset.pcol); zoomWire(g); });
     const dropBtn = part.querySelector('[data-drop]'), form = part.querySelector('.drop-form');
     dropBtn.onclick = () => { form.hidden = false; dropBtn.setAttribute('aria-expanded','true'); upd(); form.querySelector('input').focus(); };
     const tabs = [...part.querySelectorAll('[role="tab"]')];
     const show = (t) => { tabs.forEach(x => { const on = x===t; x.setAttribute('aria-selected', on); x.tabIndex = on?0:-1; $('#'+x.getAttribute('aria-controls')).hidden = !on; }); };
     tabs.forEach((t,i) => { t.onclick = () => show(t); t.onkeydown = e => { if(e.key==='ArrowRight'||e.key==='ArrowLeft'){ e.preventDefault(); const n = tabs[(i + (e.key==='ArrowRight'?1:-1) + tabs.length) % tabs.length]; show(n); n.focus(); } }; });
-    part.querySelectorAll('.zoomable .zf').forEach(z => {
+    zoomWire(part); [].forEach(z => {
       z.onclick = () => z.classList.toggle('on');
       z.onmousemove = e => { const r = z.getBoundingClientRect(); z.style.setProperty('--zx', ((e.clientX-r.left)/r.width*100)+'%'); z.style.setProperty('--zy', ((e.clientY-r.top)/r.height*100)+'%'); };
     });
@@ -2061,6 +2122,7 @@ function render(){
   else if(h==='kassen'){ app.innerHTML = viewCheckout(); wireCheckout(); document.title='Kasse — DUO STUDIO'; }
   else if(h==='collections'){ app.innerHTML = viewCollections(); document.title='Collections — DUO STUDIO'; nav='collections'; }
   else if(h==='about'){ app.innerHTML = viewAbout(); document.title='About — DUO STUDIO'; nav='about'; }
+  else if(h==='billeder'){ app.innerHTML = viewImageStatus(); document.title='Billedstatus — DUO STUDIO'; }
   else if(h==='holly'){ app.innerHTML = viewHolly(); document.title='Holly — DUO STUDIO'; nav='collections'; coll='holly'; }
   else if(h==='in-out' || h==='penny' || h==='io-shop' || h==='io-looks'){ app.innerHTML = viewInOut(); wireInOut(); document.title='Penny — DUO STUDIO'; nav='collections'; coll='in-out'; }
   else if(h==='noir-edit' || h==='noir' || h==='kollektionen' || h==='lookbook'){ app.innerHTML = viewNoir(); wireNoir(); document.title='Noir — DUO STUDIO'; nav='collections'; coll='noir-edit'; }
