@@ -35,7 +35,8 @@ def frame_height(half, box, margin=0.08):
     """Højde på en 3:4-ramme, der rummer hele tøjet (både højde OG bredde) med luft."""
     x0, y0, x1, y1 = box
     gh, gw = y1 - y0, x1 - x0
-    return int(max(gh * (1 + 2 * margin), gw * (1 + 2 * margin) * 4 / 3))
+    ch = int(max(gh * (1 + 2 * margin), gw * (1 + 2 * margin) * 4 / 3))
+    return -(-ch // 4) * 4  # rund op til et multiplum af 4 → præcis 3:4
 
 def to_34(half, box, bg, ch):
     """Beskær en 3:4-ramme med højden ch om tøjet. Mangler der billede, forlænges kun
@@ -55,7 +56,7 @@ def to_34(half, box, bg, ch):
                 row = half.crop((0, src_y, w, src_y + 1)).resize((w, ph + 24)).filter(ImageFilter.GaussianBlur(10))
                 strip.paste(row.crop((0, 12, w, 12 + ph)), (0, y))
         strip.paste(half, (0, pad_t))
-    cw = round(ch * 3 / 4)
+    cw = ch * 3 // 4
     if cw <= w:
         left = max(0, min(w - cw, (x0 + x1) // 2 - cw // 2))
         return strip.crop((left, 0, left + cw, ch))
@@ -98,7 +99,7 @@ def split(src, base, outdir):
         box = garment_box(half, bg)
         if not box:
             raise SystemExit(f'Fandt intet tøj i {name}-halvdelen. Ingen filer gemt.')
-        if box[0] <= 2 or box[2] >= half.size[0] - 2:
+        if box[0] <= 2 or box[2] >= half.size[0] - 2 or box[1] <= 2 or box[3] >= half.size[1] - 2:
             raise SystemExit(f'Tøjet i {name}-halvdelen rører kanten/midten – kan ikke deles uden at skære i tøjet. Ingen filer gemt.')
         prepared.append((name, half, box))
     # 2) samme rammestørrelse for forside og bagside, så de vises i samme skala
