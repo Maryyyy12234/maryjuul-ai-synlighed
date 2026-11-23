@@ -15,7 +15,7 @@ def bg_color(im):
     pts = [im.getpixel((x, y)) for x in (30, w // 4, w * 3 // 4, w - 31) for y in (30, h - 31)]
     return tuple(int(median(p[i] for p in pts)) for i in range(3))
 
-def garment_box(half, bg, inner_trim=None):
+def garment_box(half, bg):
     """Find tøjet. Rammer og skillelinjer (linjer der går næsten hele vejen igennem
     i de yderste 40 px) ignoreres – tøj fylder aldrig hele højden/bredden."""
     w, h = half.size
@@ -31,21 +31,33 @@ def garment_box(half, bg, inner_trim=None):
             mask.paste(0, (0, y, w, y + 1))
     return mask.getbbox()
 
-def to_34(half, box, bg, margin=0.08):
-    """Beskær om tøjet med ægte baggrund; mangler der bredde, forlænges kun kantpixels
-    (baggrund) blødt ud til siden. Tøjet selv skaleres eller strækkes aldrig."""
+def frame_height(half, box, margin=0.08):
+    """Højde på en 3:4-ramme, der rummer hele tøjet (både højde OG bredde) med luft."""
+    x0, y0, x1, y1 = box
+    gh, gw = y1 - y0, x1 - x0
+    return int(max(gh * (1 + 2 * margin), gw * (1 + 2 * margin) * 4 / 3))
+
+def to_34(half, box, bg, ch):
+    """Beskær en 3:4-ramme med højden ch om tøjet. Mangler der billede, forlænges kun
+    kantpixels (baggrund) blødt ud. Tøjet selv skaleres, strækkes eller beskæres aldrig."""
     from PIL import ImageFilter
     w, h = half.size
     x0, y0, x1, y1 = box
-    gh = y1 - y0
-    ch = min(int(gh * (1 + 2 * margin)), h)
+    # lodret: ramme indenfor billedet hvis muligt, ellers baggrund over/under
+    if ch <= h:
+        top = max(0, min(h - ch, (y0 + y1) // 2 - ch // 2))
+        strip = half.crop((0, top, w, top + ch))
+    else:
+        pad_t = (ch - h) // 2
+        strip = Image.new('RGB', (w, ch), bg)
+        for y, src_y, ph in ((0, 0, pad_t), (pad_t + h, h - 1, ch - h - pad_t)):
+            if ph > 0:
+                row = half.crop((0, src_y, w, src_y + 1)).resize((w, ph + 24)).filter(ImageFilter.GaussianBlur(10))
+                strip.paste(row.crop((0, 12, w, 12 + ph)), (0, y))
+        strip.paste(half, (0, pad_t))
     cw = round(ch * 3 / 4)
-    cy = (y0 + y1) // 2
-    top = max(0, min(h - ch, cy - ch // 2))
-    strip = half.crop((0, top, w, top + ch))
     if cw <= w:
-        cx = (x0 + x1) // 2
-        left = max(0, min(w - cw, cx - cw // 2))
+        left = max(0, min(w - cw, (x0 + x1) // 2 - cw // 2))
         return strip.crop((left, 0, left + cw, ch))
     pad_l = (cw - w) // 2; pad_r = cw - w - pad_l
     canvas = Image.new('RGB', (cw, ch), bg)
@@ -78,17 +90,24 @@ def split(src, base, outdir):
     w, h = im.size
     bg = bg_color(im)
     half_w = w // 2
-    halves = [(im.crop((0, 0, half_w - 4, h)), None), (im.crop((w - half_w + 4, 0, w, h)), None)]
-    os.makedirs(outdir, exist_ok=True)
-    out = []
-    for (half, trim), name in zip(halves, ('front', 'back')):
+    halves = [im.crop((0, 0, half_w - 4, h)), im.crop((w - half_w + 4, 0, w, h))]
+    # 1) find og kontrollér tøjet i BEGGE halvdele, før noget gemmes
+    prepared = []
+    for half, name in zip(halves, ('front', 'back')):
         half = trim_mat(half, bg)
-        box = garment_box(half, bg, trim)
+        box = garment_box(half, bg)
         if not box:
             raise SystemExit(f'Fandt intet tøj i {name}-halvdelen. Ingen filer gemt.')
         if box[0] <= 2 or box[2] >= half.size[0] - 2:
-            raise SystemExit(f'Tøjet i {name}-halvdelen rører kanten/midten – kan ikke deles uden at skære i tøjet.')
-        res = to_34(half, box, bg)
+            raise SystemExit(f'Tøjet i {name}-halvdelen rører kanten/midten – kan ikke deles uden at skære i tøjet. Ingen filer gemt.')
+        prepared.append((name, half, box))
+    # 2) samme rammestørrelse for forside og bagside, så de vises i samme skala
+    ch = max(frame_height(half, box) for _, half, box in prepared)
+    results = [(name, to_34(half, box, bg, ch), box) for name, half, box in prepared]
+    # 3) gem først når begge er klar
+    os.makedirs(outdir, exist_ok=True)
+    out = []
+    for name, res, box in results:
         p = os.path.join(outdir, f'{base}-{name}.jpg')
         res.save(p, quality=92, optimize=True, progressive=True)
         out.append((p, res.size, box))

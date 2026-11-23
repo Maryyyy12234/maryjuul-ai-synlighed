@@ -1,7 +1,7 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 
-ROOT = '/home/user/maryjuul-ai-synlighed/duo-studio'
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 A = ROOT + '/assets/'
 REF = ROOT + '/references/'
 PDIR = REF + 'prompts/'
