@@ -2,7 +2,8 @@
 
 **Værktøj:** et billedværktøj, der kan bruge et referencebillede (fx Higgsfield gpt_image_2_6, Midjourney med image reference, ChatGPT-billeder).
 **Reference:** upload `references/holly-powder-blue-ref.jpg`.
-**Format:** 3:2 (fx 1536 × 1024 px). **Én generering.**
+**Format:** 3:2 eller 2:3 – begge kan deles af værktøjet. **Én generering.**
+**Retning (test 1):** brug test-billede 2 som stilreference: sweatstof, ribkanter ved ærmet, rynket peplum.
 
 ## Prompt (kopiér)
 
@@ -12,7 +13,7 @@ LEFT HALF: front view. RIGHT HALF: back view of the exact same hoodie. Each garm
 
 Garment: women's cropped hoodie in soft powder blue (#B9CCE3), medium-weight brushed sweatshirt fleece, matte texture.
 FRONT: center-front opening closed by EXACTLY THREE tied bows made of soft fabric tubing in the same powder blue, evenly spaced from neckline to waist; small vertical keyhole openings between the bows (open, not covered, no underlayer). Attached hood lying flat. Long puff sleeves gathered at the shoulder seam, narrowing to ribbed cuffs. Fitted defined waist with a short flared peplum hem.
-BACK: clean back with the hood, center back seam, gathered puff sleeve heads, and the same peplum hem. No bows on the back.
+BACK: clean plain back with the hood, center back seam, gathered puff sleeve heads, ribbed cuffs and the same gathered peplum hem. ABSOLUTELY NO bow, tie, belt, sash or drawstring on the back — the back waist is smooth.
 
 Realistic stitching, realistic fabric weight and folds, consistent proportions between front and back.
 Background: smooth seamless warm taupe studio backdrop (#B8A798), soft diffused even lighting, subtle natural shadow under each garment.
@@ -21,7 +22,7 @@ No model, no mannequin visible, no hands, no text, no logo, no labels, no waterm
 
 ## Negativ / undgå (hvis værktøjet har et felt til det)
 ```
-model, person, skin, mannequin, text, logo, letters, watermark, two bows, four bows, buttons, zipper, closed front, underlayer, extra pockets, different colors, sage, white, cropped midriff on a person, moodboard, collage, flat lay
+back bow, back tie, belt, sash, waist tie, model, person, skin, mannequin, text, logo, letters, watermark, two bows, four bows, buttons, zipper, closed front, underlayer, extra pockets, different colors, sage, white, cropped midriff on a person, moodboard, collage, flat lay
 ```
 
 ## Kvalitetstjek før godkendelse
