@@ -1,6 +1,6 @@
 # DUO STUDIO – producenter og tilbud
 
-Status: research (nov. 2026). **Ingen producent er bekræftet endnu.** Alle oplysninger nedenfor er producenternes egne udsagn fra deres hjemmesider og skal bekræftes skriftligt.
+Status: research (nov. 2026). Afsender: **produktion@duo-studio.dk** (Simply Mail, oprettet nov. 2026 – fornyes til ca. 650 kr./år efter første år). **Ingen producent er bekræftet endnu.** Alle oplysninger nedenfor er producenternes egne udsagn fra deres hjemmesider og skal bekræftes skriftligt.
 
 ## Det afgørende spørgsmål
 Kan nogen sy **vores eget design** (Holly med tre sløjfer, peplum, pufærmer) **ét stykke ad gangen** og **sende direkte til kunden**? Først når det er bekræftet, kan hjemmesiden love "vi syr først, når du har bestilt".
@@ -71,7 +71,8 @@ Angiv venligst priser for HVER vare for sig:
 
 Venlig hilsen
 [Navn]
-DUO STUDIO
+DUO STUDIO · Womenswear, Danmark
+produktion@duo-studio.dk
 ```
 
 ## Tilbudsskema (udfyldes, når svarene kommer)
