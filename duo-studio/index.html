@@ -7,7 +7,7 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..900;1,62..125,300..900&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..900;1,62..125,300..900&family=Bodoni+Moda:ital,opsz,wght@1,6..96,400&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Poppins:wght@300;400;500;600;700&family=Volkhov:ital@0;1&display=swap">
 <style>
 /* Retning: "Two sides" – sort/hvid kontrast, kondenseret grotesk som art direction,
    mono til data. Ét bevidst lyst tema (sort bruges som sektionsflader, ikke som dark mode). */
@@ -991,12 +991,164 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
   .hc-dots{width:auto}
 }
 @media (prefers-reduced-motion:reduce){.hc,.hc-c img{transition:none}}
+
+/* ================= FASCO-skabelon (Figma) – DUO-tilpasset ================= */
+:root{--ivory:#FFFFFF;--ink:#000000;--grey:#EDEDED;--mute:#8A8A8A;--txt:#484848;--soft:#FAFAFA;
+  --ui:"Poppins","Helvetica Neue",Arial,system-ui,sans-serif;--fx-serif:"Volkhov",Georgia,serif;--mono:"Poppins","Helvetica Neue",Arial,sans-serif;
+  --shadow:0 20px 35px rgba(0,0,0,.15);--card:0 10px 40px rgba(0,0,0,.08);--maxw:1360px}
+body{color:var(--txt)}
+.mono{font-family:var(--ui);letter-spacing:.02em}
+.btn{border-radius:10px;text-transform:none;letter-spacing:0;font-weight:400;font-size:16px;box-shadow:var(--shadow)}
+/* header: logo venstre, menu i midten, kurv højre */
+.strip{background:var(--ink)}
+header.site{background:#fff}
+.bar{grid-template-columns:auto 1fr auto;column-gap:24px;height:64px}
+.bar .logo{order:-1;width:92px;color:var(--ink)}
+.nav-l{justify-content:center;gap:4px}
+.nl{font-family:var(--ui);font-size:15px;text-transform:none;letter-spacing:0;color:var(--txt)}
+.nl[aria-current="page"]{color:var(--ink)}
+.bag{background:var(--ink);color:#fff;border-radius:10px;padding:8px 16px;box-shadow:var(--shadow)}
+.bag .n{color:#fff}
+@media (max-width:999px){.nav-r{order:2;justify-self:end}.nav-l{order:3;justify-content:end}.bar{grid-template-columns:auto 1fr auto;column-gap:12px}}
+@media (min-width:1000px){.bar{height:96px}.bar .logo{width:110px}.nav-l{gap:28px}}
+/* footer */
+footer.site{background:#fff;color:var(--txt);border-top:1px solid var(--grey)}
+footer.site h4,footer.site .mono{color:var(--ink)}
+footer.site a,footer.site button{color:var(--txt)}
+footer.site .f-logo{color:var(--ink);opacity:1}
+footer.site .f-bottom{color:var(--mute);border-color:var(--grey);justify-content:center;gap:24px}
+
+/* ---------- forside ---------- */
+.fx-btn{display:inline-block;background:var(--ink);color:#fff;border-radius:10px;padding:14px 40px;font-family:var(--ui);font-size:15px;box-shadow:var(--shadow);transition:transform .25s var(--ease),background .25s}
+.fx-btn:hover{transform:translateY(-2px);background:#222}
+.fx-h2{font-family:var(--fx-serif);font-weight:400;font-size:clamp(30px,3.4vw,46px);line-height:1.15;color:var(--ink);margin:0}
+.fx-p{color:var(--mute);font-size:15px;line-height:1.7;max-width:52ch;margin:0}
+.c{text-align:center;margin-inline:auto;justify-self:center}
+.fx-sub{font-size:13px;color:var(--mute)}
+.fx-price{font-size:20px;color:var(--ink);font-weight:500}
+.fx-note{font-size:12px;color:#FF4646}
+figure{position:relative}
+figure .review{z-index:3}
+
+.fx-hero{display:grid;gap:16px;padding-block:24px 8px;grid-template-columns:1fr 1fr}
+.fx-hero figure{margin:0;overflow:hidden;border-radius:10px;background:#E0E0E0}
+.fx-hero img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.fx-h-c{grid-column:1 / -1;display:grid;gap:16px;grid-template-rows:auto auto auto}
+.fx-h-top{aspect-ratio:16/7}.fx-h-bot{aspect-ratio:16/6}
+.fx-h-l,.fx-h-r{aspect-ratio:3/4.4}
+.fx-h-txt{display:grid;justify-items:center;text-align:center;gap:10px;padding:10px 0}
+.fx-hero h1{margin:0;display:grid;line-height:.9;font-family:var(--ui);font-weight:500}
+.fx-solid{font-size:clamp(56px,10vw,96px);color:#484848}
+.fx-outline{font-size:clamp(84px,16vw,168px);color:transparent;-webkit-text-stroke:1.5px #484848;letter-spacing:.01em}
+.fx-h-sub{font-size:18px;letter-spacing:.06em;color:var(--ink)}
+@media (min-width:900px){
+  .fx-hero{grid-template-columns:1fr 1.25fr 1fr;align-items:stretch;padding-block:32px 16px}
+  .fx-h-c{grid-column:auto}
+  .fx-h-l,.fx-h-r{aspect-ratio:auto;height:100%;min-height:640px}
+  .fx-h-top{aspect-ratio:16/6}.fx-h-bot{aspect-ratio:16/5.5}
+}
+.fx-brands{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:18px 32px;padding-block:40px;color:var(--ink)}
+.fx-brands a{font-size:clamp(20px,2.4vw,34px);line-height:1}
+.fx-brands .b1{font-family:var(--ui);font-weight:600;letter-spacing:.18em}
+.fx-brands .b2{font-family:var(--fx-serif);font-style:italic}
+.fx-brands .b3{font-family:var(--fx-serif);letter-spacing:.04em}
+.fx-brands .b4{font-family:var(--ui);font-weight:300;letter-spacing:.2em}
+.fx-brands .b4 small{font-size:.4em;letter-spacing:.1em;vertical-align:super;color:var(--mute)}
+.fx-brands .b5{font-family:var(--ui);font-weight:700;letter-spacing:.08em;font-size:clamp(16px,1.8vw,26px)}
+
+.fx-deal{background:var(--soft);padding-block:72px;overflow:hidden}
+.fx-deal-in{display:grid;gap:40px;min-width:0}
+.fx-deal-txt{display:grid;gap:20px;align-content:center;justify-items:start;min-width:0}
+.fx-deal-k{margin:12px 0 0;font-size:20px;font-weight:500;color:var(--ink)}
+.fx-status{display:flex;gap:14px}
+.fx-status div{display:grid;justify-items:center;gap:6px}
+.fx-status b{display:grid;place-items:center;width:64px;height:64px;background:#fff;border-radius:10px;box-shadow:var(--card);font-weight:400;font-size:22px;color:var(--ink)}
+.fx-status div:first-child b{background:var(--ink);color:#fff}
+.fx-status span{font-size:14px}
+.fx-fine{margin:0;font-size:12px;color:var(--mute)}
+.fx-car{min-width:0}
+.fx-car-track{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;align-items:flex-start;padding-bottom:4px}
+.fx-car-track::-webkit-scrollbar{display:none}
+.fx-car-i{margin:0;flex:0 0 58%;aspect-ratio:3/4.4;scroll-snap-align:start;overflow:hidden;transition:flex-basis .4s var(--ease)}
+.fx-car-i:not(.big){flex-basis:46%;aspect-ratio:3/4}
+.fx-car-i img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.fx-car-cap{position:absolute;left:16px;bottom:16px;background:#fff;padding:12px 16px;display:grid;gap:4px;font-size:12px;color:var(--txt)}
+.fx-car-cap b{font-size:16px;font-weight:500;color:var(--ink)}
+.fx-car-i:not(.big) .fx-car-cap{display:none}
+.fx-car-nav{display:flex;align-items:center;gap:12px;margin-top:18px}
+.fx-arrow{width:44px;height:44px;border-radius:50%;background:#fff;box-shadow:var(--card);font-size:22px;color:var(--ink)}
+.fx-dots{display:flex;gap:10px;margin-left:12px}
+.fx-dots i{width:8px;height:8px;border-radius:50%;background:#C4C4C4}
+.fx-dots i.on{background:var(--ink);outline:1px solid var(--ink);outline-offset:4px}
+@media (min-width:900px){.fx-deal-in{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);align-items:center}.fx-car-i{flex-basis:44%}.fx-car-i:not(.big){flex-basis:34%}}
+
+.fx-new{display:grid;gap:22px;padding-block:80px}
+.fx-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-block:8px 10px}
+.fx-tabs button{background:var(--soft);color:var(--mute);border-radius:10px;padding:12px 28px;font-size:15px;min-height:44px}
+.fx-tabs button[aria-selected="true"]{background:var(--ink);color:#fff;box-shadow:var(--shadow)}
+.fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px;margin-bottom:16px}
+.fx-card{background:#fff;border-radius:10px;box-shadow:var(--card);padding:14px;display:grid;gap:14px;transition:transform .3s var(--ease),box-shadow .3s}
+.fx-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.12)}
+.fx-card[hidden]{display:none}
+.fx-card-m{position:relative;aspect-ratio:3/3.4;border-radius:10px;overflow:hidden;background:#B8A798}
+.fx-card-m img{width:100%;height:100%;object-fit:cover}
+.fx-card-t{display:grid;gap:4px;padding:0 4px 4px}
+.fx-card-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.fx-card-h b{font-weight:500;font-size:18px;color:var(--ink)}
+.fx-sw{display:flex;gap:4px}
+.fx-card-f{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px}
+
+.fx-look{display:grid;background:#DADADA;overflow:hidden}
+.fx-look-img{display:grid;grid-template-columns:1.2fr 1fr .9fr;gap:12px;align-items:end;padding:32px 20px 0}
+.fx-lk{margin:0}
+.fx-lk img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.fx-lk1 img{aspect-ratio:3/4.6}.fx-lk2 img{aspect-ratio:1}
+.fx-tag{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:#fff;border:1px solid var(--ink);padding:4px 10px;font-size:12px;color:var(--ink);white-space:nowrap}
+.fx-look-txt{display:grid;gap:16px;align-content:center;justify-items:start;padding:40px 20px 56px;background:#F2F2F2}
+.fx-u{font-size:14px;font-weight:500;color:var(--txt);text-decoration:underline;text-underline-offset:6px}
+.fx-chips{display:flex;gap:10px;align-items:center;font-size:14px}
+.fx-chips b{background:var(--ink);color:#fff;border-radius:6px;padding:3px 12px;font-weight:400;font-size:13px}
+@media (min-width:900px){
+  .fx-look{grid-template-columns:1.1fr 1fr}
+  .fx-look-img{padding:56px 40px 0}
+  .fx-look-txt{padding:64px 64px 64px 120px;clip-path:polygon(18% 0,100% 0,100% 100%,0 100%);margin-left:-80px}
+}
+
+.fx-feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;padding-block:56px}
+.fx-f{display:flex;gap:14px;align-items:center}
+.fx-f svg{width:40px;height:40px;flex:none;fill:none;stroke:var(--ink);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.fx-f b{display:block;font-weight:500;font-size:17px;color:var(--ink)}
+.fx-f span{font-size:14px;color:var(--txt)}
+
+.fx-insta{display:grid;gap:22px;padding-block:72px;background:var(--soft)}
+.fx-insta-row{display:flex;gap:10px;align-items:center;overflow-x:auto;scrollbar-width:none;padding-inline:var(--gl)}
+.fx-insta-row figure{margin:0;flex:0 0 clamp(140px,14vw,230px);aspect-ratio:3/3.6;overflow:hidden}
+.fx-insta-row figure.tall{aspect-ratio:3/4.4}
+.fx-insta-row img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.fx-insta-row .review{font-size:9px}
+
+.fx-news{display:grid;gap:28px;padding-block:72px;padding-inline:var(--gl) var(--gr);max-width:var(--maxw);margin-inline:auto;align-items:center}
+.fx-news figure{margin:0;overflow:hidden;border-radius:10px;display:none}
+.fx-news img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.fx-news-c{display:grid;gap:18px;justify-items:center}
+.fx-news-c .form{width:min(100%,560px);box-shadow:var(--card);padding:20px;border-radius:10px;background:#fff}
+@media (min-width:900px){.fx-news{grid-template-columns:1fr 1.4fr 1fr}.fx-news figure{display:block;aspect-ratio:3/4.4}}
+/* rettelser efter test */
+body.home-top .bar > .logo{opacity:1;pointer-events:auto}
+.fx-news{grid-template-columns:minmax(0,1fr)}
+.fx-news-c{min-width:0}
+.fx-news-c .form{min-width:0;box-sizing:border-box;width:100%;max-width:560px}
+.field-line{min-width:0}.field-line input{min-width:0;width:100%}.form{min-width:0}
+@media (max-width:899px){.fx-h-c{order:-1}.fx-h-l,.fx-h-r{grid-column:auto}}
+footer.site .f-logo{width:140px;margin-block:28px 8px}
+@media (min-width:900px){.fx-news{grid-template-columns:1fr 1.4fr 1fr}}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
 
 <header class="site" id="hdr">
   <div class="wrap bar">
+    <a href="#forside" class="logo" aria-label="DUO STUDIO – forside"></a>
     <div class="nav-l">
       <button class="nl mob" id="menuBtn" aria-expanded="false" aria-controls="sheet">Menu</button>
       <a class="nl desk" href="#women" data-nav="women">Women</a>
@@ -1004,7 +1156,6 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
       <a class="nl desk" href="#collections" data-nav="collections">Collections</a>
       <a class="nl desk" href="#about" data-nav="about">About</a>
     </div>
-    <a href="#forside" class="logo" aria-label="DUO STUDIO – forside"></a>
     <div class="nav-r">
       <button class="nl desk" type="button" data-open="sizeguide">Størrelsesguide</button>
       <button class="nl bag" id="bagBtn" aria-label="Åbn kurv">Kurv <span class="n" id="bagCount">0</span></button>
@@ -1743,112 +1894,122 @@ function pieceCard(p){
   </a>`;
 }
 function viewHome(){
-  const s0 = HERO_SLIDES[0];
-  const sel = ['alma','freja','cleo','everywhere-tee','soft-fit-wide-pants','off-duty-zip','bow-hoodie','bow-wide-pants'].map(byId).filter(Boolean);
+  const AI = PREVIEW ? '<span class="review">AI-reference</span>' : '';
+  const prods = PRODUCTS.filter(p => p.dept !== 'men');
+  const card = p => {
+    const c = p.status === 'concept';
+    return `<a class="fx-card" href="#produkt-${p.id}" data-coll="${p.coll}">
+      <div class="fx-card-m"><img src="${img(primaryImg(p))}" alt="${esc(p.name)}" loading="lazy">${c ? '<span class="review">AI-koncept</span>' : ''}</div>
+      <div class="fx-card-t">
+        <div class="fx-card-h"><b>${esc(p.name)}</b><span class="fx-sw" aria-label="Farver">${swatchesFor(p).map(x => sw(x)).join('')}</span></div>
+        <span class="fx-sub">${esc(collName(p.coll))}</span>
+        <div class="fx-card-f">${c ? '<span class="fx-price">Pris følger</span><span class="fx-note">Under udvikling</span>' : `<span class="fx-price">${p.price == null ? 'Pris følger' : kr(p.price)}</span>`}</div>
+      </div></a>`;
+  };
+  const drop = [['holly-blue','03','Holly','Powder Blue'],['penny-l3','02','Penny','Off-Duty · Midnight Navy'],['holly-white','03','Holly','Soft White'],['io2-l1','02','Penny','Everywhere · Butter Yellow']];
+  const look = ['holly-white','io2-l1','holly-blue','cleo-pair','holly-wine','penny-l3','io2-l1top'];
   return `
-  <section class="hc" id="hx" data-theme="${s0.theme}" aria-roledescription="karrusel" aria-label="DUO STUDIO kollektioner">
-    <div class="hc-g">
-      <figure class="hc-c hc-L">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.L[0])}" alt="${i===0?s.L[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'L')?'':' hidden'}>${heroTag(s0,'L')}</span>`:''}</figure>
-      <div class="hc-top"><span class="hc-k" id="hxNo">${s0.kicker}</span><h1 class="hc-t" id="hxName">${s0.title}</h1><p class="hc-line" id="hxLine">${s0.line}</p></div>
-      <figure class="hc-c hc-dL">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.dL[0])}" alt="${i===0?s.dL[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'dL')?'':' hidden'}>${heroTag(s0,'dL')}</span>`:''}</figure>
-      <div class="hc-mid">
-        <a class="hc-pill" id="hxCta" href="#${s0.coll}">Shop kollektionen</a>
-        <figure class="hc-c hc-o">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.O[0])}" alt="${i===0?s.O[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'O')?'':' hidden'}>${heroTag(s0,'O')}</span>`:''}</figure>
-        <div class="hc-dots" role="tablist" aria-label="Vælg kollektion">${HERO_SLIDES.map((s,i)=>`<button type="button" role="tab" data-hx="${i}" aria-selected="${i===0}" aria-label="${s.name}">${s.no}</button>`).join('')}</div>
+  <section class="fx-hero wrap" aria-label="DUO STUDIO">
+    <figure class="fx-h-l">${AI}<img src="${img('holly-wine')}" alt="Holly i Cherry Wine" fetchpriority="high"></figure>
+    <div class="fx-h-c">
+      <figure class="fx-h-top">${AI}<img src="${img('penny-hero')}" alt="Penny-sættene på modeller"></figure>
+      <div class="fx-h-txt">
+        <h1><span class="fx-solid">NYE</span><span class="fx-outline">DROPS</span></h1>
+        <span class="fx-h-sub">NOIR · PENNY · HOLLY</span>
+        <a class="fx-btn" href="#women">SHOP NU</a>
       </div>
-      <figure class="hc-c hc-dR">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.dR[0])}" alt="${i===0?s.dR[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'dR')?'':' hidden'}>${heroTag(s0,'dR')}</span>`:''}</figure>
-      <figure class="hc-c hc-R">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.R[0])}" alt="${i===0?s.R[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'R')?'':' hidden'}>${heroTag(s0,'R')}</span>`:''}</figure>
+      <figure class="fx-h-bot">${AI}<img src="${img('noir-body1')}" alt="Noir i Black på fem kropstyper" loading="lazy"></figure>
+    </div>
+    <figure class="fx-h-r">${AI}<img src="${img('io2-l1')}" alt="Penny Everywhere-sættet"></figure>
+  </section>
+
+  <nav class="fx-brands wrap" aria-label="Kollektioner">
+    <a href="#noir-edit" class="b1">NOIR</a><a href="#in-out" class="b2">Penny</a><a href="#holly" class="b3">Holly</a><a href="#men" class="b4">MEN <small>snart</small></a><a href="#collections" class="b5">DUO STUDIO</a>
+  </nav>
+
+  <section class="fx-deal" aria-labelledby="dealT">
+    <div class="wrap fx-deal-in">
+      <div class="fx-deal-txt">
+        <h2 class="fx-h2" id="dealT">Næste drop</h2>
+        <p class="fx-p">Penny og Holly er under udvikling. Skriv dig op, så hører du det først, når de kan købes.</p>
+        <a class="fx-btn" href="#nyhedsbrev">Skriv mig op</a>
+        <p class="fx-deal-k">Status lige nu</p>
+        <div class="fx-status"><div><b>01</b><span>Design</span></div><div><b>02</b><span>Prøver</span></div><div><b>03</b><span>Lancering</span></div></div>
+        <p class="fx-fine">Datoen er ikke fastlagt endnu. Billederne er AI-koncepter.</p>
+      </div>
+      <div class="fx-car">
+        <div class="fx-car-track" id="dealTrack">${drop.map(([k, n, c, t], i) => `<figure class="fx-car-i${i === 0 ? ' big' : ''}">${AI}<img src="${img(k)}" alt="${c} – ${t}" loading="lazy"><figcaption class="fx-car-cap"><span>${n} — ${c}</span><b>${t}</b></figcaption></figure>`).join('')}</div>
+        <div class="fx-car-nav"><button type="button" class="fx-arrow" data-car="-1" aria-label="Forrige">‹</button><button type="button" class="fx-arrow" data-car="1" aria-label="Næste">›</button>
+          <span class="fx-dots" id="dealDots">${drop.map((_, i) => `<i class="${i === 0 ? 'on' : ''}"></i>`).join('')}</span></div>
+      </div>
     </div>
   </section>
 
-  <section class="cx" aria-labelledby="cxT">
-    <div class="wrap cx-head"><h2 class="serif" id="cxT">Tre kollektioner</h2><span class="mono">Noir · Penny · Holly</span></div>
-    <a class="cx-p cx-noir rv" href="#noir-edit">
-      <div class="wrap cx-in">
-        <figure class="cx-img cx-pack"><img src="${img('freja-front')}" alt="Freja bukser med blonde langs siden" loading="lazy"><img src="${img('alma-front')}" alt="Alma vest" loading="lazy"></figure>
-        <div class="cx-txt"><span class="mono">Collection 01 · Aften</span><b class="serif cx-title">Noir</b>
-          <p>Skræddersyet sort med blomsterblonder langs siderne. Vest, vide bukser og slingbacks.</p>
-          <div class="cx-sw">${['Black','Chocolate Brown','Midnight Navy'].map(c=>`<span>${sw(c)}<span class="mono">${c==='Chocolate Brown'?'Chocolate':c}${c==='Black'?'':' · koncept'}</span></span>`).join('')}</div>
-          <span class="ulink">Udforsk Noir</span></div>
-        <figure class="cx-detail"><img src="${img('freja-lace')}" alt="Blonde langs Frejas sidesøm" loading="lazy"></figure>
-      </div>
-    </a>
-    <a class="cx-p cx-penny rv" href="#in-out">
-      <div class="wrap cx-in">
-        <div class="cx-txt"><span class="mono">Collection 02 · Pyjamas &amp; lounge · Koncept</span><b class="cond cx-title">Penny</b>
-          <p>Tre sæt, der er bløde nok til sofaen og pæne nok til at gå ud i.</p><span class="ulink">Udforsk Penny</span></div>
-        <div class="cx-strip">${[['io2-l1','01 Everywhere'],['io2-l2','02 Soft Fit'],['penny-l3','03 Off-Duty']].map(([k,t],i)=>`<figure style="--i:${i}">${PREVIEW?'<span class="review">AI</span>':''}<img src="${img(k)}" alt="Penny ${t}" loading="lazy"><figcaption class="mono">${t}</figcaption></figure>`).join('')}</div>
-      </div>
-    </a>
-    <a class="cx-p cx-holly rv" href="#holly">
-      <div class="wrap cx-in">
-        <div class="cx-collage">
-          <figure class="cc1">${PREVIEW?'<span class="review">AI</span>':''}<img src="${img('holly-blue')}" alt="Holly i Powder Blue" loading="lazy"></figure>
-          <figure class="cc2"><img src="${img('holly-d-bows-white')}" alt="Sløjfer foran" loading="lazy"></figure>
-          <figure class="cc3"><img src="${img('holly-d-back-wine')}" alt="Bagside i Cherry Wine" loading="lazy"></figure>
-        </div>
-        <div class="cx-txt"><span class="mono">Collection 03 · Feminin streetwear · Koncept</span><b class="serif cx-title">Holly</b>
-          <p>Hoodies med sløjfer og pufærmer, og matchende wide-leg bukser.</p>
-          <div class="cx-sw">${['Soft White','Powder Blue','Cherry Wine'].map(c=>`<span>${sw(c)}<span class="mono">${c}</span></span>`).join('')}</div>
-          <span class="ulink">Udforsk Holly</span></div>
-      </div>
-    </a>
+  <section class="fx-new wrap" aria-labelledby="newT">
+    <h2 class="fx-h2 c" id="newT">Kollektionen</h2>
+    <p class="fx-p c">Tre kollektioner til kvinder. Noir er hovedkollektionen. Penny og Holly er koncepter under udvikling.</p>
+    <div class="fx-tabs" role="tablist" aria-label="Filtrér kollektion">
+      ${[['all','Alle'],['noir-edit','Noir'],['in-out','Penny'],['holly','Holly']].map(([v, l], i) => `<button type="button" role="tab" data-ftab="${v}" aria-selected="${i === 0}">${l}</button>`).join('')}
+    </div>
+    <div class="fx-grid" id="fxGrid">${prods.map(card).join('')}</div>
+    <div class="c"><a class="fx-btn" href="#women">Se alle produkter</a></div>
   </section>
 
-  <section class="ed wrap" aria-labelledby="edT">
-    <h2 class="ed-q" id="edT"><span class="cond">Not just</span> <span class="serif">what you wear.</span><br><span class="serif">How you</span> <span class="cond">feel in it.</span></h2>
-    <div class="ed-grid">
-      <figure class="ed-a rv">${PREVIEW?'<span class="review">AI-reference</span>':''}<img src="${img('io2-l2top')}" alt="Soft Fit Long Sleeve i bordeaux" loading="lazy"><figcaption class="mono">Penny · Soft Fit</figcaption></figure>
-      <figure class="ed-b rv"><img src="${img('freja-lace')}" alt="Blonde på Freja" loading="lazy"><figcaption class="mono">Noir · blonde</figcaption></figure>
-      <p class="ed-txt">Vi starter med detaljen: en blonde langs sidesømmen, en piping, en sløjfe. Resten skal bare føles godt.</p>
-      <figure class="ed-c rv"><img src="${img('io2-d-stripe')}" alt="Striber og broderi på Penny" loading="lazy"><figcaption class="mono">Penny · striber</figcaption></figure>
-      <figure class="ed-d rv"><img src="${img('holly-d-bows-blue')}" alt="Sløjfer på Holly" loading="lazy"><figcaption class="mono">Holly · sløjfer</figcaption></figure>
+  <section class="fx-look" aria-labelledby="lookT">
+    <div class="fx-look-img">
+      ${[['alma-front','Alma vest'],['freja-front','Freja bukser'],['cleo-side','Cleo slingbacks']].map(([k, t], i) => `<figure class="fx-lk fx-lk${i}"><img src="${img(k)}" alt="${t}" loading="lazy"><span class="fx-tag">${t}</span></figure>`).join('')}
+    </div>
+    <div class="fx-look-txt">
+      <span class="fx-sub">Collection 01 · aften</span>
+      <h2 class="fx-h2" id="lookT">Noir Edit</h2>
+      <span class="fx-u">BESKRIVELSE</span>
+      <p class="fx-p">Skræddersyet sort med blomsterblonder langs siderne. En lang vest, vide bukser og spidse slingbacks med små sølvspænder.</p>
+      <div class="fx-chips"><span>Farve:</span><b>Black</b></div>
+      <span class="fx-price">Pris følger</span>
+      <a class="fx-btn" href="#noir-edit">Se Noir</a>
     </div>
   </section>
 
-  <section class="sp" aria-labelledby="spT">
-    <div class="wrap"><div class="sec-h"><h2 class="cond" id="spT">Selected pieces</h2><a class="ulink" href="#women">Se alle styles</a></div></div>
-    <div class="sp-track wrap">${sel.map(pieceCard).join('')}</div>
+  <section class="fx-feat wrap" aria-label="Om DUO STUDIO">
+    ${[['M4 20h16M6 20V9l6-5 6 5v11M10 20v-6h4v6','Dansk design','Womenswear fra DUO STUDIO'],
+       ['M4 7h16M4 12h16M4 17h10','XXS–4XL','Foreløbigt størrelsesudvalg'],
+       ['M7 21v-6a5 5 0 0 1 10 0v6M12 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6','Fem kropstyper','Vist på forskellige kroppe'],
+       ['M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4','Ingen betaling endnu','Privat forhåndsvisning']]
+      .map(([d, t, s]) => `<div class="fx-f"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg><div><b>${t}</b><span>${s}</span></div></div>`).join('')}
   </section>
 
-  <section class="dw" aria-labelledby="dwT">
-    <div class="wrap">
-      <h2 class="dw-t" id="dwT"><span class="serif">The</span> <span class="cond">Duo</span> <span class="serif">world</span></h2>
-      <div class="dw-grid">${[
-        ['Komfort','Bløde materialer og vide silhuetter. Tøj du kan sidde, ligge og leve i.','io2-l1pants','Penny'],
-        ['Feminitet','Blonder, sløjfer og pufærmer. Feminint uden at være pænt-pænt.','holly-d-bows-wine','Holly'],
-        ['Nutid','Københavnsk streetstyle møder skræddersyet. Én garderobe, to sider.','alma-front','Noir']
-      ].map(([t,d,k,c],i)=>`<div class="dw-c rv"><span class="mono">0${i+1} · ${c}</span><figure><img src="${img(k)}" alt="" loading="lazy"></figure><b class="serif">${t}</b><p>${d}</p></div>`).join('')}</div>
-      <p class="dw-bodies mono">Vi viser tøjet på fem kropstyper: Petite · Curvy · Regular · Plus · Tall</p>
-    </div>
+  <section class="fx-insta" aria-labelledby="instaT">
+    <div class="wrap"><h2 class="fx-h2 c" id="instaT">Lookbook</h2>
+    <p class="fx-p c">Udvalgte billeder fra de tre kollektioner. Modelbillederne er AI-referencer.</p></div>
+    <div class="fx-insta-row">${look.map((k, i) => `<figure class="${i % 2 ? 'tall' : ''}">${k.startsWith('cleo') ? '' : AI}<img src="${img(k)}" alt="" loading="lazy"></figure>`).join('')}</div>
   </section>
 
-  <section class="next wrap" aria-label="Drop-tilmelding">
-    <div class="next-grid">
-      <div style="display:grid;gap:18px">
-        <span class="mono">Næste drop</span>
-        <h2 class="serif" style="font-size:clamp(56px,9vw,140px);line-height:.9">Hør først.</h2>
-        <p class="mute" style="max-width:42ch">Penny og Holly er under udvikling. Tilmeldingen er en forhåndsvisning og er ikke forbundet til et e-mailsystem endnu.</p>
-      </div>
-      ${notifyForm('newsEmail','Drop-tilmelding')}
+  <section class="fx-news" id="nyhedsbrev" aria-labelledby="newsT">
+    <figure class="fx-news-a">${AI}<img src="${img('io2-l1')}" alt="" loading="lazy"></figure>
+    <div class="fx-news-c">
+      <h2 class="fx-h2 c" id="newsT">Skriv dig op til næste drop</h2>
+      <p class="fx-p c">Få besked, når Penny og Holly kan købes. Tilmeldingen er en forhåndsvisning og er ikke forbundet til et e-mailsystem endnu.</p>
+      ${notifyForm('newsEmail', 'Din e-mail')}
     </div>
+    <figure class="fx-news-b">${AI}<img src="${img('holly-blue')}" alt="" loading="lazy"></figure>
   </section>`;
 }
 function wireHome(){
-  const hx = $('#hx'); if(!hx) return;
-  const dots = $$('[data-hx]', hx);
-  const KEYS = { 'hc-L':'L', 'hc-dL':'dL', 'hc-o':'O', 'hc-dR':'dR', 'hc-R':'R' };
+  const tabs = $$('[data-ftab]'), cards = $$('#fxGrid .fx-card');
+  tabs.forEach(t => t.onclick = () => {
+    tabs.forEach(x => x.setAttribute('aria-selected', x === t));
+    cards.forEach(c => { c.hidden = t.dataset.ftab !== 'all' && c.dataset.coll !== t.dataset.ftab; });
+  });
+  const track = $('#dealTrack'); if(!track) return;
+  const items = $$('.fx-car-i', track), dots = $$('#dealDots i');
+  let i = 0;
   const go = n => {
-    const s = HERO_SLIDES[n]; hx.dataset.theme = s.theme;
-    $$('.hc-c', hx).forEach(f => {
-      const key = KEYS[Object.keys(KEYS).find(c => f.classList.contains(c))];
-      $$('img', f).forEach((im,k)=>{ im.classList.toggle('on', k===n); im.alt = k===n ? HERO_SLIDES[k][key][1] : ''; });
-      const ai = $('.hc-ai', f); if(ai){ const t = heroTag(s, key); ai.textContent = t; ai.hidden = !t; }
-    });
-    dots.forEach((d,k)=>d.setAttribute('aria-selected', k===n));
-    $('#hxNo').textContent = s.kicker; $('#hxName').textContent = s.title; $('#hxLine').textContent = s.line; $('#hxCta').href = '#' + s.coll;
+    i = (n + items.length) % items.length;
+    items.forEach((el, k) => el.classList.toggle('big', k === i));
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    track.scrollTo({ left: items[i].offsetLeft - items[0].offsetLeft, behavior: 'smooth' });
   };
-  dots.forEach((d,k)=>d.onclick = () => go(k));
+  $$('[data-car]').forEach(b => b.onclick = () => go(i + Number(b.dataset.car)));
 }
 
 
