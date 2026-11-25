@@ -9,7 +9,8 @@ Disse beslutninger er låst. Ændr dem ikke uden ejerens godkendelse.
 - Fra skabelonen bruges aldrig: nedtælling, rabatter, stjerner/anmeldelser, "næsten udsolgt", andre mærkers logoer, løfter om fri fragt eller garanti.
 - Ingen nyt redesign uden ejerens godkendelse – kun små justeringer.
 - Kurven er en demo. Betaling aktiveres først, når pris, produktion og levering er afklaret.
-- Alle AI-billeder er **koncepter** og skal mærkes sådan, indtil der findes fysiske prøver og rigtige fotos.
+- Alle AI-billeder er **koncepter**. Ejeren har valgt at skjule AI-mærkerne i den private forhåndsvisning (`AI_TAGS = false` i index.html). Footeren siger, at billederne er visualiseringer af produkter under udvikling. Før offentlig lancering: rigtige fotos eller tydelig mærkning.
+- Bevægelse: hero-billeder skifter blødt, kollektionsbånd og lookbook glider, produktkort viser bagsiden ved hover. Alt slås fra ved "reducer bevægelse".
 - Ingen opfundne priser, lager, størrelser eller produktionsstatus. Ingen rigtig betaling.
 
 ## 01 — NOIR (aften · tailoring · blonde)
