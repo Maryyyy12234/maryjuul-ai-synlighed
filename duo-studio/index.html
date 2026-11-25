@@ -952,6 +952,45 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
 .hx[data-theme="noir"] .hx-big{color:var(--ivory);text-shadow:0 2px 30px rgba(0,0,0,.35)}
 .part-gal{align-items:start}.part-gal figure{align-content:start;aspect-ratio:auto!important;height:auto}
 .part-gal{align-content:start;align-self:start}
+
+/* ===== Forside-hero: collage (Figma-reference, DUO-tilpasset) ===== */
+.hc{--bg:#1C1B1D;--fg:#D9C7A4;--line:rgba(217,199,164,.28);--pill:#8B6A58;--pillfg:#F3ECE0;background:var(--bg);color:var(--fg);overflow:hidden;transition:background .8s var(--ease),color .8s var(--ease)}
+.hc[data-theme="penny"]{--bg:#EDE8E1;--fg:#4A3426;--line:rgba(74,52,38,.22);--pill:#C9AC7C;--pillfg:#2E1F16}
+.hc[data-theme="holly"]{--bg:#4E1119;--fg:#F3E9E2;--line:rgba(243,233,226,.26);--pill:#A07A52;--pillfg:#FBF4EC}
+.hc-g{position:relative;max-width:1180px;margin-inline:auto;display:grid;min-width:0;
+  grid-template-columns:1fr 1fr;grid-template-areas:"top top" "L R" "mid mid" "dL dR"}
+.hc-g>*{min-width:0;position:relative}
+.hc-top{grid-area:top;display:grid;justify-items:center;text-align:center;gap:6px;padding:28px 16px 24px;border-bottom:1px solid var(--line)}
+.hc-k{font-family:var(--ui);font-size:13px;letter-spacing:.02em;opacity:.85}
+.hc-t{margin:0;font-family:var(--editorial);font-weight:400;font-style:normal;font-size:clamp(46px,8vw,104px);line-height:.95;letter-spacing:.01em}
+.hc-line{margin:0;font-size:14px;opacity:.8;max-width:34ch}
+.hc-c{position:relative;margin:0;overflow:hidden;background:rgba(0,0,0,.06)}
+.hc-c img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 15%;opacity:0;transition:opacity .9s var(--ease)}
+.hc-c img.on{opacity:1}
+.hc-L,.hc-R{aspect-ratio:3/4}.hc-L{grid-area:L}.hc-R{grid-area:R;border-left:1px solid var(--line)}
+.hc-dL,.hc-dR{aspect-ratio:1;border-top:1px solid var(--line)}.hc-dL{grid-area:dL}.hc-dR{grid-area:dR;border-left:1px solid var(--line)}
+.hc-mid{grid-area:mid;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 20px;padding:22px 12px;border-top:1px solid var(--line)}
+.hc-pill{display:inline-block;white-space:nowrap;background:var(--pill);color:var(--pillfg);border-radius:999px;padding:9px 20px;font-size:13px;font-weight:500;letter-spacing:.01em;transition:transform .3s var(--ease),filter .3s}
+.hc-pill:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.hc-o{width:128px;aspect-ratio:1;flex:none;overflow:visible;background:none}
+.hc-o img{border-radius:50%;filter:grayscale(1) contrast(1.05);object-position:50% 20%}
+.hc-o .hc-ai{left:50%;top:auto;bottom:-6px;transform:translateX(-50%);white-space:nowrap}
+.hc-dots{display:flex;gap:4px;width:100%;justify-content:center}
+.hc-dots button{min-width:44px;min-height:44px;font-family:var(--mono);font-size:12px;color:inherit;opacity:.55;border-bottom:1px solid transparent}
+.hc-dots button[aria-selected="true"]{opacity:1;border-bottom-color:currentColor}
+.hc-ai{left:8px;top:8px;z-index:3}
+@media (min-width:900px){
+  .hc-g{border-inline:1px solid var(--line);grid-template-columns:1.1fr 1fr 2fr 1fr 1.1fr;grid-template-rows:auto 1fr;grid-template-areas:"L top top top R" "L dL mid dR R"}
+  .hc-top{padding:34px 16px 30px;border-bottom:0}
+  .hc-top::after{content:"";position:absolute;left:-100vmax;right:-100vmax;bottom:0;height:1px;background:var(--line);pointer-events:none;z-index:0}
+  .hc-L,.hc-R{aspect-ratio:auto;height:100%;z-index:2}
+  .hc-L{border-right:1px solid var(--line)}
+  .hc-dL,.hc-dR{aspect-ratio:auto;border-top:1px solid var(--line);border-left:0}
+  .hc-mid{flex-direction:column;flex-wrap:nowrap;min-height:clamp(300px,30vw,380px);border-inline:1px solid var(--line)}
+  .hc-o{width:min(70%,200px)}
+  .hc-dots{width:auto}
+}
+@media (prefers-reduced-motion:reduce){.hc,.hc-c img{transition:none}}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -1684,10 +1723,14 @@ const notifyForm = (id, label) => `<form class="form" data-notify>
 
 /* ================= FORSIDE v4 – editorial ================= */
 const HERO_SLIDES = [
-  { coll:'noir-edit', no:'01', name:'Noir', img:'alma-front', trip:['alma-front','freja-front','cleo-pair'], pos:'50% 18%', theme:'noir', line:'Aften. Tailoring. Blonde.', review:false },
-  { coll:'in-out',    no:'02', name:'Penny', img:'io2-l1', pos:'50% 14%', theme:'penny', line:'Pyjamas, men pænt nok til at gå ud i.', review:true },
-  { coll:'holly',     no:'03', name:'Holly', img:'holly-wine', pos:'50% 12%', theme:'holly', line:'Sløjfer, pufærmer og blød sweat.', review:true }
+  { coll:'noir-edit', no:'01', name:'Noir', theme:'noir', kicker:'Collection 01 · aften', title:'Noir Edit', line:'Tailoring med blonde langs siderne.',
+    L:['alma-front','Alma vest'], dL:['freja-lace','Blonde langs Frejas sidesøm'], O:['cleo-side','Cleo slingback'], dR:['cleo-pair','Cleo slingbacks'], R:['freja-front','Freja bukser'], ai:false },
+  { coll:'in-out', no:'02', name:'Penny', theme:'penny', kicker:'Collection 02 · pyjamas & lounge', title:'Penny', line:'Bløde nok til sofaen, pæne nok til at gå ud i.',
+    L:['io2-l1','Penny Everywhere-sættet'], dL:['penny-everywhere-pants-front','Everywhere-bukser med striber'], O:['io2-l1top','Everywhere Tee'], dR:['penny-softfit-pants-front','Soft Fit-bukser med piping'], R:['penny-l3','Penny Off-Duty-sættet'], ai:true },
+  { coll:'holly', no:'03', name:'Holly', theme:'holly', kicker:'Collection 03 · feminin streetwear', title:'Holly', line:'Sløjfer, pufærmer og blød sweat.',
+    L:['holly-wine','Holly i Cherry Wine'], dL:['holly-d-bows-wine','Tre sløjfer foran'], O:['holly-white','Holly i Soft White'], dR:['holly-d-waist-wine','Sløjfe i taljen'], R:['holly-blue','Holly i Powder Blue'], ai:true }
 ];
+const heroTag = (s, key) => !s.ai ? '' : (/-(front|back)$/.test(s[key][0]) ? 'AI-koncept' : 'AI-reference');
 const collName = id => (COLLECTIONS.find(c=>c.id===id)||{}).name || '';
 const swatchesFor = p => (p.colors && p.colors.length ? p.colors : ['Black']);
 function pieceCard(p){
@@ -1703,18 +1746,18 @@ function viewHome(){
   const s0 = HERO_SLIDES[0];
   const sel = ['alma','freja','cleo','everywhere-tee','soft-fit-wide-pants','off-duty-zip','bow-hoodie','bow-wide-pants'].map(byId).filter(Boolean);
   return `
-  <section class="hx" id="hx" data-theme="${s0.theme}" aria-roledescription="karrusel" aria-label="DUO STUDIO kampagne">
-    <div class="hx-in wrap">
-      <div class="hx-type">
-        <span class="mono hx-kicker">DUO STUDIO · Womenswear · København</span>
-        <h1 class="hx-logo"><span class="logo" role="img" aria-label="DUO STUDIO"></span></h1>
-        <p class="hx-state"><em>Not just what you wear.</em> How you feel in it.</p>
-        <div class="hx-now" aria-live="polite"><span class="mono" id="hxNo">Collection ${s0.no}</span><b class="cond" id="hxName">${s0.name}</b><span id="hxLine">${s0.line}</span></div>
-        <div class="hx-cta"><a class="btn" id="hxCta" href="#${s0.coll}">Shop kollektionen <span class="arr">→</span></a>
-          <div class="hx-dots" role="tablist" aria-label="Vælg kollektion">${HERO_SLIDES.map((s,i)=>`<button type="button" role="tab" data-hx="${i}" aria-selected="${i===0}" aria-label="${s.name}">${s.no}</button>`).join('')}</div></div>
+  <section class="hc" id="hx" data-theme="${s0.theme}" aria-roledescription="karrusel" aria-label="DUO STUDIO kollektioner">
+    <div class="hc-g">
+      <figure class="hc-c hc-L">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.L[0])}" alt="${i===0?s.L[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'L')?'':' hidden'}>${heroTag(s0,'L')}</span>`:''}</figure>
+      <div class="hc-top"><span class="hc-k" id="hxNo">${s0.kicker}</span><h1 class="hc-t" id="hxName">${s0.title}</h1><p class="hc-line" id="hxLine">${s0.line}</p></div>
+      <figure class="hc-c hc-dL">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.dL[0])}" alt="${i===0?s.dL[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'dL')?'':' hidden'}>${heroTag(s0,'dL')}</span>`:''}</figure>
+      <div class="hc-mid">
+        <a class="hc-pill" id="hxCta" href="#${s0.coll}">Shop kollektionen</a>
+        <figure class="hc-c hc-o">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.O[0])}" alt="${i===0?s.O[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'O')?'':' hidden'}>${heroTag(s0,'O')}</span>`:''}</figure>
+        <div class="hc-dots" role="tablist" aria-label="Vælg kollektion">${HERO_SLIDES.map((s,i)=>`<button type="button" role="tab" data-hx="${i}" aria-selected="${i===0}" aria-label="${s.name}">${s.no}</button>`).join('')}</div>
       </div>
-      <div class="hx-stage">${HERO_SLIDES.map((s,i)=>`<figure class="hx-slide${i===0?' on':''}" aria-hidden="${i!==0}">${s.trip?`<div class="hx-trip">${s.trip.map((k,n)=>`<img src="${img(k)}" alt="${['Alma vest','Freja bukser','Cleo slingbacks'][n]}" ${n?'':'fetchpriority="high"'}>`).join('')}</div><figcaption class="hx-cap mono">Alma · Freja · Cleo — produktbilleder</figcaption>`:`${PREVIEW&&s.review?'<span class="review">AI-reference</span>':''}<img src="${img(s.img)}" alt="${s.name} kampagne" style="object-position:${s.pos}" loading="lazy">`}</figure>`).join('')}
-        <span class="hx-big serif" aria-hidden="true" id="hxBig">${s0.name}</span></div>
+      <figure class="hc-c hc-dR">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.dR[0])}" alt="${i===0?s.dR[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'dR')?'':' hidden'}>${heroTag(s0,'dR')}</span>`:''}</figure>
+      <figure class="hc-c hc-R">${HERO_SLIDES.map((s,i)=>`<img class="${i===0?'on':''}" src="${img(s.R[0])}" alt="${i===0?s.R[1]:''}" ${i===0?'':'loading="lazy"'}>`).join('')}${PREVIEW?`<span class="review hc-ai"${heroTag(s0,'R')?'':' hidden'}>${heroTag(s0,'R')}</span>`:''}</figure>
     </div>
   </section>
 
@@ -1793,21 +1836,19 @@ function viewHome(){
 }
 function wireHome(){
   const hx = $('#hx'); if(!hx) return;
-  const slides = $$('.hx-slide', hx), dots = $$('[data-hx]', hx);
-  let i = 0, t;
+  const dots = $$('[data-hx]', hx);
+  const KEYS = { 'hc-L':'L', 'hc-dL':'dL', 'hc-o':'O', 'hc-dR':'dR', 'hc-R':'R' };
   const go = n => {
-    i = (n + slides.length) % slides.length; const s = HERO_SLIDES[i];
-    hx.dataset.theme = s.theme;
-    slides.forEach((el,k)=>{ el.classList.toggle('on', k===i); el.setAttribute('aria-hidden', k!==i); });
-    dots.forEach((d,k)=>d.setAttribute('aria-selected', k===i));
-    $('#hxNo').textContent = 'Collection ' + s.no; $('#hxName').textContent = s.name; $('#hxLine').textContent = s.line;
-    $('#hxBig').textContent = s.name; $('#hxCta').href = '#' + s.coll;
+    const s = HERO_SLIDES[n]; hx.dataset.theme = s.theme;
+    $$('.hc-c', hx).forEach(f => {
+      const key = KEYS[Object.keys(KEYS).find(c => f.classList.contains(c))];
+      $$('img', f).forEach((im,k)=>{ im.classList.toggle('on', k===n); im.alt = k===n ? HERO_SLIDES[k][key][1] : ''; });
+      const ai = $('.hc-ai', f); if(ai){ const t = heroTag(s, key); ai.textContent = t; ai.hidden = !t; }
+    });
+    dots.forEach((d,k)=>d.setAttribute('aria-selected', k===n));
+    $('#hxNo').textContent = s.kicker; $('#hxName').textContent = s.title; $('#hxLine').textContent = s.line; $('#hxCta').href = '#' + s.coll;
   };
-  const auto = () => { clearInterval(t); }; /* bevidst ingen autoplay: Noir er hovedkampagnen */
-  dots.forEach((d,k)=>d.onclick = () => { go(k); auto(); });
-  hx.addEventListener('mouseenter', ()=>clearInterval(t)); hx.addEventListener('mouseleave', auto);
-  hx.addEventListener('focusin', ()=>clearInterval(t));
-  auto(); cleanup.push(()=>clearInterval(t));
+  dots.forEach((d,k)=>d.onclick = () => go(k));
 }
 
 
