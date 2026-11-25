@@ -5,7 +5,10 @@ Disse beslutninger er låst. Ændr dem ikke uden ejerens godkendelse.
 ## Brand
 - Dansk womenswear (Men kommer senere – ingen opdigtede herreprodukter).
 - Luxury × streetwear, editorial, feminin men moderne. Originalt DUO STUDIO-logo – aldrig AI-logo.
-- Hjemmesiden er godkendt. Ingen redesign – kun små justeringer, der støtter billederne.
+- Hjemmesiden følger Figma-skabelonen "FASCO" (valgt af ejeren nov. 2026): Poppins til tekst, Volkhov til overskrifter, sorte knapper med runde hjørner, hvid baggrund. Shop med filtre, fælles produktside, minikurv, kurvside og demo-kasse.
+- Fra skabelonen bruges aldrig: nedtælling, rabatter, stjerner/anmeldelser, "næsten udsolgt", andre mærkers logoer, løfter om fri fragt eller garanti.
+- Ingen nyt redesign uden ejerens godkendelse – kun små justeringer.
+- Kurven er en demo. Betaling aktiveres først, når pris, produktion og levering er afklaret.
 - Alle AI-billeder er **koncepter** og skal mærkes sådan, indtil der findes fysiske prøver og rigtige fotos.
 - Ingen opfundne priser, lager, størrelser eller produktionsstatus. Ingen rigtig betaling.
 

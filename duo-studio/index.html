@@ -1322,6 +1322,8 @@ footer.site .f-logo{width:140px;margin-block:28px 8px}
 }
 .fx-co-form legend{text-transform:none;letter-spacing:0;font-weight:400}
 @media (min-width:1000px){.fx-filters .fx-f-done{display:none}}
+.fx-li-ph,.fx-co-ph{position:relative}
+.fx-ai{position:absolute;left:4px;top:4px;background:#fff;color:var(--ink);font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;padding:2px 4px;line-height:1.2;z-index:2}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -1650,10 +1652,16 @@ const cartTotal = () => cart.reduce((s,l)=>s + (byId(l.id).price||0)*l.qty, 0);
 const lineSize = l => l.size ? 'Str. ' + l.size : 'Størrelse følger';
 function saveCart(){ store.set('duo-cart', cart); renderCart(); }
 document.addEventListener('click', e => {
-  const q = e.target.closest('[data-q]'); if(q){ const l = cart[+q.dataset.q]; l.qty += +q.dataset.d; if(l.qty<1) cart.splice(+q.dataset.q,1); saveCart(); if(location.hash==='#kassen'||location.hash==='#kurv') render(); return; }
-  const r = e.target.closest('[data-rm]'); if(r){ cart.splice(+r.dataset.rm,1); saveCart(); if(location.hash==='#kassen'||location.hash==='#kurv') render(); }
+  const q = e.target.closest('[data-q]'); if(q){ const l = cart[+q.dataset.q]; l.qty += +q.dataset.d; if(l.qty<1) cart.splice(+q.dataset.q,1); saveCart(); rerenderKeep(); return; }
+  const r = e.target.closest('[data-rm]'); if(r){ cart.splice(+r.dataset.rm,1); saveCart(); rerenderKeep(); }
 });
 
+function rerenderKeep(){
+  if(location.hash!=='#kassen' && location.hash!=='#kurv') return;
+  const vals = {}; $$('#coForm input, #coForm select').forEach(i => vals[i.id] = i.value);
+  render();
+  Object.entries(vals).forEach(([id, v]) => { const el = document.getElementById(id); if(el) el.value = v; });
+}
 /* ================= Skuffer & menu ================= */
 let lastFocus;
 function openDrawer(id){
@@ -2010,6 +2018,12 @@ function wireHome(){
     dots.forEach((d, k) => d.classList.toggle('on', k === i));
     track.scrollTo({ left: items[i].offsetLeft - items[0].offsetLeft, behavior: 'smooth' });
   };
+  const mark = n => { i = n; items.forEach((el, k) => el.classList.toggle('big', k === i)); dots.forEach((d, k) => d.classList.toggle('on', k === i)); };
+  let st; track.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => {
+    const x = track.scrollLeft + items[0].offsetLeft; let best = 0;
+    items.forEach((el, k) => { if (Math.abs(el.offsetLeft - x) < Math.abs(items[best].offsetLeft - x)) best = k; });
+    if (best !== i) mark(best);
+  }, 140); }, { passive: true });
   $$('[data-car]').forEach(b => b.onclick = () => go(i + Number(b.dataset.car)));
 }
 
@@ -2337,6 +2351,7 @@ function card(p){ return fxCard(p); }
 /* ---------- kurv (demo) ---------- */
 const lineColor = l => l.color || defaultColor(byId(l.id));
 const lineImg = l => imgFor(byId(l.id), lineColor(l));
+const aiTag = l => PREVIEW && byId(l.id).status === 'concept' ? '<span class="fx-ai">AI-koncept</span>' : '';
 const lineMeta = l => { const p = byId(l.id); return `${esc(lineColor(l))} · ${l.size ? 'Str. ' + esc(l.size) : 'Størrelse følger'}`; };
 function addToCart(id, size, color, qty){
   qty = Math.max(1, qty || 1);
@@ -2360,7 +2375,7 @@ function renderCart(){
   foot.hidden = false;
   body.innerHTML = demoNote + cart.map((l, i) => { const p = byId(l.id); return `
     <div class="fx-li">
-      <a class="fx-li-ph" href="#produkt-${p.id}" data-close><img src="${img(lineImg(l))}" alt="${esc(p.name)}"></a>
+      <a class="fx-li-ph" href="#produkt-${p.id}" data-close><img src="${img(lineImg(l))}" alt="${esc(p.name)}">${aiTag(l)}</a>
       <div class="fx-li-t">
         <a href="#produkt-${p.id}" data-close><b>${esc(p.name)}</b></a>
         <span class="fx-li-m">${lineMeta(l)}</span>
@@ -2478,7 +2493,7 @@ function viewProduct(p){
     </section>
     ${mate ? `<section class="fx-set"><h2 class="fx-h2">Fuldend sættet</h2><p class="fx-p">${esc(set.name)} · ${esc(set.line)}</p><div class="fx-grid">${fxCard(mate)}</div></section>` : ''}
     <section class="fx-rel"><h2 class="fx-h2">Du vil måske også kunne lide</h2><div class="fx-grid">${related.map(fxCard).join('')}</div></section>
-    <div class="fx-mbar" id="fxMbar" aria-hidden="true"><div><b>${esc(p.name)}</b><span>${STATUS_TXT(p)} · demo</span></div><button type="button" class="fx-btn" id="mbAdd">Læg i kurv</button></div>
+    <div class="fx-mbar" id="fxMbar" aria-hidden="true" inert><div><b>${esc(p.name)}</b><span>${STATUS_TXT(p)} · demo</span></div><button type="button" class="fx-btn" id="mbAdd">Læg i kurv</button></div>
   </div>`;
 }
 function wireProduct(p){
@@ -2500,7 +2515,7 @@ function wireProduct(p){
   };
   add.onclick = doAdd; $('#mbAdd').onclick = () => { if (sizes && !pdp.size) { add.scrollIntoView({ behavior: 'smooth', block: 'center' }); note.textContent = 'Vælg en størrelse først.'; } else doAdd(); };
   const mb = $('#fxMbar');
-  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 0; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); }, { rootMargin: '-64px 0px 0px 0px' });
+  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 0; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); mb.inert = !show; }, { rootMargin: '-64px 0px 0px 0px' });
   io.observe(add); cleanup.push(() => io.disconnect());
 }
 
@@ -2513,7 +2528,7 @@ function viewCart(){
     <div class="fx-table" role="table" aria-label="Produkter i kurven">
       <div class="fx-tr fx-th" role="row"><span role="columnheader">Produkt</span><span role="columnheader">Pris</span><span role="columnheader">Antal</span><span role="columnheader">I alt</span></div>
       ${cart.map((l, i) => { const p = byId(l.id); return `<div class="fx-tr" role="row">
-        <div class="fx-td-p" role="cell"><a href="#produkt-${p.id}" class="fx-li-ph"><img src="${img(lineImg(l))}" alt="${esc(p.name)}"></a><div><a href="#produkt-${p.id}"><b>${esc(p.name)}</b></a><span class="fx-li-m">${lineMeta(l)}</span><span class="fx-li-m">${STATUS_TXT(p)}</span><button type="button" class="fx-rm" data-rm="${i}">Fjern</button></div></div>
+        <div class="fx-td-p" role="cell"><a href="#produkt-${p.id}" class="fx-li-ph"><img src="${img(lineImg(l))}" alt="${esc(p.name)}">${aiTag(l)}</a><div><a href="#produkt-${p.id}"><b>${esc(p.name)}</b></a><span class="fx-li-m">${lineMeta(l)}</span><span class="fx-li-m">${STATUS_TXT(p)}</span><button type="button" class="fx-rm" data-rm="${i}">Fjern</button></div></div>
         <span role="cell" class="fx-td-n"><span class="fx-mlbl">Pris</span>${p.price == null ? 'Følger' : kr(p.price)}</span>
         <span role="cell" class="fx-td-n"><span class="fx-mlbl">Antal</span>${qtyCtl(i, l.qty, p.name)}</span>
         <span role="cell" class="fx-td-n"><span class="fx-mlbl">I alt</span>${p.price == null ? 'Følger' : kr(p.price * l.qty)}</span>
@@ -2555,7 +2570,7 @@ function viewCheckout(){
         <p class="fx-fine">Dine oplysninger bliver kun i browseren og sendes ingen steder hen.</p>
       </form>
       <aside class="fx-co-sum" aria-label="Din ordre">
-        ${cart.map(l => { const p = byId(l.id); return `<div class="fx-co-li"><div class="fx-co-ph"><img src="${img(lineImg(l))}" alt=""><i>${l.qty}</i></div><div><b>${esc(p.name)}</b><span class="fx-li-m">${lineMeta(l)}</span></div><span>${p.price == null ? 'Følger' : kr(p.price * l.qty)}</span></div>`; }).join('')}
+        ${cart.map(l => { const p = byId(l.id); return `<div class="fx-co-li"><div class="fx-co-ph"><img src="${img(lineImg(l))}" alt="">${aiTag(l)}<i>${l.qty}</i></div><div><b>${esc(p.name)}</b><span class="fx-li-m">${lineMeta(l)}</span></div><span>${p.price == null ? 'Følger' : kr(p.price * l.qty)}</span></div>`; }).join('')}
         <div class="fx-co-tot">
           <div class="fx-sum"><span>Subtotal</span><span>${allPriced() ? kr(cartTotal()) : 'Følger'}</span></div>
           <div class="fx-sum"><span>Fragt</span><span>Følger</span></div>
@@ -2615,7 +2630,7 @@ function route(scroll=true){
   const h = render();
   if(!scroll) return;
   const cp = h.startsWith('produkt-') && byId(h.slice(8));
-  const target = h==='kollektionen' ? $('#sec-kollektionen') : h==='lookbook' ? $('#sec-lookbook') : (h==='io-shop'||h==='io-looks') ? $('#io-looks') : (cp && cp.status==='concept' && cp.part==='Bukser') ? $('#del-'+cp.id) : null;
+  const target = h==='nyhedsbrev' ? $('#nyhedsbrev') : h==='kollektionen' ? $('#sec-kollektionen') : h==='lookbook' ? $('#sec-lookbook') : (h==='io-shop'||h==='io-looks') ? $('#io-looks') : (cp && cp.status==='concept' && cp.part==='Bukser') ? $('#del-'+cp.id) : null;
   const off = innerWidth >= 1000 ? 70 : 60;
   if(target) scrollTo({top: target.getBoundingClientRect().top + scrollY - off, behavior:'auto'});
   else scrollTo({top:0, behavior:'auto'});
