@@ -2013,15 +2013,20 @@ function wireHome(){
   const items = $$('.fx-car-i', track), dots = $$('#dealDots i');
   let i = 0;
   const go = n => {
+    prog = Date.now() + 900;
     i = (n + items.length) % items.length;
     items.forEach((el, k) => el.classList.toggle('big', k === i));
     dots.forEach((d, k) => d.classList.toggle('on', k === i));
     track.scrollTo({ left: items[i].offsetLeft - items[0].offsetLeft, behavior: 'smooth' });
   };
   const mark = n => { i = n; items.forEach((el, k) => el.classList.toggle('big', k === i)); dots.forEach((d, k) => d.classList.toggle('on', k === i)); };
-  let st; track.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => {
+  let st, prog = 0;
+  track.addEventListener('scroll', () => { clearTimeout(st); st = setTimeout(() => {
+    if (Date.now() < prog) return; /* rulning startet af pilene – behold valget */
+    const atEnd = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
     const x = track.scrollLeft + items[0].offsetLeft; let best = 0;
     items.forEach((el, k) => { if (Math.abs(el.offsetLeft - x) < Math.abs(items[best].offsetLeft - x)) best = k; });
+    if (atEnd && best < items.length - 1 && track.scrollLeft > 0) best = items.length - 1;
     if (best !== i) mark(best);
   }, 140); }, { passive: true });
   $$('[data-car]').forEach(b => b.onclick = () => go(i + Number(b.dataset.car)));
