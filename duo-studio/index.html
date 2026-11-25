@@ -1487,7 +1487,7 @@ footer.site{--mute-d:#6B6B6B}
 const PREVIEW = true;
 const AI_TAGS = false; /* ejerens valg nov. 2026: ingen AI-mærker på billederne. Sæt til true for at vise dem igen. */
 /* Filer i assets/ – opdateres automatisk af build.js. Billeder vises først, når filen findes. */
-const ASSETS = new Set(/*ASSETS*/["alma-back.jpg","alma-front.jpg","alma-lace.jpg","cleo-back-hd.jpg","cleo-back.jpg","cleo-front.jpg","cleo-lace.jpg","cleo-pair.jpg","cleo-side.jpg","freja-back.jpg","freja-front.jpg","freja-lace.jpg","holly-blue.jpg","holly-body1.jpg","holly-body2.jpg","holly-body3.jpg","holly-d-back-blue.jpg","holly-d-back-white.jpg","holly-d-back-wine.jpg","holly-d-bows-blue.jpg","holly-d-bows-white.jpg","holly-d-bows-wine.jpg","holly-d-fabric-blue.jpg","holly-d-fabric-white.jpg","holly-d-fabric-wine.jpg","holly-d-waist-blue.jpg","holly-d-waist-white.jpg","holly-d-waist-wine.jpg","holly-hoodie-blue-back.jpg","holly-hoodie-blue-front.jpg","holly-hoodie-white-back.jpg","holly-hoodie-white-front.jpg","holly-hoodie-wine-back.jpg","holly-hoodie-wine-front.jpg","holly-pants-blue-back.jpg","holly-pants-blue-front.jpg","holly-pants-white-back.jpg","holly-pants-white-front.jpg","holly-pants-wine-back.jpg","holly-pants-wine-front.jpg","holly-white.jpg","holly-wine.jpg","io-camp.jpg","io-d-fabric.jpg","io-d-label.jpg","io-d-logo.jpg","io-d-piping.jpg","io-d-pocket.jpg","io-d-rib.jpg","io-d-zip.jpg","io-halfzip.jpg","io-hoodie.jpg","io-look1.jpg","io-look2.jpg","io-look3.jpg","io-look4.jpg","io-look5.jpg","io-look6.jpg","io-mat-jersey.jpg","io-mat-sweat.jpg","io-sets.jpg","io-shorts.jpg","io-softls-back.jpg","io-softls-front2.jpg","io-softls.jpg","io-straight-back.jpg","io-straight-side.jpg","io-straight.jpg","io-stripe.jpg","io-tech.jpg","io-tee.jpg","io-wide.jpg","io2-d-boat.jpg","io2-d-hiplogo2.jpg","io2-d-logo1.jpg","io2-d-neck.jpg","io2-d-piping.jpg","io2-d-rib3.jpg","io2-d-stripe.jpg","io2-d-stripe3.jpg","io2-d-zip.jpg","io2-hero.jpg","io2-l1.jpg","io2-l1pants.jpg","io2-l1top.jpg","io2-l2.jpg","io2-l2pants.jpg","io2-l2top.jpg","io2-l3.jpg","io2-l3pants.jpg","io2-l3top.jpg","logo.png","look-bob.jpg","look-brunette.jpg","look-curls.jpg","look-red.jpg","noir-allcolors.jpg","noir-body1.jpg","noir-body2.jpg","noir-body3.jpg","penny-body1-hd.jpg","penny-body1.jpg","penny-body2-hd.jpg","penny-body2.jpg","penny-body3-hd.jpg","penny-body3.jpg","penny-d-hip-l2.jpg","penny-d-hip-l3.jpg","penny-d-logo-chest-hd.jpg","penny-d-logo-chest.jpg","penny-d-logo-hip-hd.jpg","penny-d-logo-hip.jpg","penny-d-neck-hd.jpg","penny-d-neck.jpg","penny-d-piping-l2.jpg","penny-d-stripe-hd.jpg","penny-d-stripe-l3.jpg","penny-d-stripe.jpg","penny-d-stripe3.jpg","penny-d-zip-v2-hd.jpg","penny-d-zip-v2.jpg","penny-d-zip.jpg","penny-everywhere-pants-back.jpg","penny-everywhere-pants-front.jpg","penny-everywhere-tee-back.jpg","penny-everywhere-tee-front.jpg","penny-hero.jpg","penny-l1-model.jpg","penny-l1-pants.jpg","penny-l1-top.jpg","penny-l2-model.jpg","penny-l2-pants.jpg","penny-l2-top.jpg","penny-l3.jpg","penny-l3pants.jpg","penny-l3top.jpg","penny-offduty-pants-back.jpg","penny-offduty-pants-front.jpg","penny-offduty-zip-back.jpg","penny-offduty-zip-front.jpg","penny-softfit-pants-back.jpg","penny-softfit-pants-front.jpg","penny-softfit-top-back.jpg","penny-softfit-top-front-hd.jpg","penny-softfit-top-front.jpg"]/*/ASSETS*/);
+const ASSETS = new Set(/*ASSETS*/["alma-back.jpg","alma-front-hd.jpg","alma-front.jpg","alma-lace.jpg","cleo-back-hd.jpg","cleo-back.jpg","cleo-front.jpg","cleo-lace.jpg","cleo-pair.jpg","cleo-side.jpg","freja-back.jpg","freja-front.jpg","freja-lace-hd.jpg","freja-lace.jpg","holly-blue.jpg","holly-body1.jpg","holly-body2.jpg","holly-body3.jpg","holly-d-back-blue.jpg","holly-d-back-white.jpg","holly-d-back-wine.jpg","holly-d-bows-blue.jpg","holly-d-bows-white.jpg","holly-d-bows-wine.jpg","holly-d-fabric-blue.jpg","holly-d-fabric-white.jpg","holly-d-fabric-wine.jpg","holly-d-waist-blue.jpg","holly-d-waist-white.jpg","holly-d-waist-wine.jpg","holly-hoodie-blue-back.jpg","holly-hoodie-blue-front.jpg","holly-hoodie-white-back.jpg","holly-hoodie-white-front.jpg","holly-hoodie-wine-back.jpg","holly-hoodie-wine-front.jpg","holly-pants-blue-back.jpg","holly-pants-blue-front.jpg","holly-pants-white-back.jpg","holly-pants-white-front.jpg","holly-pants-wine-back.jpg","holly-pants-wine-front.jpg","holly-white.jpg","holly-wine.jpg","io-camp.jpg","io-d-fabric.jpg","io-d-label.jpg","io-d-logo.jpg","io-d-piping.jpg","io-d-pocket.jpg","io-d-rib.jpg","io-d-zip.jpg","io-halfzip.jpg","io-hoodie.jpg","io-look1.jpg","io-look2.jpg","io-look3.jpg","io-look4.jpg","io-look5.jpg","io-look6.jpg","io-mat-jersey.jpg","io-mat-sweat.jpg","io-sets.jpg","io-shorts.jpg","io-softls-back.jpg","io-softls-front2.jpg","io-softls.jpg","io-straight-back.jpg","io-straight-side.jpg","io-straight.jpg","io-stripe.jpg","io-tech.jpg","io-tee.jpg","io-wide.jpg","io2-d-boat.jpg","io2-d-hiplogo2.jpg","io2-d-logo1.jpg","io2-d-neck.jpg","io2-d-piping.jpg","io2-d-rib3.jpg","io2-d-stripe.jpg","io2-d-stripe3.jpg","io2-d-zip.jpg","io2-hero.jpg","io2-l1.jpg","io2-l1pants.jpg","io2-l1top.jpg","io2-l2.jpg","io2-l2pants.jpg","io2-l2top.jpg","io2-l3.jpg","io2-l3pants.jpg","io2-l3top.jpg","logo.png","look-bob.jpg","look-brunette.jpg","look-curls.jpg","look-red.jpg","noir-allcolors.jpg","noir-body1-hd.jpg","noir-body1.jpg","noir-body2-hd.jpg","noir-body2.jpg","noir-body3-hd.jpg","noir-body3.jpg","penny-body1-hd.jpg","penny-body1.jpg","penny-body2-hd.jpg","penny-body2.jpg","penny-body3-hd.jpg","penny-body3.jpg","penny-d-hip-l2.jpg","penny-d-hip-l3.jpg","penny-d-logo-chest-hd.jpg","penny-d-logo-chest.jpg","penny-d-logo-hip-hd.jpg","penny-d-logo-hip.jpg","penny-d-neck-hd.jpg","penny-d-neck.jpg","penny-d-piping-l2.jpg","penny-d-stripe-hd.jpg","penny-d-stripe-l3.jpg","penny-d-stripe.jpg","penny-d-stripe3.jpg","penny-d-zip-v2-hd.jpg","penny-d-zip-v2.jpg","penny-d-zip.jpg","penny-everywhere-pants-back.jpg","penny-everywhere-pants-front.jpg","penny-everywhere-tee-back.jpg","penny-everywhere-tee-front.jpg","penny-hero-v2.jpg","penny-hero.jpg","penny-l1-model.jpg","penny-l1-pants.jpg","penny-l1-top.jpg","penny-l2-model.jpg","penny-l2-pants.jpg","penny-l2-top.jpg","penny-l3-model.jpg","penny-l3-pants.jpg","penny-l3-top.jpg","penny-l3.jpg","penny-l3pants.jpg","penny-l3top.jpg","penny-offduty-pants-back.jpg","penny-offduty-pants-front.jpg","penny-offduty-zip-back.jpg","penny-offduty-zip-front.jpg","penny-softfit-pants-back.jpg","penny-softfit-pants-front.jpg","penny-softfit-top-back.jpg","penny-softfit-top-front-hd.jpg","penny-softfit-top-front.jpg"]/*/ASSETS*/);
 const has = k => !!k && (ASSETS.has(k + '.jpg') || ASSETS.has(k + '.png'));
 /* Sæt til true, når priser, størrelser og betaling er klar. Indtil da vises købsknapperne som forhåndsvisning. */
 const OPEN_FOR_SALE = false;
@@ -1522,7 +1522,7 @@ const DEPARTMENTS = [ { id:'women', name:'Women' }, { id:'men', name:'Men' } ];
 const COLLECTIONS = [
   { id:'noir-edit', no:'01', name:'Noir', dept:'women', status:'preview', hero:'alma-front', rail:'look-bob', theme:{},
     tagline:'Elegant. Sort. Blonde.', text:'Skræddersyet sort med blomsterblonder langs siderne. Alma, Freja og Cleo.' },
-  { id:'in-out', no:'02', name:'Penny', dept:'women', status:'concept', hero:'penny-hero', theme:{},
+  { id:'in-out', no:'02', name:'Penny', dept:'women', status:'concept', hero:'penny-hero-v2', theme:{},
     tagline:'IN for comfort. OUT for everything.', text:'Hjemme. Ude. Helt dig. Tre sæt elevated loungewear – The Everywhere Set, The Soft Fit Set og The Off-Duty Set. Koncept – under udvikling.' },
   { id:'holly', no:'03', name:'Holly', dept:'women', status:'concept', hero:'holly-body2', cover:'holly-wine', theme:{},
     tagline:'Sløjfer, pufærmer og blød sweat.', text:'Feminine hoodie-sæt: hoodie med sløjfer og peplum + matchende wide-leg bukser i Soft White, Powder Blue og Cherry Wine. Koncept – under udvikling.' }
@@ -1589,7 +1589,7 @@ PRODUCTS.push(
     mat:{ comp:'Let double-knit / ponte-blanding i modal og bomuld', weight:'280–310 GSM', stretch:'Let stræk', comfort:'Tungt nok til et eksklusivt fald, stadig blødt', durability:'Double-knit er ikke gennemsigtigt og holder faconen', care:'30 °C på vrangen (forslag)', construction:'Piping lagt ind i ydersømmen, linning med skjult snøre' },
     sleep:true, use:'Egnet til søvn, lounge og hverdag.', pom:POM_PANT, note:'Nærbilledet af piping i referencen er bordeaux – bukserne skal være Chocolate Brown.' }),
   IO({ id:'off-duty-zip', set:'off-duty', part:'Overdel', name:'Off-Duty Zip Jacket', type:'Oversized boxy ziptrøje', cat:'overdele', order:15,
-    front:null, refImg:'penny-l3top', detail:[['penny-d-zip-v2','Høj krave + lynlås'],['penny-l3','Hele looket']], colors:['Midnight Navy'], colorway:'Midnight Navy',
+    front:null, refImg:'penny-l3-top', detail:[['penny-d-zip-v2','Høj krave + lynlås'],['penny-l3-model','Hele looket']], colors:['Midnight Navy'], colorway:'Midnight Navy',
     desc:'Oversized, boxy ziptrøje i Midnight Navy med høj, blød krave, tonal lynlås hele vejen og ribkanter.',
     details:['Høj, blød krave','Tonal lynlås hele vejen foran','Sænkede skuldre','Lidt voluminøse ærmer','Strukturerede ribkanter ved ærmer og nederst','Afslappet boxy pasform'],
     signature:['Lille DUO STUDIO-logo på venstre bryst','Lynlåstræk med DUO-gravering (forslag)','Vævet label'],
@@ -1597,7 +1597,7 @@ PRODUCTS.push(
     mat:{ comp:'Diagonal- eller loopback-fleece i økologisk bomuld/modal, uden børstet inderside', weight:'360–400 GSM', stretch:'Minimal – stræk kun i ribkanterne', comfort:'Luksuriøs og struktureret ude, åndbar inde', durability:'Formstabil – testes for krympning', care:'30 °C på vrangen, lynlås lukket (forslag)', construction:'Tonal metal- eller nylonlynlås med belægning, ribkanter i 2×2 rib' },
     sleep:false, use:'Primært til afslapning på sofaen, rejser og hverdag ude. Blød nok til en lur, men den høje krave og frontlynlåsen gør den mindre egnet til en hel nats søvn.', pom:POM_TOP, note:'' }),
   IO({ id:'off-duty-stripe-pants', set:'off-duty', part:'Bukser', name:'Off-Duty Stripe Pants', type:'Ekstra vide bukser', cat:'bukser', order:16, lengths:true,
-    front:null, refImg:'penny-l3pants', detail:[['penny-d-stripe-l3','Fine lodrette striber'],['penny-d-hip-l3','Logo ved hoften']], colors:['Midnight Navy'], colorway:'Midnight Navy med fine lodrette striber',
+    front:null, refImg:'penny-l3-pants', detail:[['penny-d-stripe-l3','Fine lodrette striber'],['penny-d-hip-l3','Logo ved hoften']], colors:['Midnight Navy'], colorway:'Midnight Navy med fine lodrette striber',
     desc:'Matchende ekstra vide bukser i Midnight Navy med fine lodrette striber. Blød elastisk talje uden synlig snøre.',
     details:['Ekstra vide ben','Midnight Navy med fine lodrette striber','Blød elastisk talje','Skjult justering','Diskrete lommer','Flot fald'],
     signature:['Diskret DUO STUDIO-logo ved hoften','Vævet label i linningen'],
@@ -1610,7 +1610,7 @@ const SETS_IO = [
     line:'Smørgul tee mod creme bukser med bordeaux striber. Kontrasten mellem ensfarvet og stribet er hele idéen.' },
   { id:'soft-fit', no:'02', name:'The Soft Fit Set', ref:'penny-l2-model', top:'soft-fit-top', bottom:'soft-fit-wide-pants', colors:['Burgundy','Chocolate Brown','Cream'],
     line:'Fitted bordeaux top mod meget vide chokoladebrune bukser med lys piping.' },
-  { id:'off-duty', no:'03', name:'The Off-Duty Set', ref:'penny-l3', top:'off-duty-zip', bottom:'off-duty-stripe-pants', colors:['Midnight Navy'],
+  { id:'off-duty', no:'03', name:'The Off-Duty Set', ref:'penny-l3-model', top:'off-duty-zip', bottom:'off-duty-stripe-pants', colors:['Midnight Navy'],
     line:'Oversized ziptrøje med høj krave over løse, stribede bukser.' }
 ];
 const setBy = id => SETS_IO.concat(typeof SETS_HOLLY!=='undefined'?SETS_HOLLY:[]).find(s => s.id===id);
@@ -1946,7 +1946,7 @@ const HERO_SLIDES = [
   { coll:'noir-edit', no:'01', name:'Noir', theme:'noir', kicker:'Collection 01 · aften', title:'Noir Edit', line:'Tailoring med blonde langs siderne.',
     L:['alma-front','Alma vest'], dL:['freja-lace','Blonde langs Frejas sidesøm'], O:['cleo-side','Cleo slingback'], dR:['cleo-pair','Cleo slingbacks'], R:['freja-front','Freja bukser'], ai:false },
   { coll:'in-out', no:'02', name:'Penny', theme:'penny', kicker:'Collection 02 · pyjamas & lounge', title:'Penny', line:'Bløde nok til sofaen, pæne nok til at gå ud i.',
-    L:['penny-l1-model','Penny Everywhere-sættet'], dL:['penny-everywhere-pants-front','Everywhere-bukser med striber'], O:['penny-l1-top','Everywhere Tee'], dR:['penny-softfit-pants-front','Soft Fit-bukser med piping'], R:['penny-l3','Penny Off-Duty-sættet'], ai:true },
+    L:['penny-l1-model','Penny Everywhere-sættet'], dL:['penny-everywhere-pants-front','Everywhere-bukser med striber'], O:['penny-l1-top','Everywhere Tee'], dR:['penny-softfit-pants-front','Soft Fit-bukser med piping'], R:['penny-l3-model','Penny Off-Duty-sættet'], ai:true },
   { coll:'holly', no:'03', name:'Holly', theme:'holly', kicker:'Collection 03 · feminin streetwear', title:'Holly', line:'Sløjfer, pufærmer og blød sweat.',
     L:['holly-wine','Holly i Cherry Wine'], dL:['holly-d-bows-wine','Tre sløjfer foran'], O:['holly-white','Holly i Soft White'], dR:['holly-d-waist-wine','Sløjfe i taljen'], R:['holly-blue','Holly i Powder Blue'], ai:true }
 ];
@@ -1975,13 +1975,13 @@ function viewHome(){
         <div class="fx-card-f">${c ? '<span class="fx-price">Pris følger</span><span class="fx-note">Under udvikling</span>' : `<span class="fx-price">${p.price == null ? 'Pris følger' : kr(p.price)}</span>`}</div>
       </div></a>`;
   };
-  const drop = [['holly-blue','03','Holly','Powder Blue'],['penny-l3','02','Penny','Off-Duty · Midnight Navy'],['holly-white','03','Holly','Soft White'],['penny-l1-model','02','Penny','Everywhere · Butter Yellow']];
-  const look = ['holly-white','penny-l1-model','holly-blue','cleo-pair','holly-wine','penny-l3','penny-l1-top'];
+  const drop = [['holly-blue','03','Holly','Powder Blue'],['penny-l3-model','02','Penny','Off-Duty · Midnight Navy'],['holly-white','03','Holly','Soft White'],['penny-l1-model','02','Penny','Everywhere · Butter Yellow']];
+  const look = ['holly-white','penny-l1-model','holly-blue','cleo-pair','holly-wine','penny-l3-model','penny-l1-top'];
   return `
   <section class="fx-hero wrap" aria-label="DUO STUDIO">
     <figure class="fx-h-l fx-live" data-live>${[['holly-wine','Holly i Cherry Wine'],['alma-front','Alma vest'],['holly-blue','Holly i Powder Blue']].map(([k,t],i)=>`<img class="${i?'':'on'}" src="${img(k)}" alt="${i?'':t}" ${i?'loading="lazy"':'fetchpriority="high"'}>`).join('')}</figure>
     <div class="fx-h-c">
-      <figure class="fx-h-top fx-pan">${AI}<img src="${img('penny-hero')}" alt="Penny-sættene på modeller"></figure>
+      <figure class="fx-h-top fx-pan">${AI}<img src="${img('penny-hero-v2')}" alt="Penny-sættene på modeller"></figure>
       <div class="fx-h-txt">
         <h1 class="fx-in"><span class="fx-solid">NYE</span><span class="fx-outline">DROPS</span></h1>
         <span class="fx-h-sub">NOIR · PENNY · HOLLY</span>
@@ -1989,7 +1989,7 @@ function viewHome(){
       </div>
       <figure class="fx-h-bot fx-pan rev">${AI}<img src="${img('noir-body1')}" alt="Noir i Black på fem kropstyper" loading="lazy"></figure>
     </div>
-    <figure class="fx-h-r fx-live" data-live data-delay="2200">${[['penny-l1-model','Penny Everywhere-sættet'],['freja-front','Freja bukser'],['penny-l3','Penny Off-Duty-sættet']].map(([k,t],i)=>`<img class="${i?'':'on'}" src="${img(k)}" alt="${i?'':t}" ${i?'loading="lazy"':''}>`).join('')}</figure>
+    <figure class="fx-h-r fx-live" data-live data-delay="2200">${[['penny-l1-model','Penny Everywhere-sættet'],['freja-front','Freja bukser'],['penny-l3-model','Penny Off-Duty-sættet']].map(([k,t],i)=>`<img class="${i?'':'on'}" src="${img(k)}" alt="${i?'':t}" ${i?'loading="lazy"':''}>`).join('')}</figure>
   </section>
 
   <nav class="fx-marq" aria-label="Kollektioner">
@@ -2168,7 +2168,7 @@ function viewInOut(){
         <div class="io-status"><span class="ctag">Koncept</span><span>Tre sæt under udvikling. Ingen priser, størrelser eller køb endnu.</span></div>
         <a class="btn" href="#io-looks">Se de tre looks <span class="arr">→</span></a>
       </div>
-      <figure class="io-hero-img">${PREVIEW?'<span class="review">AI-reference · til gennemgang</span>':''}<img src="${img('penny-hero')}" alt="Tre modeller i The Everywhere Set, The Soft Fit Set og The Off-Duty Set" fetchpriority="high"></figure>
+      <figure class="io-hero-img">${PREVIEW?'<span class="review">AI-reference · til gennemgang</span>':''}<img src="${img('penny-hero-v2')}" alt="Tre modeller i The Everywhere Set, The Soft Fit Set og The Off-Duty Set" fetchpriority="high"></figure>
     </div>
     <div class="io-bar" aria-hidden="true">${Object.keys(COLORS).map(c=>`<i style="background:${COLORS[c]}"></i>`).join('')}</div>
   </section>
