@@ -1142,6 +1142,186 @@ body.home-top .bar > .logo{opacity:1;pointer-events:auto}
 @media (max-width:899px){.fx-h-c{order:-1}.fx-h-l,.fx-h-r{grid-column:auto}}
 footer.site .f-logo{width:140px;margin-block:28px 8px}
 @media (min-width:900px){.fx-news{grid-template-columns:1fr 1.4fr 1fr}}
+
+/* ================= FASE 2: shop · produkt · kurv · kasse (FASCO) ================= */
+.fx-h1{font-family:var(--fx-serif);font-weight:400;font-size:clamp(30px,3.6vw,42px);color:var(--ink);margin:0}
+.fx-h3{font-family:var(--fx-serif);font-weight:400;font-size:24px;color:var(--ink);margin:0}
+.fx-pagehead{display:grid;justify-items:center;gap:8px;padding:32px 0 28px;text-align:center}
+.fx-crumbs{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--mute)}
+.fx-crumbs a{color:var(--txt)}.fx-crumbs a:hover{color:var(--ink)}
+.fx-crumbs.l{padding:20px 0 16px}
+.fx-link{font-size:14px;color:var(--ink);text-decoration:underline;text-underline-offset:4px;background:none;padding:0;justify-self:center}
+.fx-btn.block{display:block;width:100%;text-align:center;box-sizing:border-box}
+.fx-fine{font-size:12.5px;color:var(--mute);line-height:1.5;margin:0}
+.fx-badge{position:absolute;right:10px;bottom:10px;z-index:3;background:rgba(255,255,255,.94);color:var(--ink);font-size:11px;padding:4px 9px;border-radius:999px}
+.fx-sw .sw,.fx-colors .sw{box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* shop */
+.fx-shop{padding-bottom:72px}
+.fx-shop-in{display:grid;gap:24px;min-width:0}
+.fx-shop-main{min-width:0}
+.fx-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.fx-count{font-size:14px;color:var(--mute);margin-right:auto}
+.fx-fbtn{border:1px solid var(--ink);border-radius:10px;padding:10px 18px;font-size:14px;color:var(--ink);min-height:44px}
+.fx-sort select{border:1px solid var(--grey);border-radius:10px;padding:10px 14px;font:inherit;font-size:14px;color:var(--txt);background:#fff;min-height:44px}
+.fx-filters{display:none;gap:26px;align-content:start;background:#fff;border:1px solid var(--grey);border-radius:10px;padding:20px}
+.fx-filters.open{display:grid}
+.fx-f-head{display:flex;justify-content:space-between;align-items:baseline}
+.fx-fg{display:grid;gap:6px}
+.fx-fg h3{font-family:var(--ui);font-weight:500;font-size:16px;color:var(--ink);margin:0 0 4px}
+.fx-opt{display:flex;justify-content:space-between;align-items:center;text-align:left;font-size:14px;color:var(--mute);padding:8px 0;min-height:40px;border-bottom:1px solid transparent}
+.fx-opt span{font-size:12px;color:#B5B5B5}
+.fx-opt[aria-pressed="true"]{color:var(--ink);font-weight:500}
+.fx-opt[aria-pressed="true"]::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ink);margin-right:8px}
+.fx-opt[aria-pressed="true"]{justify-content:flex-start}.fx-opt[aria-pressed="true"] span{margin-left:auto}
+.fx-colors{display:flex;flex-wrap:wrap;gap:8px}
+.fx-col{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid transparent}
+.fx-col[aria-pressed="true"],.fx-col[aria-checked="true"]{border-color:var(--ink)}
+.fx-col.static{width:auto;height:auto}
+.fx-grid3{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fx-grid3 .fx-card{padding:8px;gap:10px}
+.fx-grid3 .fx-card-h{flex-wrap:wrap;gap:4px}
+.fx-grid3 .fx-card-h b{font-size:15px}
+.fx-grid3 .fx-price{font-size:15px}
+@media (min-width:600px){.fx-grid3{gap:20px}.fx-grid3 .fx-card{padding:12px}.fx-grid3 .fx-card-h b{font-size:17px}}
+@media (min-width:1000px){
+  .fx-shop-in{grid-template-columns:240px minmax(0,1fr);gap:48px}
+  .fx-filters{display:grid;border:0;padding:0;position:sticky;top:110px}
+  .fx-fbtn,.fx-f-done{display:none}
+  .fx-grid3{grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+}
+
+/* produktside */
+.fx-pdp-w{padding-bottom:80px}
+.fx-pdp{display:grid;gap:28px;min-width:0}
+.fx-gal{display:grid;gap:12px;min-width:0}
+.fx-thumbs{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;order:2}
+.fx-thumbs button{flex:0 0 64px;height:80px;border-radius:8px;overflow:hidden;border:1px solid transparent;opacity:.75;background:#eee}
+.fx-thumbs button[aria-selected="true"]{border-color:var(--ink);opacity:1}
+.fx-thumbs img{width:100%;height:100%;object-fit:cover}
+.fx-main{margin:0;position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#B8A798}
+.fx-main img{width:100%;height:100%;object-fit:cover}
+.fx-main figcaption{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.94);font-size:12px;padding:5px 10px;border-radius:6px;color:var(--ink)}
+.fx-ph{display:grid;place-items:center;height:100%;color:#fff}
+.fx-info{display:grid;gap:18px;align-content:start;min-width:0}
+.fx-brand{font-size:12px;color:var(--mute);letter-spacing:.06em;text-transform:uppercase}
+.fx-title{font-family:var(--fx-serif);font-weight:400;font-size:clamp(28px,3vw,36px);color:var(--ink);margin:-8px 0 -10px;line-height:1.2}
+.fx-price-row{display:flex;align-items:center;gap:14px}
+.fx-price-row .fx-price{font-size:24px}
+.fx-pill{background:#FF4646;color:#fff;border-radius:999px;font-size:12px;padding:4px 12px}
+.fx-alert{background:#FDEFEE;border:1px solid #FF706B;color:#B3261E;border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.5}
+.fx-alert b{color:#B3261E}
+.fx-opt-g{display:grid;gap:10px}
+.fx-lbl{font-size:15px;color:var(--txt)}.fx-lbl b{font-weight:500;color:var(--ink)}
+.fx-lbl-row{display:flex;justify-content:space-between;align-items:baseline}
+.fx-sizes{display:flex;flex-wrap:wrap;gap:8px}
+.fx-sizes button{min-width:48px;height:44px;padding:0 10px;border:1px solid var(--grey);border-radius:8px;font-size:14px;color:var(--txt)}
+.fx-sizes button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.fx-buy{display:flex;gap:12px;align-items:stretch}
+.fx-qty{display:inline-flex;align-items:center;border:1px solid var(--grey);border-radius:8px;min-height:44px}
+.fx-qty button{width:40px;height:44px;font-size:18px;color:var(--ink)}
+.fx-qty span{min-width:26px;text-align:center;font-size:15px;color:var(--ink)}
+.fx-add{flex:1;border:1px solid var(--ink);border-radius:10px;font-size:15px;color:var(--ink);min-height:48px;transition:background .25s,color .25s}
+.fx-add:hover{background:var(--ink);color:#fff}
+.fx-meta{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--grey);display:grid;gap:8px;font-size:14px}
+.fx-meta b{font-weight:500;color:var(--ink)}
+.fx-guard{display:grid;gap:4px;background:#F8F8F8;border-radius:10px;padding:16px;text-align:center;font-size:13px;color:var(--mute)}
+.fx-guard b{color:var(--ink);font-weight:500;font-size:15px}
+.fx-acc{margin-top:48px;border-top:1px solid var(--grey)}
+.fx-acc details{border-bottom:1px solid var(--grey)}
+.fx-acc summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;padding:18px 0;font-size:17px;color:var(--ink)}
+.fx-acc summary::after{content:"+";font-size:20px}.fx-acc details[open] summary::after{content:"−"}
+.fx-acc summary::-webkit-details-marker{display:none}
+.fx-acc details>div{padding:0 0 20px;font-size:15px;line-height:1.7;max-width:70ch}
+.fx-acc ul{margin:0;padding-left:18px}
+.fx-dl{display:grid;gap:8px;margin:0 0 10px}.fx-dl div{display:grid;grid-template-columns:110px 1fr;gap:10px}.fx-dl dt{color:var(--mute)}.fx-dl dd{margin:0}
+.fx-set,.fx-rel{display:grid;gap:18px;margin-top:64px}
+.fx-set .fx-grid{grid-template-columns:repeat(auto-fill,minmax(220px,280px))}
+.fx-rel .fx-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.fx-rel .fx-card{padding:8px}.fx-rel .fx-card-h b{font-size:15px}
+@media (min-width:900px){
+  .fx-pdp{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:56px}
+  .fx-gal{grid-template-columns:88px minmax(0,1fr);align-items:start}
+  .fx-thumbs{order:0;flex-direction:column;overflow:visible}
+  .fx-thumbs button{flex:none;width:88px;height:110px}
+  .fx-main{aspect-ratio:3/3.6}
+  .fx-info{position:sticky;top:110px}
+  .fx-rel .fx-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+}
+.fx-mbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;box-shadow:0 -8px 30px rgba(0,0,0,.1);padding:12px var(--gr) calc(12px + env(safe-area-inset-bottom,0px)) var(--gl);transform:translateY(110%);transition:transform .3s var(--ease)}
+.fx-mbar.show{transform:none}
+.fx-mbar div{display:grid;min-width:0}.fx-mbar b{color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fx-mbar span{font-size:12px;color:var(--mute)}
+.fx-mbar .fx-btn{padding:12px 22px;flex:none}
+@media (min-width:900px){.fx-mbar{display:none}}
+
+/* minikurv (skuffe) */
+#cart .d-head{border-bottom:0;padding-bottom:0}
+#cart .d-head .fx-h3{font-size:30px}
+#cart .d-head sup{font-family:var(--ui);font-size:13px;color:var(--mute)}
+.fx-demo{background:#F8F8F8;border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.5;color:var(--txt);margin-bottom:14px}
+.fx-demo b{color:var(--ink);font-weight:500}
+.fx-li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding:16px 0;border-bottom:1px solid var(--grey)}
+.fx-li-ph{display:block;aspect-ratio:3/4;border-radius:8px;overflow:hidden;background:#B8A798}
+.fx-li-ph img{width:100%;height:100%;object-fit:cover}
+.fx-li-t{display:grid;gap:4px;align-content:start;min-width:0}
+.fx-li-t b{font-family:var(--fx-serif);font-weight:400;font-size:18px;color:var(--ink)}
+.fx-li-m{display:block;font-size:13px;color:var(--mute)}
+.fx-li-p{font-size:15px;color:var(--ink)}
+.fx-li-b{display:flex;align-items:center;gap:14px;margin-top:6px}
+.fx-rm{font-size:13px;color:var(--txt);text-decoration:underline;text-underline-offset:3px;min-height:36px}
+.fx-sum{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;color:var(--ink)}
+.fx-sum b{font-weight:500}
+.fx-sum.big{font-size:18px}
+#cartFoot{display:grid;gap:14px}
+.fx-empty{display:grid;gap:14px;justify-items:center;text-align:center;padding:40px 10px}
+
+/* kurvside */
+.fx-cart{padding-bottom:80px;max-width:1100px}
+.fx-table{display:grid}
+.fx-tr{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding:20px 0;border-bottom:1px solid var(--grey);align-items:center}
+.fx-th{display:none}
+.fx-td-p{display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;align-items:start}
+.fx-td-p b{font-family:var(--fx-serif);font-weight:400;font-size:19px;color:var(--ink)}
+.fx-td-p .fx-rm{display:block;margin-top:6px}
+.fx-td-n{display:flex;justify-content:space-between;align-items:center;font-size:15px;color:var(--ink)}
+.fx-mlbl{font-size:13px;color:var(--mute)}
+.fx-cart-sum{display:grid;gap:14px;margin:28px 0 0 auto;max-width:420px}
+@media (min-width:800px){
+  .fx-tr{grid-template-columns:minmax(0,2.2fr) 1fr 1fr 1fr;gap:16px}
+  .fx-th{display:grid;font-family:var(--fx-serif);font-size:18px;color:var(--ink);padding:14px 0}
+  .fx-th span:not(:first-child),.fx-td-n{justify-content:flex-start}
+  .fx-th span:last-child,.fx-td-n:last-child{justify-content:flex-end;text-align:right}
+  .fx-mlbl{display:none}
+}
+
+/* kasse */
+.fx-co{max-width:var(--maxw);margin-inline:auto;padding:0 var(--gr) 80px var(--gl)}
+.fx-co-in{display:grid;gap:32px;min-width:0}
+.fx-co-form{display:grid;gap:28px;min-width:0}
+.fx-co-form fieldset{border:0;margin:0;padding:0;display:grid;gap:12px;min-width:0}
+.fx-co-form legend{font-family:var(--fx-serif);font-size:28px;color:var(--ink);margin-bottom:10px;padding:0}
+.fx-fld{display:grid;gap:6px;min-width:0}
+.fx-fld label{font-size:13px;color:var(--mute)}
+.fx-fld input,.fx-fld select{border:1px solid #D9D9D9;border-radius:6px;padding:14px;font:inherit;font-size:15px;color:var(--ink);background:#fff;min-width:0;width:100%;box-sizing:border-box}
+.fx-fld input:focus,.fx-fld select:focus{outline:2px solid var(--ink);outline-offset:1px}
+.fx-fld input[aria-invalid="true"]{border-color:#FF4646}
+.fx-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.fx-paybox{display:grid;gap:6px;background:#F8F8F8;border:1px dashed #B5B5B5;border-radius:8px;padding:18px;font-size:14px;line-height:1.5}
+.fx-paybox b{color:var(--ink);font-weight:500;font-size:16px}
+.fx-co-sum{background:#F5F5F5;border-radius:10px;padding:22px;display:grid;gap:16px;align-content:start;min-width:0}
+.fx-co-li{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:14px;align-items:center;font-size:14px;color:var(--ink)}
+.fx-co-li b{font-weight:500;display:block}
+.fx-co-ph{position:relative;aspect-ratio:3/4;border-radius:8px;overflow:visible;background:#B8A798}
+.fx-co-ph img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.fx-co-ph i{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:#FF4646;color:#fff;font-style:normal;font-size:12px;display:grid;place-items:center}
+.fx-co-tot{display:grid;gap:10px;border-top:1px solid #DDD;padding-top:14px}
+@media (min-width:900px){
+  .fx-co-in{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:56px;align-items:start}
+  .fx-co-sum{position:sticky;top:110px;padding:32px}
+}
+.fx-co-form legend{text-transform:none;letter-spacing:0;font-weight:400}
+@media (min-width:1000px){.fx-filters .fx-f-done{display:none}}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -1208,7 +1388,7 @@ footer.site .f-logo{width:140px;margin-block:28px 8px}
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="cart" aria-label="Kurv" aria-hidden="true">
-  <div class="d-head"><h2 class="cond">Kurv<sup id="cartQty"></sup></h2><button class="close" data-close>Luk</button></div>
+  <div class="d-head"><h2 class="fx-h3">Kurv <sup id="cartQty"></sup></h2><button class="close" data-close>Luk</button></div>
   <div class="d-body" id="cartBody"></div>
   <div class="d-foot" id="cartFoot"></div>
 </aside>
@@ -1463,48 +1643,15 @@ const store = {
 };
 
 /* ================= Kurv ================= */
-let cart = store.get('duo-cart-noir', []).filter(l => byId(l.id) && byId(l.id).status!=='concept');
+let cart = store.get('duo-cart', store.get('duo-cart-noir', [])).filter(l => byId(l.id));
 const cartCount = () => cart.reduce((s,l)=>s+l.qty,0);
 const allPriced = () => cart.every(l => byId(l.id).price != null);
 const cartTotal = () => cart.reduce((s,l)=>s + (byId(l.id).price||0)*l.qty, 0);
 const lineSize = l => l.size ? 'Str. ' + l.size : 'Størrelse følger';
-function saveCart(){ store.set('duo-cart-noir', cart); renderCart(); }
-function addToCart(id, size){
-  const hit = cart.find(l => l.id===id && l.size===(size||null));
-  hit ? hit.qty++ : cart.push({id,size:size||null,qty:1});
-  saveCart();
-  const c=$('#bagCount'); c.classList.add('bump'); setTimeout(()=>c.classList.remove('bump'),300);
-  openDrawer('cart');
-}
-function renderCart(){
-  const n = cartCount();
-  $('#bagCount').textContent = n;
-  $('#cartQty').textContent = n || '';
-  const body = $('#cartBody'), foot = $('#cartFoot');
-  if(!cart.length){
-    body.innerHTML = `<div class="empty"><b>Tom<br>for nu</b><p class="mute">Se de tre styles i Noir.</p><a class="btn" href="#kollektionen" data-close>Se kollektionen <span class="arr">→</span></a></div>`;
-    foot.innerHTML = ''; foot.hidden = true; return;
-  }
-  foot.hidden = false;
-  body.innerHTML = cart.map((l,i) => { const p = byId(l.id); return `
-    <div class="li">
-      <a class="ph" href="#produkt-${p.id}" data-close><img src="${img(p.imgs[0][0])}" alt="${esc(p.name)}"></a>
-      <div>
-        <div class="li-top"><a href="#produkt-${p.id}" data-close><b>${esc(p.name)}</b></a>${p.price==null?'<span class="tbd">Pris følger</span>':`<span class="mono">${kr(p.price*l.qty)}</span>`}</div>
-        <p class="li-meta">${esc(p.type)} · Sort · ${lineSize(l)}</p>
-        <div class="li-bot">
-          <div class="qty"><button type="button" data-q="${i}" data-d="-1" aria-label="Færre af ${esc(p.name)}">−</button><span>${l.qty}</span><button type="button" data-q="${i}" data-d="1" aria-label="Flere af ${esc(p.name)}">+</button></div>
-          <button type="button" class="rm" data-rm="${i}">Fjern</button>
-        </div>
-      </div>
-    </div>`; }).join('');
-  foot.innerHTML = `<div class="sum tot"><span>Subtotal</span>${allPriced()?`<span class="mono">${kr(cartTotal())}</span>`:'<span class="tbd">Følger</span>'}</div>
-    <p class="mute" style="font-size:12.5px">Priser og fragt vises, når de er fastlagt. Køb er ikke åbnet endnu.</p>
-    <a class="btn block" href="#kassen" data-close>${OPEN_FOR_SALE?'Til kassen':'Se kassen · forhåndsvisning'} <span class="arr">→</span></a>`;
-}
+function saveCart(){ store.set('duo-cart', cart); renderCart(); }
 document.addEventListener('click', e => {
-  const q = e.target.closest('[data-q]'); if(q){ const l = cart[+q.dataset.q]; l.qty += +q.dataset.d; if(l.qty<1) cart.splice(+q.dataset.q,1); saveCart(); if(location.hash==='#kassen') render(); return; }
-  const r = e.target.closest('[data-rm]'); if(r){ cart.splice(+r.dataset.rm,1); saveCart(); if(location.hash==='#kassen') render(); }
+  const q = e.target.closest('[data-q]'); if(q){ const l = cart[+q.dataset.q]; l.qty += +q.dataset.d; if(l.qty<1) cart.splice(+q.dataset.q,1); saveCart(); if(location.hash==='#kassen'||location.hash==='#kurv') render(); return; }
+  const r = e.target.closest('[data-rm]'); if(r){ cart.splice(+r.dataset.rm,1); saveCart(); if(location.hash==='#kassen'||location.hash==='#kurv') render(); }
 });
 
 /* ================= Skuffer & menu ================= */
@@ -1549,16 +1696,6 @@ addEventListener('scroll', () => { $('#hdr').classList.toggle('scrolled', scroll
 let isHome = false;
 
 /* ================= Komponenter ================= */
-function card(p){
-  const c = p.status==='concept';
-  return `<a class="card${c?' is-concept':''}" href="#produkt-${p.id}">
-    <div class="m">${c?'<span class="ctag">Koncept</span>':'<span class="tag mono">Nyhed</span>'}
-      <img src="${img(primaryImg(p))}" alt="${esc(p.name)} – ${esc(p.type.toLowerCase())}" loading="lazy">
-      ${p.back?`<img class="b" src="${img(p.back)}" alt="" loading="lazy">`:''}</div>
-    <div class="t"><b>${esc(p.name)}</b>${c?'<span class="tbd">Under udvikling</span>':price(p)}</div>
-    <span class="s">${c?`${esc(p.type)} · <span class="mm-sw">${p.colors.map(x=>sw(x)).join('')}</span>`:`${esc(p.type)} · Sort`}</span>
-  </a>`;
-}
 function piece(p, cls){
   return `<article class="piece ${cls} rv">
     <div class="piece-media">
@@ -1722,144 +1859,8 @@ function wireNoir(){
   set(state.mode, false);
 }
 
-function viewShop(){
-  const depts = liveDepts();
-  const inDept = PRODUCTS.filter(p => (state.dept==='alle' || p.dept===state.dept) && (state.coll==='alle' || p.coll===state.coll));
-  const cats = [['alle','Alle'], ...Object.keys(CATS).filter(k => inDept.some(p=>p.cat===k)).map(k=>[k,CATS[k]])];
-  if(!cats.some(([k])=>k===state.filter)) state.filter = 'alle';
-  const n = k => k==='alle' ? inDept.length : inDept.filter(p=>p.cat===k).length;
-  let list = inDept.filter(p => state.filter==='alle' || p.cat===state.filter);
-  const sub = (state.dept==='alle' ? depts.map(d=>d.name).join(' & ') : deptName(state.dept)) + ' · ' + list.length + ' ' + (list.length===1?'style':'styles');
-  list.sort(state.sort==='navn' ? (a,b)=>a.name.localeCompare(b.name,'da') : (a,b)=>a.order-b.order);
-  return `<div class="wrap">
-    <div class="shop-head"><h1 class="cond">${state.dept==='alle'?'Shop':deptName(state.dept)}</h1><span class="mono mute" style="padding-bottom:10px">${sub}</span></div>
-    ${depts.length>1?`<div class="tabs" role="group" aria-label="Afdeling" style="margin-bottom:10px">${[['alle','Alle'],...depts.map(d=>[d.id,d.name])].map(([k,t])=>`<a class="nl" href="#${k==='alle'?'shop':'shop-'+k}" aria-current="${state.dept===k?'page':'false'}">${t}</a>`).join('')}</div>`:''}
-    <div class="tabs coll-tabs" role="group" aria-label="Kollektion" style="margin-bottom:12px">${[['alle','Alle kollektioner'],...COLLECTIONS.map(c=>[c.id,c.name+(c.status==='concept'?' · koncept':'')])].map(([k,t])=>`<button type="button" data-coll="${k}" aria-pressed="${state.coll===k}">${t}</button>`).join('')}</div>
-    <div class="toolbar">
-      <div class="tabs" role="group" aria-label="Kategori">${cats.map(([k,t])=>`<button type="button" data-cat="${k}" aria-pressed="${state.filter===k}">${t}<sup>${n(k)}</sup></button>`).join('')}</div>
-      <div class="sort"><label for="sortSel" class="mute">Sortér</label><select id="sortSel" aria-label="Sortér"><option value="kollektion">Kollektion</option><option value="navn">Navn A–Å</option></select></div>
-    </div>
-    <div class="grid">${list.map(card).join('') || '<p class="mute">Ingen styles her endnu.</p>'}</div>
-  </div>`;
-}
-function wireShop(){
-  const sel = $('#sortSel'); sel.value = state.sort; sel.onchange = () => { state.sort = sel.value; render(); };
-  $$('[data-cat]').forEach(b => b.onclick = () => { state.filter = b.dataset.cat; render(); });
-  $$('[data-coll]').forEach(b => b.onclick = () => { state.coll = b.dataset.coll; state.filter='alle'; render(); });
-}
 
-function viewProduct(p){
-  if(p.status==='concept') return viewSet(setBy(p.set));
-  state.size = null;
-  const others = PRODUCTS.filter(x=>x.id!==p.id);
-  const sizeBlock = p.sizes
-    ? `<div class="sizes" role="group" aria-label="Vælg størrelse">${p.sizes.map(s=>`<button type="button" data-size="${s}" aria-pressed="false">${s}</button>`).join('')}</div>`
-    : `<div class="pending"><b>Størrelser tilføjes.</b> Størrelserne er ikke fastlagt endnu.</div>`;
-  return `<div class="wrap">
-    <nav class="crumbs mono" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>/</span><a href="#shop">Shop</a><span>/</span><span style="color:var(--ink)">${esc(p.name)}</span></nav>
-    <div class="pdp">
-      <div style="min-width:0">
-        <div class="gal" id="gal">${p.imgs.map(([k,cap],i)=>`<figure><img src="${img(k)}" alt="${esc(p.name)} – ${cap.toLowerCase()}" ${i?'loading="lazy"':''}><figcaption class="mono">${cap}</figcaption></figure>`).join('')}</div>
-        <div class="gal-bar"><span class="mono" id="galN">1 / ${p.imgs.length}</span><span class="track"><i id="galI" style="width:${100/p.imgs.length}%"></i></span></div>
-      </div>
-      <div class="buy">
-        <div class="buy-top">
-          <span class="mono mute">Noir — ${esc(p.type)}</span>
-          <h1 class="cond">${esc(p.name)}</h1>
-          <div class="buy-row"><span>${esc(p.type)}</span>${price(p)}</div>
-        </div>
-        <div><div class="sizes-head"><span class="mono">Farve: <span id="ncol">Black</span></span><span class="mono mute">1 tilgængelig · 2 koncept</span></div>
-          <div class="csel" role="radiogroup" aria-label="Vælg farve">${[['Black',1],['Chocolate Brown',0],['Midnight Navy',0]].map(([c,ok],k)=>`<button type="button" role="radio" data-ncol="${c}" data-ok="${ok}" aria-checked="${k===0}">${sw(c,'lg')}<span class="sr">${c}</span></button>`).join('')}</div>
-          <p class="mono mute csel-note" id="ncolNote">Vist på billederne.</p></div>
-        <div>
-          <div class="sizes-head"><span class="mono">Størrelse</span><button type="button" class="ulink" data-open="sizeguide" style="font-size:11.5px">Størrelsesguide</button></div>
-          ${sizeBlock}
-        </div>
-        <div style="display:grid;gap:10px">
-          ${OPEN_FOR_SALE?'':'<div class="closed" role="status"><i aria-hidden="true"></i><span><b>Ikke åben for køb endnu</b>Pris og størrelser mangler. Du kan prøve kurven, men intet kan købes.</span></div>'}
-          <button type="button" class="btn block${OPEN_FOR_SALE?'':' preview'}" id="addBtn">Læg i kurv <span class="arr">→</span></button>
-        </div>
-        <div class="acc">
-          <details open><summary>Beskrivelse</summary><div class="body"><p>${esc(p.desc)}</p></div></details>
-          <details><summary>Detaljer</summary><div class="body"><ul>${p.details.map(d=>`<li>${esc(d)}</li>`).join('')}</ul></div></details>
-          <details><summary>Materiale &amp; pleje</summary><div class="body"><p>${p.material?esc(p.material):'<span class="tbd">Materiale tilføjes</span>'}</p><p>${p.care?esc(p.care):'<span class="tbd">Plejeanvisning tilføjes</span>'}</p></div></details>
-          <details><summary>Levering &amp; retur</summary><div class="body"><p><span class="tbd">Fragt og returregler tilføjes</span></p></div></details>
-          <details><summary>Styling</summary><div class="body"><p>Dag: ${esc(p.day)}.</p><p>Aften: ${esc(p.night)}.</p></div></details>
-        </div>
-      </div>
-    </div>
-    <section class="related" aria-label="Fuldend looket">
-      <h2 class="cond">Fuldend looket</h2>
-      <div class="grid" style="padding-bottom:0">${others.map(card).join('')}</div>
-    </section>
-  </div>`;
-}
-function wireProduct(p){
-  $$('[data-ncol]').forEach(b => b.onclick = () => { $$('[data-ncol]').forEach(x=>x.setAttribute('aria-checked', x===b)); $('#ncol').textContent = b.dataset.ncol==='Chocolate Brown'?'Chocolate':b.dataset.ncol;
-    $('#ncolNote').textContent = b.dataset.ok==='1' ? 'Vist på billederne.' : 'Ny farve – koncept. Kan ikke lægges i kurv endnu; billederne viser Black.'; });
-  if(p.status==='concept') return wireSet();
-  const add = $('#addBtn'), mb = $('#mbar');
-  const needsSize = () => p.sizes && !state.size;
-  const sync = () => {
-    add.disabled = !!needsSize();
-    add.innerHTML = needsSize() ? 'Vælg størrelse' : (OPEN_FOR_SALE ? 'Læg i kurv <span class="arr">→</span>' : 'Prøv kurven · ikke åben for køb');
-    mb.innerHTML = `<div class="i"><b>${esc(p.name)}</b>${OPEN_FOR_SALE?(p.price==null?'<span class="tbd" style="justify-self:start">Pris følger</span>':`<span class="mono">${kr(p.price)}</span>`):'<span class="mono" style="color:var(--mute)">Ikke åben for køb</span>'}</div>
-      <button type="button" class="btn${OPEN_FOR_SALE?'':' preview'}" id="mbAdd">${needsSize()?'Vælg str.':(OPEN_FOR_SALE?'Læg i kurv':'Prøv kurven')}</button>`;
-    $('#mbAdd').onclick = () => needsSize() ? add.scrollIntoView({behavior:'smooth', block:'center'}) : addToCart(p.id, state.size);
-  };
-  $$('[data-size]').forEach(b => b.onclick = () => { state.size = b.dataset.size; $$('[data-size]').forEach(x=>x.setAttribute('aria-pressed', x===b)); sync(); });
-  add.onclick = () => addToCart(p.id, state.size);
-  sync();
-  const g = $('#gal'), n = p.imgs.length;
-  g.addEventListener('scroll', () => { if(g.scrollWidth <= g.clientWidth + 2) return; const i = Math.round(g.scrollLeft / g.clientWidth); $('#galN').textContent = (i+1) + ' / ' + n; $('#galI').style.transform = `translateX(${i*100}%)`; }, {passive:true});
-  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 80; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); document.body.classList.toggle('has-mbar', show); }, {rootMargin:'-64px 0px 0px 0px'});
-  io.observe(add); cleanup.push(() => { io.disconnect(); mb.classList.remove('show'); mb.setAttribute('aria-hidden','true'); document.body.classList.remove('has-mbar'); });
-}
 
-function viewCheckout(){
-  if(!cart.length) return `<div class="wrap co"><h1 class="cond">Kassen</h1><p class="mute">Kurven er tom.</p><a class="btn" href="#kollektionen" style="justify-self:start">Se Noir <span class="arr">→</span></a></div>`;
-  return `<div class="wrap co">
-    <h1 class="cond">Kassen</h1>
-    <div class="co-in">
-      <form class="co-form" id="coForm" novalidate>
-        <fieldset><legend>Kontakt</legend>
-          <div class="fld"><label for="coEmail">E-mail</label><input id="coEmail" type="email" autocomplete="email" required></div>
-          <div class="fld"><label for="coPhone">Mobilnummer</label><input id="coPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+45"></div>
-        </fieldset>
-        <fieldset><legend>Levering</legend>
-          <div class="two"><div class="fld"><label for="coFirst">Fornavn</label><input id="coFirst" autocomplete="given-name" required></div><div class="fld"><label for="coLast">Efternavn</label><input id="coLast" autocomplete="family-name" required></div></div>
-          <div class="fld"><label for="coAddr">Adresse</label><input id="coAddr" autocomplete="street-address" required></div>
-          <div class="two z"><div class="fld"><label for="coZip">Postnr.</label><input id="coZip" autocomplete="postal-code" inputmode="numeric" maxlength="4" required></div><div class="fld"><label for="coCity">By</label><input id="coCity" autocomplete="address-level2" required></div></div>
-          <div class="pending"><b>Fragtmetoder tilføjes.</b> Valg af levering vises her, når fragt og priser er fastlagt.</div>
-        </fieldset>
-        <fieldset><legend>Betaling</legend>
-          <div class="notice">Betaling er ikke aktiveret. Du kan tjekke dine oplysninger, men der oprettes ingen ordre, og der trækkes ingen penge.</div>
-        </fieldset>
-        <button class="btn block" type="submit">Tjek oplysninger <span class="arr">→</span></button>
-        <p class="mono" id="coNote" aria-live="polite" style="min-height:1.4em"></p>
-      </form>
-      <aside class="co-sum" aria-label="Din ordre">
-        <span class="mono">Din ordre · ${cartCount()} ${cartCount()===1?'vare':'varer'}</span>
-        ${cart.map(l=>{const p=byId(l.id);return `<div class="li" style="grid-template-columns:64px 1fr"><div class="ph"><img src="${img(p.imgs[0][0])}" alt=""></div><div><div class="li-top"><b style="font-size:22px">${esc(p.name)}</b>${p.price==null?'<span class="tbd">Følger</span>':`<span class="mono">${kr(p.price*l.qty)}</span>`}</div><p class="li-meta">${esc(p.type)} · ${lineSize(l)} · Antal ${l.qty}</p></div></div>`}).join('')}
-        <div style="border-top:1px solid var(--grey);padding-top:12px;display:grid;gap:8px">
-          <div class="sum"><span>Subtotal</span>${allPriced()?`<span class="mono">${kr(cartTotal())}</span>`:'<span class="tbd">Følger</span>'}</div>
-          <div class="sum"><span>Fragt</span><span class="tbd">Følger</span></div>
-          <div class="sum tot"><span>I alt</span><span class="tbd">Følger</span></div>
-        </div>
-      </aside>
-    </div>
-  </div>`;
-}
-function wireCheckout(){
-  const f = $('#coForm'); if(!f) return;
-  f.onsubmit = e => {
-    e.preventDefault();
-    const bad = $$('input[required]', f).find(i => !i.value.trim() || (i.type==='email' && !/^\S+@\S+\.\S+$/.test(i.value)) || (i.id==='coZip' && !/^\d{4}$/.test(i.value)));
-    const note = $('#coNote');
-    if(bad){ bad.focus(); note.textContent = 'Udfyld ' + (bad.labels[0]?.textContent || 'feltet').toLowerCase() + ' for at fortsætte.'; return; }
-    note.textContent = 'Oplysningerne ser rigtige ud. Køb er ikke åbnet – ingen ordre er oprettet.';
-  };
-}
 
 
 /* ================= BRAND, KOLLEKTIONER, PENNY ================= */
@@ -2304,6 +2305,278 @@ function viewSet(s){
   </div>`;
 }
 
+/* ================= FASE 2 · Shop, produktside, kurv, checkout (FASCO-skabelon) ================= */
+const STATUS_TXT = p => p.status === 'concept' ? 'Under udvikling' : 'Forhåndsvisning';
+const isHolly = p => p.coll === 'holly';
+const NOIR_COLORS = [['Black', true], ['Chocolate Brown', false], ['Midnight Navy', false]];
+const colorsOf = p => p.coll === 'noir-edit' ? NOIR_COLORS.map(c => c[0]) : (p.colors || []);
+const defaultColor = p => p.coll === 'noir-edit' ? 'Black' : (isHolly(p) ? p.colors[0] : (p.colorway || p.colors[0]));
+const sizesOf = p => p.status === 'concept' ? SIZE_RANGE : (p.sizes || null);
+const imgFor = (p, color) => {
+  if (isHolly(p)) { const b = hollyBase(p, color || p.colors[0]); return has(b + '-front') ? b + '-front' : p.refImg; }
+  return primaryImg(p);
+};
+/* billedliste til produktsiden: [nøgle, billedtekst, mærke] – manglende billeder springes over */
+function pdpImages(p, color){
+  if (p.coll === 'noir-edit') return p.imgs.map(([k, cap]) => [k, cap, '']);
+  return galFor(p, color).filter(x => x[0]).map(([k, cap, kind]) => [k, cap, kind === 'pack' ? 'AI-koncept' : 'AI-reference']);
+}
+
+function fxCard(p){
+  const c = p.status === 'concept';
+  return `<a class="fx-card" href="#produkt-${p.id}" data-coll="${p.coll}">
+    <div class="fx-card-m"><img src="${img(imgFor(p))}" alt="${esc(p.name)}" loading="lazy">${c ? '<span class="review">AI-koncept</span>' : ''}<span class="fx-badge">${STATUS_TXT(p)}</span></div>
+    <div class="fx-card-t">
+      <div class="fx-card-h"><b>${esc(p.name)}</b><span class="fx-sw" aria-label="Farver">${swatchesFor(p).map(x => sw(x)).join('')}</span></div>
+      <span class="fx-sub">${esc(collName(p.coll))} · ${esc(p.type)}</span>
+      <div class="fx-card-f"><span class="fx-price">${p.price == null ? 'Pris følger' : kr(p.price)}</span></div>
+    </div></a>`;
+}
+function card(p){ return fxCard(p); }
+
+/* ---------- kurv (demo) ---------- */
+const lineColor = l => l.color || defaultColor(byId(l.id));
+const lineImg = l => imgFor(byId(l.id), lineColor(l));
+const lineMeta = l => { const p = byId(l.id); return `${esc(lineColor(l))} · ${l.size ? 'Str. ' + esc(l.size) : 'Størrelse følger'}`; };
+function addToCart(id, size, color, qty){
+  qty = Math.max(1, qty || 1);
+  const hit = cart.find(l => l.id === id && l.size === (size || null) && lineColor(l) === (color || defaultColor(byId(id))));
+  hit ? hit.qty += qty : cart.push({ id, size: size || null, color: color || defaultColor(byId(id)), qty });
+  saveCart();
+  const c = $('#bagCount'); c.classList.add('bump'); setTimeout(() => c.classList.remove('bump'), 300);
+  openDrawer('cart');
+}
+const qtyCtl = (i, q, name) => `<div class="fx-qty"><button type="button" data-q="${i}" data-d="-1" aria-label="Færre af ${esc(name)}">−</button><span aria-live="polite">${String(q).padStart(2, '0')}</span><button type="button" data-q="${i}" data-d="1" aria-label="Flere af ${esc(name)}">+</button></div>`;
+const demoNote = '<div class="fx-demo" role="status"><b>Demo-kurv.</b> Produkterne er under udvikling. Betaling aktiveres først, når pris, produktion og levering er afklaret.</div>';
+function renderCart(){
+  const n = cartCount();
+  $('#bagCount').textContent = n;
+  $('#cartQty').textContent = n || '';
+  const body = $('#cartBody'), foot = $('#cartFoot');
+  if (!cart.length){
+    body.innerHTML = `<div class="fx-empty"><p class="fx-h3">Kurven er tom</p><p class="fx-p">Du kan lægge alle produkter i kurven for at prøve den. Intet kan købes endnu.</p><a class="fx-btn" href="#women" data-close>Gå til shop</a></div>`;
+    foot.innerHTML = ''; foot.hidden = true; return;
+  }
+  foot.hidden = false;
+  body.innerHTML = demoNote + cart.map((l, i) => { const p = byId(l.id); return `
+    <div class="fx-li">
+      <a class="fx-li-ph" href="#produkt-${p.id}" data-close><img src="${img(lineImg(l))}" alt="${esc(p.name)}"></a>
+      <div class="fx-li-t">
+        <a href="#produkt-${p.id}" data-close><b>${esc(p.name)}</b></a>
+        <span class="fx-li-m">${lineMeta(l)}</span>
+        <span class="fx-li-p">${p.price == null ? 'Pris følger' : kr(p.price * l.qty)}</span>
+        <div class="fx-li-b">${qtyCtl(i, l.qty, p.name)}<button type="button" class="fx-rm" data-rm="${i}">Fjern</button></div>
+      </div>
+    </div>`; }).join('');
+  foot.innerHTML = `<div class="fx-sum"><span>Subtotal</span><b>${allPriced() ? kr(cartTotal()) : 'Følger'}</b></div>
+    <a class="fx-btn block" href="#kassen" data-close>Til kassen</a>
+    <a class="fx-link" href="#kurv" data-close>Se kurv</a>`;
+}
+
+/* ---------- shop ---------- */
+const shopState = { coll: 'alle', cat: 'alle', color: 'alle', sort: 'kollektion', open: false };
+function viewShop(){
+  const base = PRODUCTS.filter(p => p.dept === 'women');
+  const colorsAll = [...new Set(base.flatMap(swatchesFor))];
+  const match = (p, skip) => (skip === 'coll' || shopState.coll === 'alle' || p.coll === shopState.coll)
+    && (skip === 'cat' || shopState.cat === 'alle' || p.cat === shopState.cat)
+    && (skip === 'color' || shopState.color === 'alle' || swatchesFor(p).includes(shopState.color));
+  let list = base.filter(p => match(p));
+  list.sort(shopState.sort === 'navn' ? (a, b) => a.name.localeCompare(b.name, 'da') : (a, b) => a.order - b.order);
+  const cnt = (key, v) => base.filter(p => match(p, key) && (v === 'alle' || (key === 'coll' ? p.coll === v : p.cat === v))).length;
+  const radio = (key, v, label) => `<button type="button" class="fx-opt" data-f="${key}" data-v="${v}" aria-pressed="${shopState[key] === v}">${label}<span>${cnt(key, v)}</span></button>`;
+  const cats = Object.keys(CATS).filter(k => base.some(p => p.cat === k));
+  const active = ['coll', 'cat', 'color'].filter(k => shopState[k] !== 'alle').length;
+  return `<div class="wrap fx-shop">
+    <header class="fx-pagehead"><h1 class="fx-h1">Shop</h1><nav class="fx-crumbs" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>›</span><span>Women</span></nav></header>
+    <div class="fx-shop-in">
+      <aside class="fx-filters${shopState.open ? ' open' : ''}" id="fxFilters" aria-label="Filtre">
+        <div class="fx-f-head"><h2 class="fx-h3">Filtre</h2>${active ? `<button type="button" class="fx-link" data-freset>Nulstil (${active})</button>` : ''}</div>
+        <div class="fx-fg"><h3>Kollektion</h3>${radio('coll', 'alle', 'Alle')}${COLLECTIONS.map(c => radio('coll', c.id, c.name + (c.status === 'concept' ? ' · koncept' : ''))).join('')}</div>
+        <div class="fx-fg"><h3>Kategori</h3>${radio('cat', 'alle', 'Alle')}${cats.map(k => radio('cat', k, CATS[k])).join('')}</div>
+        <div class="fx-fg"><h3>Farve</h3><div class="fx-colors">${colorsAll.map(c => `<button type="button" class="fx-col" data-f="color" data-v="${esc(c)}" aria-pressed="${shopState.color === c}" title="${esc(c)}" aria-label="${esc(c)}">${sw(c, 'lg')}</button>`).join('')}</div>
+          ${shopState.color !== 'alle' ? `<p class="fx-fine">Valgt: ${esc(shopState.color)}</p>` : ''}</div>
+        <div class="fx-fg"><h3>Størrelse</h3><p class="fx-fine">XXS–4XL er et foreløbigt udvalg. Der er intet lager endnu, så der kan ikke filtreres på størrelse.</p></div>
+        <button type="button" class="fx-btn block fx-f-done" data-fclose>Vis ${list.length} ${list.length === 1 ? 'produkt' : 'produkter'}</button>
+      </aside>
+      <div class="fx-shop-main">
+        <div class="fx-bar">
+          <button type="button" class="fx-fbtn" data-fopen aria-controls="fxFilters" aria-expanded="${shopState.open}">Filtre${active ? ` (${active})` : ''}</button>
+          <span class="fx-count">${list.length} ${list.length === 1 ? 'produkt' : 'produkter'}</span>
+          <label class="fx-sort"><span class="sr">Sortér</span><select id="sortSel"><option value="kollektion">Sortér: Kollektion</option><option value="navn">Sortér: Navn A–Å</option></select></label>
+        </div>
+        <div class="fx-grid fx-grid3">${list.map(fxCard).join('') || '<p class="fx-p">Ingen produkter matcher. <button type="button" class="fx-link" data-freset>Nulstil filtre</button></p>'}</div>
+        <p class="fx-fine c" style="margin-top:28px">Alle produkter er under udvikling. Penny og Holly er AI-koncepter. Ingen priser, størrelser eller lager er fastlagt.</p>
+      </div>
+    </div>
+  </div>`;
+}
+function wireShop(){
+  const sel = $('#sortSel'); sel.value = shopState.sort; sel.onchange = () => { shopState.sort = sel.value; render(); };
+  $$('[data-f]').forEach(b => b.onclick = () => { const k = b.dataset.f, v = b.dataset.v; shopState[k] = (k === 'color' && shopState.color === v) ? 'alle' : v; render(); });
+  $$('[data-freset]').forEach(b => b.onclick = () => { shopState.coll = shopState.cat = shopState.color = 'alle'; render(); });
+  const f = $('#fxFilters'), ob = $('[data-fopen]');
+  ob.onclick = () => { shopState.open = !f.classList.contains('open'); f.classList.toggle('open', shopState.open); ob.setAttribute('aria-expanded', shopState.open); };
+  $('[data-fclose]').onclick = () => { shopState.open = false; f.classList.remove('open'); ob.setAttribute('aria-expanded', 'false'); ob.scrollIntoView({ block: 'start' }); };
+}
+
+/* ---------- produktside ---------- */
+const pdp = { color: null, size: null, qty: 1, img: 0 };
+function pdpGallery(p){
+  const ims = pdpImages(p, pdp.color);
+  if (pdp.img >= ims.length) pdp.img = 0;
+  const [k, cap, tag] = ims[pdp.img] || [];
+  return `<div class="fx-thumbs" role="tablist" aria-label="Billeder">${ims.map(([tk, tc], i) => `<button type="button" role="tab" data-img="${i}" aria-selected="${i === pdp.img}" aria-label="${esc(tc)}"><img src="${img(tk)}" alt="" loading="lazy"></button>`).join('')}</div>
+    <figure class="fx-main">${k ? `${tag && PREVIEW ? `<span class="review">${tag}</span>` : ''}<img src="${img(k)}" alt="${esc(p.name)} – ${esc(cap.toLowerCase())}"><figcaption>${esc(cap)}</figcaption>` : `<div class="fx-ph">Produktbillede mangler</div>`}</figure>`;
+}
+function viewProduct(p){
+  pdp.color = defaultColor(p); pdp.size = null; pdp.qty = 1; pdp.img = 0;
+  const set = p.set ? setBy(p.set) : null, mate = set ? byId(set.top === p.id ? set.bottom : set.top) : null;
+  const sizes = sizesOf(p);
+  const related = PRODUCTS.filter(x => x.id !== p.id && x.coll === p.coll && (!mate || x.id !== mate.id)).concat(PRODUCTS.filter(x => x.coll !== p.coll)).slice(0, 4);
+  const colorBlock = isHolly(p) || p.coll === 'noir-edit'
+    ? `<div class="fx-opt-g"><span class="fx-lbl">Farve: <b id="pdpCol">${esc(pdp.color)}</b></span>
+        <div class="fx-colors" role="radiogroup" aria-label="Vælg farve">${colorsOf(p).map(c => `<button type="button" role="radio" class="fx-col" data-pc="${esc(c)}" aria-checked="${c === pdp.color}" aria-label="${esc(c)}">${sw(c, 'lg')}</button>`).join('')}</div>
+        <p class="fx-fine" id="pdpColNote">${p.coll === 'noir-edit' ? 'Black er hovedfarven. Chocolate og Midnight Navy er kun koncepter.' : 'Billederne skifter med farven.'}</p></div>`
+    : `<div class="fx-opt-g"><span class="fx-lbl">Farve: <b>${esc(p.colorway)}</b></span><div class="fx-colors">${p.colors.map(c => `<span class="fx-col static">${sw(c, 'lg')}</span>`).join('')}</div></div>`;
+  const sizeBlock = sizes
+    ? `<div class="fx-opt-g"><div class="fx-lbl-row"><span class="fx-lbl">Størrelse: <b id="pdpSize">vælg</b></span><button type="button" class="fx-link" data-open="sizeguide">Størrelsesguide</button></div>
+        <div class="fx-sizes" role="group" aria-label="Vælg størrelse">${sizes.map(s => `<button type="button" data-ps="${s}" aria-pressed="false">${s}</button>`).join('')}</div>
+        <p class="fx-fine">${p.status === 'concept' ? 'Foreløbigt udvalg. Pasformen testes på prøver.' : ''}</p></div>`
+    : `<div class="fx-opt-g"><div class="fx-lbl-row"><span class="fx-lbl">Størrelse</span><button type="button" class="fx-link" data-open="sizeguide">Størrelsesguide</button></div><p class="fx-fine">Størrelserne er ikke fastlagt endnu. Du kan prøve kurven uden størrelse.</p></div>`;
+  const mat = p.mat ? `<dl class="fx-dl"><div><dt>Kvalitet</dt><dd>${esc(p.mat.comp)}</dd></div><div><dt>Vægt</dt><dd>${esc(p.mat.weight)}</dd></div><div><dt>Stræk</dt><dd>${esc(p.mat.stretch)}</dd></div><div><dt>Vask</dt><dd>${esc(p.mat.care)}</dd></div></dl><p class="fx-fine">Forslag. Afventer stofprøve og pasformstest.</p>`
+    : `<p>${p.material ? esc(p.material) : 'Materiale tilføjes.'}</p><p>${p.care ? esc(p.care) : 'Plejeanvisning tilføjes.'}</p>`;
+  return `<div class="wrap fx-pdp-w">
+    <nav class="fx-crumbs l" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>›</span><a href="#women">Shop</a><span>›</span><a href="#${p.coll}">${esc(collName(p.coll))}</a><span>›</span><span>${esc(p.name)}</span></nav>
+    <div class="fx-pdp">
+      <div class="fx-gal" id="pdpGal">${pdpGallery(p)}</div>
+      <div class="fx-info">
+        <span class="fx-brand">DUO STUDIO · ${esc(collName(p.coll))}</span>
+        <h1 class="fx-title">${esc(p.name)}</h1>
+        <span class="fx-sub">${esc(p.type)}</span>
+        <div class="fx-price-row"><span class="fx-price">${p.price == null ? 'Pris følger' : kr(p.price)}</span><span class="fx-pill">${STATUS_TXT(p)}</span></div>
+        <div class="fx-alert" role="status"><b>Kan ikke købes endnu.</b> ${p.status === 'concept' ? 'Koncept under udvikling. Billederne er AI-koncepter.' : 'Forhåndsvisning.'} Pris, produktion og levering er ikke afklaret.</div>
+        ${sizeBlock}
+        ${colorBlock}
+        <div class="fx-opt-g"><span class="fx-lbl">Antal</span>
+          <div class="fx-buy"><div class="fx-qty"><button type="button" data-pq="-1" aria-label="Færre">−</button><span id="pdpQty">01</span><button type="button" data-pq="1" aria-label="Flere">+</button></div>
+            <button type="button" class="fx-add" id="addBtn">Læg i kurv · demo</button></div>
+          <p class="fx-fine" id="addNote" aria-live="polite"></p></div>
+        <ul class="fx-meta">
+          <li><b>Levering:</b> afklares, før salget åbner</li>
+          <li><b>Retur:</b> afklares, før salget åbner</li>
+        </ul>
+        <div class="fx-guard"><b>Betaling er ikke aktiveret</b><span>Kurven er en demo. Der oprettes ingen ordre, og der trækkes ingen penge.</span></div>
+      </div>
+    </div>
+    <section class="fx-acc" aria-label="Produktinformation">
+      <details open><summary>Beskrivelse</summary><div><p>${esc(p.desc)}</p>${p.fit ? `<p><b>Pasform:</b> ${esc(p.fit)}</p>` : ''}</div></details>
+      <details><summary>Detaljer</summary><div><ul>${(p.details || []).map(d => `<li>${esc(d)}</li>`).join('')}</ul></div></details>
+      <details><summary>Materiale &amp; pleje</summary><div>${mat}</div></details>
+      ${p.pom ? `<details><summary>Målepunkter · tech pack</summary><div><p class="fx-fine">Målepunkter, der skal måles og testes på prøver. Ingen mål er fastlagt endnu.</p><ul>${p.pom.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></details>` : ''}
+      ${p.note ? `<details><summary>Til afklaring</summary><div><p>${esc(p.note)}</p></div></details>` : ''}
+    </section>
+    ${mate ? `<section class="fx-set"><h2 class="fx-h2">Fuldend sættet</h2><p class="fx-p">${esc(set.name)} · ${esc(set.line)}</p><div class="fx-grid">${fxCard(mate)}</div></section>` : ''}
+    <section class="fx-rel"><h2 class="fx-h2">Du vil måske også kunne lide</h2><div class="fx-grid">${related.map(fxCard).join('')}</div></section>
+    <div class="fx-mbar" id="fxMbar" aria-hidden="true"><div><b>${esc(p.name)}</b><span>${STATUS_TXT(p)} · demo</span></div><button type="button" class="fx-btn" id="mbAdd">Læg i kurv</button></div>
+  </div>`;
+}
+function wireProduct(p){
+  const sizes = sizesOf(p), add = $('#addBtn'), note = $('#addNote');
+  const sync = () => { $('#pdpQty').textContent = String(pdp.qty).padStart(2, '0'); };
+  const wireGal = () => $$('#pdpGal [data-img]').forEach(b => b.onclick = () => { pdp.img = +b.dataset.img; $('#pdpGal').innerHTML = pdpGallery(p); wireGal(); });
+  wireGal();
+  $$('[data-pc]').forEach(b => b.onclick = () => {
+    pdp.color = b.dataset.pc; $$('[data-pc]').forEach(x => x.setAttribute('aria-checked', x === b)); $('#pdpCol').textContent = pdp.color;
+    if (isHolly(p)) { pdp.img = 0; $('#pdpGal').innerHTML = pdpGallery(p); wireGal(); }
+    if (p.coll === 'noir-edit') $('#pdpColNote').textContent = pdp.color === 'Black' ? 'Black er hovedfarven. Chocolate og Midnight Navy er kun koncepter.' : pdp.color + ' er kun et koncept. Billederne viser Black.';
+  });
+  $$('[data-ps]').forEach(b => b.onclick = () => { pdp.size = b.dataset.ps; $$('[data-ps]').forEach(x => x.setAttribute('aria-pressed', x === b)); $('#pdpSize').textContent = pdp.size; note.textContent = ''; });
+  $$('[data-pq]').forEach(b => b.onclick = () => { pdp.qty = Math.min(9, Math.max(1, pdp.qty + +b.dataset.pq)); sync(); });
+  const doAdd = () => {
+    if (sizes && !pdp.size) { note.textContent = 'Vælg en størrelse først.'; $('.fx-sizes button')?.focus(); return; }
+    if (p.coll === 'noir-edit' && pdp.color !== 'Black') { note.textContent = pdp.color + ' er kun et koncept og kan ikke lægges i kurven. Vælg Black.'; return; }
+    addToCart(p.id, pdp.size, pdp.color, pdp.qty);
+  };
+  add.onclick = doAdd; $('#mbAdd').onclick = () => { if (sizes && !pdp.size) { add.scrollIntoView({ behavior: 'smooth', block: 'center' }); note.textContent = 'Vælg en størrelse først.'; } else doAdd(); };
+  const mb = $('#fxMbar');
+  const io = new IntersectionObserver(([en]) => { const show = !en.isIntersecting && en.boundingClientRect.top < 0; mb.classList.toggle('show', show); mb.setAttribute('aria-hidden', !show); }, { rootMargin: '-64px 0px 0px 0px' });
+  io.observe(add); cleanup.push(() => io.disconnect());
+}
+
+/* ---------- kurvside ---------- */
+function viewCart(){
+  return `<div class="wrap fx-cart">
+    <header class="fx-pagehead"><h1 class="fx-h1">Kurv</h1><nav class="fx-crumbs" aria-label="Brødkrummer"><a href="#forside">Forside</a><span>›</span><span>Din kurv</span></nav></header>
+    ${!cart.length ? `<div class="fx-empty"><p class="fx-p">Kurven er tom. Du kan lægge alle produkter i kurven for at prøve den.</p><a class="fx-btn" href="#women">Gå til shop</a></div>` : `
+    ${demoNote}
+    <div class="fx-table" role="table" aria-label="Produkter i kurven">
+      <div class="fx-tr fx-th" role="row"><span role="columnheader">Produkt</span><span role="columnheader">Pris</span><span role="columnheader">Antal</span><span role="columnheader">I alt</span></div>
+      ${cart.map((l, i) => { const p = byId(l.id); return `<div class="fx-tr" role="row">
+        <div class="fx-td-p" role="cell"><a href="#produkt-${p.id}" class="fx-li-ph"><img src="${img(lineImg(l))}" alt="${esc(p.name)}"></a><div><a href="#produkt-${p.id}"><b>${esc(p.name)}</b></a><span class="fx-li-m">${lineMeta(l)}</span><span class="fx-li-m">${STATUS_TXT(p)}</span><button type="button" class="fx-rm" data-rm="${i}">Fjern</button></div></div>
+        <span role="cell" class="fx-td-n"><span class="fx-mlbl">Pris</span>${p.price == null ? 'Følger' : kr(p.price)}</span>
+        <span role="cell" class="fx-td-n"><span class="fx-mlbl">Antal</span>${qtyCtl(i, l.qty, p.name)}</span>
+        <span role="cell" class="fx-td-n"><span class="fx-mlbl">I alt</span>${p.price == null ? 'Følger' : kr(p.price * l.qty)}</span>
+      </div>`; }).join('')}
+    </div>
+    <div class="fx-cart-sum">
+      <div class="fx-sum"><span>Subtotal</span><b>${allPriced() ? kr(cartTotal()) : 'Følger'}</b></div>
+      <p class="fx-fine">Fragt beregnes, når levering er afklaret.</p>
+      <a class="fx-btn block" href="#kassen">Til kassen</a>
+      <a class="fx-link c" href="#women">Fortsæt med at shoppe</a>
+    </div>`}
+  </div>`;
+}
+
+/* ---------- checkout ---------- */
+function viewCheckout(){
+  if (!cart.length) return `<div class="wrap fx-cart"><header class="fx-pagehead"><h1 class="fx-h1">Kassen</h1></header><div class="fx-empty"><p class="fx-p">Kurven er tom.</p><a class="fx-btn" href="#women">Gå til shop</a></div></div>`;
+  return `<div class="fx-co">
+    <header class="fx-pagehead"><h1 class="fx-h1">Kassen · demo</h1></header>
+    <div class="fx-co-in">
+      <form class="fx-co-form" id="coForm" novalidate>
+        ${demoNote}
+        <fieldset><legend>Kontakt</legend>
+          <div class="fx-fld"><label for="coEmail">E-mail</label><input id="coEmail" type="email" autocomplete="email" required></div>
+          <div class="fx-fld"><label for="coPhone">Mobilnummer (valgfrit)</label><input id="coPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+45"></div>
+        </fieldset>
+        <fieldset><legend>Levering</legend>
+          <div class="fx-fld"><label for="coCountry">Land</label><select id="coCountry" autocomplete="country-name"><option>Danmark</option></select></div>
+          <div class="fx-two"><div class="fx-fld"><label for="coFirst">Fornavn</label><input id="coFirst" autocomplete="given-name" required></div><div class="fx-fld"><label for="coLast">Efternavn</label><input id="coLast" autocomplete="family-name" required></div></div>
+          <div class="fx-fld"><label for="coAddr">Adresse</label><input id="coAddr" autocomplete="street-address" required></div>
+          <div class="fx-two"><div class="fx-fld"><label for="coZip">Postnr.</label><input id="coZip" autocomplete="postal-code" inputmode="numeric" maxlength="4" required></div><div class="fx-fld"><label for="coCity">By</label><input id="coCity" autocomplete="address-level2" required></div></div>
+          <p class="fx-fine">Fragtmetoder vises her, når levering og priser er afklaret.</p>
+        </fieldset>
+        <fieldset><legend>Betaling</legend>
+          <div class="fx-paybox"><b>Betaling er ikke aktiveret</b><span>Der er ingen kortfelter, og der trækkes ingen penge. Betaling aktiveres først, når pris, produktion og levering er afklaret.</span></div>
+        </fieldset>
+        <button class="fx-btn block" type="submit">Tjek oplysninger</button>
+        <p class="fx-fine" id="coNote" aria-live="polite" style="min-height:1.4em"></p>
+        <p class="fx-fine">Dine oplysninger bliver kun i browseren og sendes ingen steder hen.</p>
+      </form>
+      <aside class="fx-co-sum" aria-label="Din ordre">
+        ${cart.map(l => { const p = byId(l.id); return `<div class="fx-co-li"><div class="fx-co-ph"><img src="${img(lineImg(l))}" alt=""><i>${l.qty}</i></div><div><b>${esc(p.name)}</b><span class="fx-li-m">${lineMeta(l)}</span></div><span>${p.price == null ? 'Følger' : kr(p.price * l.qty)}</span></div>`; }).join('')}
+        <div class="fx-co-tot">
+          <div class="fx-sum"><span>Subtotal</span><span>${allPriced() ? kr(cartTotal()) : 'Følger'}</span></div>
+          <div class="fx-sum"><span>Fragt</span><span>Følger</span></div>
+          <div class="fx-sum big"><span>I alt</span><b>Følger</b></div>
+        </div>
+      </aside>
+    </div>
+  </div>`;
+}
+function wireCheckout(){
+  const f = $('#coForm'); if (!f) return;
+  f.onsubmit = e => {
+    e.preventDefault();
+    const bad = $$('input[required]', f).find(i => !i.value.trim() || (i.type === 'email' && !/^\S+@\S+\.\S+$/.test(i.value)) || (i.id === 'coZip' && !/^\d{4}$/.test(i.value)));
+    $$('input', f).forEach(i => i.removeAttribute('aria-invalid'));
+    const note = $('#coNote');
+    if (bad){ bad.setAttribute('aria-invalid', 'true'); bad.focus(); note.textContent = 'Udfyld ' + (bad.labels[0]?.textContent || 'feltet').toLowerCase() + ' korrekt for at fortsætte.'; return; }
+    note.textContent = 'Oplysningerne ser rigtige ud. Dette er en demo – ingen ordre er oprettet, og der er ikke trukket penge.';
+  };
+}
+
 /* ================= Scroll-reveal ================= */
 let rvIO;
 function wireReveal(){
@@ -2323,6 +2596,7 @@ function render(){
   if(h.startsWith('produkt-') && byId(h.slice(8))){ const p = byId(h.slice(8)); app.innerHTML = viewProduct(p); wireProduct(p); document.title = p.name + ' — DUO STUDIO'; nav='women'; coll = p.coll; }
   else if(h==='men' || h==='shop-men'){ app.innerHTML = viewMen(); document.title='Men — DUO STUDIO'; nav='men'; }
   else if(h==='women' || h==='shop' || h==='shop-women'){ state.dept = 'women'; app.innerHTML = viewShop(); wireShop(); document.title='Women — DUO STUDIO'; nav='women'; }
+  else if(h==='kurv'){ app.innerHTML = viewCart(); document.title='Kurv — DUO STUDIO'; }
   else if(h==='kassen'){ app.innerHTML = viewCheckout(); wireCheckout(); document.title='Kasse — DUO STUDIO'; }
   else if(h==='collections'){ app.innerHTML = viewCollections(); document.title='Collections — DUO STUDIO'; nav='collections'; }
   else if(h==='about'){ app.innerHTML = viewAbout(); document.title='About — DUO STUDIO'; nav='about'; }
