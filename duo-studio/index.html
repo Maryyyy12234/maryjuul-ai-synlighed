@@ -249,7 +249,7 @@ header.site.scrolled{box-shadow:0 1px 0 var(--grey)}
 footer.site{background:var(--ink);color:var(--white);padding-bottom:env(safe-area-inset-bottom,0px)}
 .f-top{display:grid;gap:36px;padding-block:64px 40px}
 .f-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
-.f-cols h4{margin:0 0 12px;color:var(--mute-d)}
+.f-cols h4,.f-cols .f-h{margin:0 0 12px;color:var(--mute-d);font-size:12px;font-weight:500}
 .f-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14px}
 .f-cols a,.f-cols button{transition:opacity .2s}.f-cols a:hover,.f-cols button:hover{opacity:.6}
 .f-logo{width:100%;color:var(--white)}
@@ -993,7 +993,7 @@ main[data-coll="holly"] .holly-title h1{font-family:var(--editorial);font-style:
 @media (prefers-reduced-motion:reduce){.hc,.hc-c img{transition:none}}
 
 /* ================= FASCO-skabelon (Figma) – DUO-tilpasset ================= */
-:root{--ivory:#FFFFFF;--ink:#000000;--grey:#EDEDED;--mute:#8A8A8A;--txt:#484848;--soft:#FAFAFA;
+:root{--ivory:#FFFFFF;--ink:#000000;--grey:#EDEDED;--mute:#6B6B6B;--txt:#484848;--soft:#FAFAFA;
   --ui:"Poppins","Helvetica Neue",Arial,system-ui,sans-serif;--fx-serif:"Volkhov",Georgia,serif;--mono:"Poppins","Helvetica Neue",Arial,sans-serif;
   --shadow:0 20px 35px rgba(0,0,0,.15);--card:0 10px 40px rgba(0,0,0,.08);--maxw:1360px}
 body{color:var(--txt)}
@@ -1013,7 +1013,7 @@ header.site{background:#fff}
 @media (min-width:1000px){.bar{height:96px}.bar .logo{width:110px}.nav-l{gap:28px}}
 /* footer */
 footer.site{background:#fff;color:var(--txt);border-top:1px solid var(--grey)}
-footer.site h4,footer.site .mono{color:var(--ink)}
+footer.site h4,footer.site .f-h,footer.site .mono{color:var(--ink)}
 footer.site a,footer.site button{color:var(--txt)}
 footer.site .f-logo{color:var(--ink);opacity:1}
 footer.site .f-bottom{color:var(--mute);border-color:var(--grey);justify-content:center;gap:24px}
@@ -1084,7 +1084,7 @@ figure .review{z-index:3}
 
 .fx-new{display:grid;gap:22px;padding-block:80px}
 .fx-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-block:8px 10px}
-.fx-tabs button{background:var(--soft);color:var(--mute);border-radius:10px;padding:12px 28px;font-size:15px;min-height:44px}
+.fx-tabs button{background:#F1F1F1;color:#555;border-radius:10px;padding:12px 28px;font-size:15px;min-height:44px}
 .fx-tabs button[aria-selected="true"]{background:var(--ink);color:#fff;box-shadow:var(--shadow)}
 .fx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px;margin-bottom:16px}
 .fx-card{background:#fff;border-radius:10px;box-shadow:var(--card);padding:14px;display:grid;gap:14px;transition:transform .3s var(--ease),box-shadow .3s}
@@ -1381,6 +1381,7 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
   .fx-glide{overflow-x:auto}
   .fx-rv,.fx-card{opacity:1;transform:none;transition:none}
 }
+footer.site{--mute-d:#6B6B6B}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -1397,7 +1398,7 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
     </div>
     <div class="nav-r">
       <button class="nl desk" type="button" data-open="sizeguide">Størrelsesguide</button>
-      <button class="nl bag" id="bagBtn" aria-label="Åbn kurv">Kurv <span class="n" id="bagCount">0</span></button>
+      <button class="nl bag" id="bagBtn" title="Åbn kurv">Kurv <span class="n" id="bagCount">0</span></button>
     </div>
   </div>
 </header>
@@ -1432,12 +1433,12 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
         <p style="font-size:18px;line-height:1.4">Dansk modebrand til kvinder og mænd. Tailoring, streetwear, basics og festtøj.</p>
       </div>
       <div class="f-cols">
-        <div><h4 class="mono">Shop</h4><ul>
+        <div><h2 class="mono f-h">Shop</h2><ul>
           <li><a href="#women">Women</a></li><li><a href="#noir-edit">Noir</a></li><li><a href="#in-out">Penny</a></li><li><a href="#holly">Holly</a></li><li><a href="#collections">Collections</a></li></ul></div>
-        <div><h4 class="mono">Hjælp</h4><ul>
+        <div><h2 class="mono f-h">Hjælp</h2><ul>
           <li><button type="button" data-open="sizeguide">Størrelsesguide</button></li><li><button type="button" data-open="info">Levering &amp; retur</button></li></ul></div>
-        <div><h4 class="mono">DUO</h4><ul><li><a href="#about">About</a></li><li><button type="button" data-open="contact">Kontakt</button></li><li><a href="#men">Men – snart</a></li></ul></div>
-        <div><h4 class="mono">Politikker</h4><ul><li><button type="button" data-open="policies">Handelsbetingelser</button></li><li><button type="button" data-open="policies">Privatlivspolitik</button></li><li><button type="button" data-open="policies">Cookies</button></li></ul></div>
+        <div><h2 class="mono f-h">DUO</h2><ul><li><a href="#about">About</a></li><li><button type="button" data-open="contact">Kontakt</button></li><li><a href="#men">Men – snart</a></li></ul></div>
+        <div><h2 class="mono f-h">Politikker</h2><ul><li><button type="button" data-open="policies">Handelsbetingelser</button></li><li><button type="button" data-open="policies">Privatlivspolitik</button></li><li><button type="button" data-open="policies">Cookies</button></li></ul></div>
       </div>
     </div>
     <span class="logo f-logo" role="img" aria-label="DUO STUDIO"></span>
@@ -1991,7 +1992,7 @@ function viewHome(){
   </section>
 
   <nav class="fx-marq" aria-label="Kollektioner">
-    <div class="fx-marq-t">${[0,1].map(r => `<div class="fx-marq-g"${r ? ' aria-hidden="true"' : ''}>${[['#noir-edit','NOIR','b1'],['#in-out','Penny','b2'],['#holly','Holly','b3'],['#men','MEN <small>snart</small>','b4'],['#collections','DUO STUDIO','b5']].map(([h,t,c]) => `<a href="${h}" class="${c}"${r ? ' tabindex="-1"' : ''}>${t}</a><i aria-hidden="true">✦</i>`).join('')}</div>`).join('')}</div>
+    <div class="fx-marq-t">${[0,1].map(r => `<div class="fx-marq-g"${r ? ' aria-hidden="true"' : ''}>${[['#noir-edit','NOIR','b1'],['#in-out','Penny','b2'],['#holly','Holly','b3'],['#men','MEN <small>snart</small>','b4'],['#collections','DUO STUDIO','b5']].map(([h,t,c]) => (r ? `<span class="${c}">${t}</span>` : `<a href="${h}" class="${c}">${t}</a>`) + '<i aria-hidden="true">✦</i>').join('')}</div>`).join('')}</div>
   </nav>
 
   <section class="fx-deal" aria-labelledby="dealT">
