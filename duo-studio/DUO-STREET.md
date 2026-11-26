@@ -1,4 +1,26 @@
-# DUO / STREET — designforslag (Soft Street-linjen)
+# DUO / STREET — designforslag
+
+> **Version 2 (gældende, nov. 2026):** Ejeren fandt v1 for neutral ("ikke nok Scuffers-vibe, passer ikke til DUO").
+> Ny retning: **vasket vintage-streetwear à la Scuffers + DUO's egne signaturer** – Noirs blonde, Hollys sløjfer,
+> Pennys striber, vinrød/butter yellow og DUO STUDIO-logoet. Street-attitude, men tydeligt samme brand.
+
+## V2 — styles med DUO-DNA
+| Style | DNA | Design |
+|---|---|---|
+| **Freja Denim** ✓ koncept | Noir-blonde | Baggy, kraftigt vintage-vasket mid-blue denim, rå frynset kant, 4 cm sort blomsterblonde langs hele ydersømmen; forsiden ren. Lavere, lidt større baglommer. |
+| **Lace Panel Hoodie** | Noir-blonde | Tung, vasket charcoal hoodie med sorte blondepaneler i siderne (som Alma); tonal DUO STUDIO på brystet. |
+| **Bow Back Hoodie** | Holly-sløjfer | Vasket cherry wine-hoodie, ren front; tre små sløjfer med mellemrum ned ad midten bagpå. |
+| **Stripe Track Pant** | Penny-striber | Baggy vasket track pant i creme med tynde bordeaux-striber og DUO STUDIO ved hoften (som Everywhere Pants), elastik og snøre. |
+| **Ringer Tee** | Penny-farver | Oversized vintage-vasket butter yellow tee med bordeaux ringer-hals og DUO STUDIO på brystet. |
+| **Lace Trim Baby Tee** | Noir × street | Fitted sort baby tee med smal sort blondekant ved hals og ærmer. |
+| **Wine Varsity Zip** | DUO-farver | Vasket bordeaux zip-sweat med creme kontrast-rib og lille broderet DUO-monogram. |
+| **DUO Cap** | Logo | Vasket ustruktureret cap, DUO STUDIO-broderi. |
+
+Logo: altid det originale DUO STUDIO-logo, sat på bagefter – AI-billeder laves uden logo.
+
+---
+
+## Version 1 (forkastet – for neutral)
 
 *Udbygger [KOLLEKTION-2027-2032.md](KOLLEKTION-2027-2032.md). Scuffers-ånd: afslappede fits, tunge kvaliteter, vaskede farver, enkle produkter med stærk styling – men med DUO's signatur: **gode proportioner + én lille feminin detalje + tone-i-tone DUO STUDIO-logo**. Ingen store prints, ingen gimmicks, ingen kopi af andre mærkers designs eller logoer.*
 
