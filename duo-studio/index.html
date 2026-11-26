@@ -1382,6 +1382,42 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
   .fx-rv,.fx-card{opacity:1;transform:none;transition:none}
 }
 footer.site{--mute-d:#6B6B6B}
+/* ===== Editorial finish (etableret modebrand): skarpe kanter, ingen skygger, rolige kort ===== */
+.btn,.bag,.fx-btn,.fx-hero figure,.fx-status b,.fx-tabs button,.fx-card,.fx-card-m,.fx-news figure,.fx-news-c .form,
+.fx-fbtn,.fx-sort select,.fx-filters,.fx-thumbs button,.fx-main,.fx-sizes button,.fx-qty,.fx-add,.fx-guard,.fx-li-ph,
+.fx-fld input,.fx-fld select,.fx-paybox,.fx-co-sum,.fx-co-ph,.fx-co-ph img,.fx-car-i,.fx-car-i img{border-radius:0}
+.fx-btn,.fx-add{box-shadow:none;text-transform:uppercase;letter-spacing:.16em;font-size:12px;font-weight:500;padding:16px 36px}
+.fx-btn:hover{transform:none;background:#3B302C}
+.bag{box-shadow:none}
+.fx-tabs button{letter-spacing:.08em;font-size:13px}
+.fx-card{background:transparent;box-shadow:none;padding:0;gap:12px}
+.fx-card:hover,.fx-card.in:hover{transform:none;box-shadow:none}
+.fx-grid3 .fx-card,.fx-rel .fx-card{padding:0}
+.fx-card-m{aspect-ratio:3/4}
+.fx-card-t{padding:0;gap:3px}
+.fx-card-h b,.fx-grid3 .fx-card-h b,.fx-rel .fx-card-h b{font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.fx-card .fx-price,.fx-grid3 .fx-price{font-size:13px;font-weight:400;color:#484848}
+.fx-card-f{margin-top:4px}
+.fx-badge{border-radius:0;left:8px;right:auto;top:8px;bottom:auto;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;padding:4px 7px;background:rgba(255,255,255,.88)}
+.fx-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 12px}
+@media (min-width:900px){.fx-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:56px 20px}}
+.fx-grid3{gap:32px 12px}
+@media (min-width:900px){.fx-grid3{gap:56px 20px}}
+.fx-tabs button[aria-selected="true"]{box-shadow:none}
+@media (max-width:599px){.fx-tabs{flex-wrap:nowrap;gap:6px}.fx-tabs button{padding:10px 14px;font-size:12px}}
+/* Noir-sektion: stort modelbillede + tekst (erstatter grå skrå flade) */
+.fx-look{background:#EDE6DE;grid-template-columns:1fr}
+.fx-look-img{display:block;padding:0;position:relative}
+.fx-look-img .fx-lk-main{margin:0;aspect-ratio:4/5;overflow:hidden;background:#B8A798}
+.fx-look-img .fx-lk-main img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.fx-look-img .fx-lk-det{position:absolute;right:16px;bottom:16px;width:30%;max-width:190px;margin:0;aspect-ratio:3/4;overflow:hidden;border:6px solid #EDE6DE}
+.fx-look-img .fx-lk-det img{width:100%;height:100%;object-fit:cover}
+.fx-look-txt{background:transparent;clip-path:none;margin:0;padding:48px 20px 64px}
+@media (min-width:900px){
+  .fx-look{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:center}
+  .fx-look-img .fx-lk-main{aspect-ratio:4/5;max-height:860px}
+  .fx-look-txt{padding:64px clamp(40px,7vw,120px);clip-path:none;margin:0}
+}
 </style>
 
 <div class="strip"><span class="mono">Privat forhåndsvisning · Køb er ikke åbnet</span></div>
@@ -2022,7 +2058,8 @@ function viewHome(){
 
   <section class="fx-look" aria-labelledby="lookT">
     <div class="fx-look-img">
-      ${[['alma-front','Alma vest'],['freja-front','Freja bukser'],['cleo-side','Cleo slingbacks']].map(([k, t], i) => `<figure class="fx-lk fx-lk${i}"><img src="${img(k)}" alt="${t}" loading="lazy"><span class="fx-tag">${t}</span></figure>`).join('')}
+      <figure class="fx-lk-main"><img src="${img('noir-m1')}" alt="Noir: Alma vest, Freja bukser og Cleo slingbacks" loading="lazy"></figure>
+      <figure class="fx-lk-det"><img src="${img('freja-lace')}" alt="Blonde langs Frejas ydersøm" loading="lazy"></figure>
     </div>
     <div class="fx-look-txt fx-rv">
       <span class="fx-sub">Collection 01 · aften</span>
