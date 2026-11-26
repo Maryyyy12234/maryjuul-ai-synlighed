@@ -3,7 +3,7 @@ const http = require('node:http'), fs = require('node:fs'), path = require('node
 const { spawn, execSync } = require('node:child_process');
 const DIST = path.join(__dirname, '..', 'dist'), PORT = 8765;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.jpg': 'image/jpeg', '.png': 'image/png', '.js': 'text/javascript', '.css': 'text/css' };
-const SUITES = ['redesign.test.js', 'flow.test.js', 'fixtest.test.js', 'test10.test.js'];
+const SUITES = ['redesign.test.js', 'hero.test.js', 'flow.test.js', 'fixtest.test.js', 'test10.test.js'];
 const TIMEOUT = 8 * 60 * 1000;
 let globalRoot = ''; try { globalRoot = execSync('npm root -g').toString().trim(); } catch {}
 

@@ -11,10 +11,9 @@ const BASE = process.env.BASE || 'http://localhost:8765/';
   // Forside: én H1, hero-billede prioriteret, ingen købs-CTA, ingen formularer der lader som om
   await p.goto(BASE + '#forside'); await p.waitForTimeout(600);
   check(await p.locator('h1').count() === 1, 'forside: én H1');
-  check((await p.locator('h1').textContent()).includes('Bløde former'), 'forside: H1-tekst');
-  check(await p.locator('.h-hero-img img[fetchpriority="high"]').count() === 1, 'forside: hero-billede prioriteret');
-  check(await p.locator('.h-hero .btn-p').textContent() === 'Se kollektionen', 'forside: én primær CTA "Se kollektionen"');
-  check(await p.locator('.h-entry').count() === 3, 'forside: tre kollektionsindgange');
+  check((await p.locator('h1').textContent()).replace(/\s+/g, ' ').trim() === 'To sider. Samme dig.', 'forside: H1 "To sider. Samme dig."');
+  check(await p.locator('.dh img[fetchpriority="high"]').count() === 1, 'forside: hero-billede prioriteret');
+  check(await p.locator('.h-entry').count() === 3, 'lookbook: tre looks (Noir, Penny, Holly)');
   const picks = await p.locator('.h-picks .fx-card').count(); check(picks >= 4 && picks <= 6, 'forside: 4–6 udvalgte styles');
   check(await p.locator('input[type="email"]').count() === 0, 'ingen e-mail-formular uden backend');
   check(await p.locator('#bagBtn').count() === 0, 'kurv er ikke i hovedmenuen');
@@ -55,10 +54,6 @@ const BASE = process.env.BASE || 'http://localhost:8765/';
   for (const [w, vh] of [[320, 640], [390, 844]]) {
     const m = await b.newPage({ viewport: { width: w, height: vh } });
     await m.goto(BASE + '#forside'); await m.waitForTimeout(400);
-    const fold = await m.evaluate(() => ['.h-cap', '#hH1', '.h-hero .btn-p'].map(q => document.querySelector(q).getBoundingClientRect().bottom <= innerHeight));
-    check(fold.every(Boolean), `${w}px: label, H1 og CTA synlige uden scroll (${fold})`);
-    const im = await m.evaluate(() => { const i = document.querySelector('.h-hero-img img'); return getComputedStyle(i).objectFit + ' ' + Math.abs(i.getBoundingClientRect().width / i.getBoundingClientRect().height - 2 / 3).toFixed(3); });
-    check(im.startsWith('contain') && parseFloat(im.split(' ')[1]) < 0.01, `${w}px: hero-billede bevarer proportioner (${im})`);
     check(await m.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${w}px: intet vandret overløb`);
     const box = await m.locator('#menuBtn').boundingBox(); check(box.width >= 44 && box.height >= 44, `${w}px: menu-knap ≥ 44×44`);
     await m.focus('#menuBtn'); await m.keyboard.press('Enter'); await m.waitForTimeout(300);

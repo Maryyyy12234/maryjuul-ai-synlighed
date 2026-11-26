@@ -15,7 +15,7 @@ const html = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="assets/logo.png">
-<link rel="preload" as="image" href="assets/noir-m2.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="assets/penny-l1-model.jpg" fetchpriority="high">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 </head>
 <body>

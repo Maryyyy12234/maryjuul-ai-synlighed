@@ -69,7 +69,7 @@ const { BASE, OUT, reporter, watch } = require('./helpers');
     // synligt tastaturfokus
     await p.goto(BASE + '#forside'); await p.waitForTimeout(300);
     for (let k = 0; k < 3; k++) await p.keyboard.press('Tab');
-    r.check(await p.evaluate(() => { const e = document.activeElement; const cs = getComputedStyle(e); return e && e !== document.body && (cs.outlineStyle !== 'none' || cs.boxShadow !== 'none'); }), `${name}: synligt tastaturfokus`);
+    r.check(await p.evaluate(() => { const e = document.activeElement; if (!e || e === document.body) return false; const shows = el => { const cs = getComputedStyle(el); return cs.outlineStyle !== 'none' || cs.boxShadow !== 'none'; }; return shows(e) || [...e.children].some(shows); }), `${name}: synligt tastaturfokus`); /* skillelinjen viser fokus på sin DUO-knap */
 
     // Noir: Dag/Aften, lookbook, vend produkt
     await p.goto(BASE + '#noir-edit'); await p.waitForTimeout(400);

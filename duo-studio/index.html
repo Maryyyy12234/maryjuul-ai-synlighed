@@ -947,26 +947,76 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
 .h-head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s5)}
 .h-sec > .h-h2{margin-bottom:var(--s5)}
 
-/* Hero: hele looket bevares (object-fit: contain). Billedfladen har fotoets egen baggrundsgradient,
-   og billedets kanter tones blødt ind i den, så fladen kan være bredere end fotoet uden beskæring. */
-.h-hero{display:grid;background:var(--ivory)}
-.h-hero-img{margin:0;display:flex;justify-content:center;overflow:hidden;
-  background:linear-gradient(180deg,#5D4236 0%,#6E5043 35%,#76564A 55%,#80604E 82%,#86654F 100%)}
-.h-hero-img img{display:block;height:max(200px,min(50svh,calc(100svh - 360px),150vw));width:auto;max-width:100%;aspect-ratio:2/3;object-fit:contain;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%)}
-.h-hero-txt{display:grid;gap:var(--s3);justify-items:start;padding:var(--s4) var(--gr) var(--s5) var(--gl)}
-.h-hero-txt .btn-p{margin-top:var(--s1)}
-.h-note{margin:0;font-size:14px;color:var(--mute);max-width:36ch}
-@media (min-width:700px){
-  .h-hero{grid-template-columns:minmax(0,45fr) minmax(0,55fr);align-items:center;padding-left:var(--gl)}
-  .h-hero-img{grid-column:2;grid-row:1;height:min(calc(100svh - 112px),82.5vw,1100px);min-height:520px}
-  .h-hero-img img{height:100%}
-  .h-hero-txt{grid-column:1;grid-row:1;align-self:start;padding:clamp(40px,9svh,112px) clamp(24px,4vw,72px) var(--s6) 0;gap:var(--s4);max-width:720px}
-}
+/* ===== Hero: DUO — to sider af dig (Dag / Aften) =====
+   Farver og skillelinjens position styres af custom properties. Hvert look vises helt (contain) på sin egen flade. */
+.dh{--day:#EFE4D7;--day-ink:var(--ink);--night:#171211;--night-ink:#F3EDE5;--split:50%;
+  position:relative;display:grid;gap:var(--s3);padding:var(--s4) var(--gr) var(--s4) var(--gl);
+  background:var(--day);color:var(--day-ink);transition:background-color .35s var(--ease),color .35s var(--ease)}
+.dh[data-mood="night"]{background:var(--night);color:var(--night-ink)}
+.dh-h1{margin:0;font-weight:400;font-stretch:92%;letter-spacing:-.035em;line-height:.98;font-size:clamp(34px,10vw,64px);color:inherit}
+.dh-switch{display:flex;gap:var(--s2)}
+.dh-switch button{min-height:44px;min-width:88px;padding:0 var(--s4);border:1px solid currentColor;font-size:14px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:inherit;transition:background-color .2s,color .2s}
+.dh-switch button[aria-pressed="true"]{background:var(--day-ink);border-color:var(--day-ink);color:var(--day)}
+.dh[data-mood="night"] .dh-switch button[aria-pressed="true"]{background:var(--night-ink);border-color:var(--night-ink);color:var(--night)}
+.dh-p{display:none;gap:var(--s3)}
+.dh[data-mood="day"] .dh-day,.dh[data-mood="night"] .dh-night{display:grid}
+.dh-fig{margin:0;display:flex;justify-content:center}
+.dh-fig img{display:block;height:max(200px,min(46svh,calc(100svh - 440px),150vw));width:auto;max-width:100%;aspect-ratio:2/3;object-fit:contain}
+.dh-cap{display:grid;grid-template-columns:1fr auto;align-items:end;column-gap:var(--s3)}
+.dh-mood{grid-column:1;margin:0;font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
+.dh-coll{grid-column:1;margin:0;font-weight:400;font-size:clamp(28px,7vw,44px);letter-spacing:-.03em;line-height:1}
+.dh-line{display:none;margin:0}
+.dh-cap .btn-p{grid-column:2;grid-row:1/3}
+.dh-night .btn-p{background:var(--night-ink);color:var(--night);border-color:var(--night-ink)}
+.dh-night .btn-p:hover{background:transparent;color:var(--night-ink)}
+.dh-handle{display:none}
+.dh-note{margin:0;font-size:13px;opacity:.85;max-width:44ch}
 @media (prefers-reduced-motion:no-preference){
-  .h-hero-img img{animation:hSettle 1.6s var(--ease) both}
-  @keyframes hSettle{from{transform:scale(1.03)}to{transform:none}}
+  .dh[data-mood] .dh-p{animation:dhIn .4s var(--ease)}
+  @keyframes dhIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 }
+
+@media (min-width:900px){
+  .dh{display:block;padding:0;height:calc(100svh - 112px);min-height:640px;max-height:1000px;overflow:hidden;background:var(--night)}
+  .dh[data-mood="night"]{background:var(--night)}
+  .dh-switch{display:none}
+  .dh-panels{position:absolute;inset:0;display:grid;grid-template-columns:var(--split) minmax(0,1fr);transition:grid-template-columns .45s var(--ease)}
+  .dh.dragging .dh-panels,.dh.dragging .dh-handle,.dh.dragging .dh-h1 > span{transition:none}
+  .dh-p,.dh[data-mood] .dh-p{display:block;position:relative;min-width:0;overflow:hidden;animation:none}
+  .dh-day{background:var(--day);color:var(--day-ink)}
+  .dh-night{background:var(--night);color:var(--night-ink)}
+  /* de to looks står mod hinanden ved skillelinjen; tekst og CTA i de ydre hjørner */
+  .dh-fig{position:absolute;top:28%;bottom:0;display:flex;align-items:flex-end;padding-bottom:0}
+  .dh-day .dh-fig{left:clamp(200px,17vw,280px);right:44px;justify-content:flex-end}
+  .dh-night .dh-fig{left:44px;right:clamp(200px,17vw,280px);justify-content:flex-start}
+  .dh-fig img{height:auto;width:auto;max-height:100%;max-width:100%;object-fit:contain;object-position:50% 100%}
+  .dh-cap{position:absolute;bottom:calc(var(--s6) + 24px);display:grid;grid-template-columns:none;gap:var(--s2);justify-items:start;width:clamp(170px,15vw,240px)}
+  .dh-day .dh-cap{left:var(--gl)}
+  .dh-night .dh-cap{right:var(--gr);justify-items:end;text-align:right}
+  .dh-mood,.dh-coll,.dh-cap .btn-p{grid-column:auto;grid-row:auto}
+  .dh-coll{font-size:clamp(36px,3.4vw,56px)}
+  .dh-line{display:block;font-size:15px;line-height:1.5;opacity:.85}
+  .dh-cap .btn-p{margin-top:var(--s2)}
+  /* overskriften er delt ved sømmen: "To sider." på Dag, "Samme dig." på Aften – begge følger skillelinjen */
+  .dh-h1{position:absolute;inset:0;z-index:3;pointer-events:none;font-size:clamp(48px,5.6vw,104px);white-space:nowrap}
+  .dh-h1 > span{position:absolute;top:clamp(28px,7svh,72px);transition:left .45s var(--ease),right .45s var(--ease)}
+  .dh-h1-a{right:calc(100% - var(--split) + 40px);color:var(--day-ink)}
+  .dh-h1-b{left:calc(var(--split) + 40px);color:var(--night-ink)}
+  .dh-handle{display:block;position:absolute;z-index:4;top:0;bottom:0;left:var(--split);width:44px;margin-left:-22px;cursor:ew-resize;touch-action:none;transition:left .45s var(--ease)}
+  .dh-handle::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(180deg,rgba(243,237,229,0) 0,rgba(243,237,229,.55) 30%,rgba(243,237,229,.55) 100%)}
+  .dh-handle .logo{position:absolute;left:50%;top:58%;width:76px;height:76px;transform:translate(-50%,-50%);border-radius:50%;background:var(--ivory);
+    -webkit-mask:none;mask:none;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(23,20,19,.12)}
+  .dh-handle .logo::after{content:"";width:46px;aspect-ratio:1140/496;background:var(--ink);-webkit-mask:url(assets/logo.png) center/contain no-repeat;mask:url(assets/logo.png) center/contain no-repeat}
+  .dh-handle:focus-visible{outline:none}
+  .dh-handle:focus-visible .logo{outline:2px solid var(--wine);outline-offset:4px}
+  .dh-note{position:absolute;z-index:3;left:var(--gl);bottom:var(--s3);width:clamp(170px,15vw,240px);font-size:12px;line-height:1.45;color:var(--day-ink);opacity:.8}
+}
+@media (min-width:900px) and (prefers-reduced-motion:reduce){
+  .dh-panels,.dh-handle,.dh-h1 > span{transition:none}
+}
+
+.h-lead{margin:0;font-size:17px;color:var(--mute);max-width:36ch}
+@media (min-width:760px){.h-lookbook .h-entry:nth-child(2){margin-top:var(--s7)}.h-lookbook .h-entries{align-items:start}}
 
 .h-entries{display:grid;gap:var(--s5)}
 .h-entry{display:grid;gap:var(--s3);color:var(--ink)}
@@ -1567,28 +1617,48 @@ function viewHome(){
   const picks = ['alma', 'freja', 'cleo', 'everywhere-tee', 'soft-fit-wide-pants', 'bow-hoodie'].map(byId).filter(Boolean);
   const entries = [
     ['noir-edit', 'Noir', 'Skarp tailoring og blonde.', 'noir-m1', 'Model i Alma vest, Freja bukser og Cleo slingbacks', 'Kollektion 01'],
-    ['in-out', 'Penny', 'Afslappede silhuetter til hverdag.', 'penny-l1-model', 'Model i Penny Everywhere-sættet: gul T-shirt og stribede bukser', 'Under udvikling'],
+    ['in-out', 'Penny', 'Afslappede silhuetter til hverdag.', 'penny-l3-model', 'Model i Penny Off-Duty-sættet: navy lynlåsjakke og vide bukser', 'Under udvikling'],
     ['holly', 'Holly', 'Sløjfer og blødere former.', 'holly-wine', 'Model i Holly Bow Hoodie og Wide Pants i Cherry Wine', 'Under udvikling']];
   return `
-  <section class="h-hero" aria-labelledby="hH1">
-    <figure class="h-hero-img">
-      <img src="${img('noir-m2')}" width="1024" height="1536" fetchpriority="high" decoding="async"
-        alt="Model i Noir: sort Alma vest med blonde i siderne, vide Freja bukser med blonde langs ydersømmen og Cleo slingbacks">
-    </figure>
-    <div class="h-hero-txt">
-      <p class="h-cap">Noir — Kollektion 01</p>
-      <h1 id="hH1" class="h-h1">Bløde former.<br>Skarpe linjer.</h1>
-      <a class="btn-p" href="#noir-edit">Se kollektionen</a>
-      <p class="h-note">Kollektionen er under udvikling og kan ikke købes endnu.</p>
+  <section class="dh" id="dh" data-mood="day" style="--split:50%" aria-labelledby="hH1">
+    <h1 id="hH1" class="dh-h1"><span class="dh-h1-a">To sider.</span> <span class="dh-h1-b">Samme dig.</span></h1>
+    <div class="dh-switch" role="group" aria-label="Vælg stemning">
+      <button type="button" data-mood-btn="day" aria-pressed="true">Dag</button>
+      <button type="button" data-mood-btn="night" aria-pressed="false">Aften</button>
     </div>
+    <div class="dh-panels">
+      <article class="dh-p dh-day" aria-labelledby="dhDay">
+        <figure class="dh-fig"><img src="${img('penny-l1-model')}" width="1024" height="1536" fetchpriority="high" decoding="async"
+          alt="Dag: model i Penny Everywhere-sættet – gul oversized T-shirt med DUO STUDIO-logo og stribede vide bukser"></figure>
+        <div class="dh-cap">
+          <p class="dh-mood">Dag</p>
+          <h2 class="dh-coll" id="dhDay">Penny</h2>
+          <p class="dh-line">Afslappede silhuetter til hverdag.</p>
+          <a class="btn-p" href="#in-out">Se Penny</a>
+        </div>
+      </article>
+      <article class="dh-p dh-night" aria-labelledby="dhNight">
+        <figure class="dh-fig"><img src="${img('noir-m2')}" width="1024" height="1536" decoding="async"
+          alt="Aften: model i Noir – sort Alma vest med blonde i siderne, vide Freja bukser med blonde langs ydersømmen og Cleo slingbacks"></figure>
+        <div class="dh-cap">
+          <p class="dh-mood">Aften</p>
+          <h2 class="dh-coll" id="dhNight">Noir</h2>
+          <p class="dh-line">Skarp tailoring og blonde.</p>
+          <a class="btn-p" href="#noir-edit">Se Noir</a>
+        </div>
+      </article>
+      <div class="dh-handle" role="slider" tabindex="0" aria-label="Balance mellem Dag og Aften" aria-orientation="horizontal"
+        aria-valuemin="35" aria-valuemax="65" aria-valuenow="50" aria-valuetext="Dag 50 %, Aften 50 %"><span class="logo" aria-hidden="true"></span></div>
+    </div>
+    <p class="dh-note">Produkterne er visualiseringer under udvikling og kan ikke købes endnu.</p>
   </section>
 
-  <section class="h-sec wrap" aria-labelledby="hColl">
-    <h2 class="h-h2" id="hColl">Kollektioner</h2>
+  <section class="h-sec wrap h-lookbook" aria-labelledby="hColl">
+    <div class="h-head"><h2 class="h-h2" id="hColl">Lookbook</h2><p class="h-lead">Tre kollektioner. To sider af samme garderobe.</p></div>
     <div class="h-entries">
-      ${entries.map(([id, n, line, k, alt, st]) => `<a class="h-entry" href="#${id}">
+      ${entries.map(([id, n, line, k, alt, st], i) => `<a class="h-entry" href="#${id}">
         <span class="h-entry-img"><img src="${img(k)}" width="1024" height="1536" alt="${esc(alt)}" loading="lazy" decoding="async"></span>
-        <span class="h-entry-t"><b>${n}</b><span>${line}</span><span class="h-entry-s">${st}</span></span>
+        <span class="h-entry-t"><span class="h-entry-s">Look 0${i + 1} · ${st}</span><b>${n}</b><span>${line}</span></span>
         <span class="h-link">Se ${n}</span></a>`).join('')}
     </div>
   </section>
@@ -1617,7 +1687,40 @@ function viewHome(){
     </div>
   </section>`;
 }
-function wireHome(){ /* forsiden har ingen automatiske karruseller; links og kort er almindelige links */ }
+function wireHome(){
+  /* Signaturinteraktion: Dag / Aften. Desktop: flytbar skillelinje (Pointer Events + rAF + tastatur). Mobil: knapper. */
+  const dh = $('#dh'); if (!dh) return;
+  const handle = $('.dh-handle', dh), MIN = 35, MAX = 65;
+  let raf = 0, nextX = null;
+  const setSplit = v => {
+    const n = Math.round(Math.min(MAX, Math.max(MIN, v)));
+    dh.style.setProperty('--split', n + '%');
+    handle.setAttribute('aria-valuenow', n);
+    handle.setAttribute('aria-valuetext', `Dag ${n} %, Aften ${100 - n} %`);
+  };
+  const fromX = x => { const r = dh.getBoundingClientRect(); setSplit((x - r.left) / r.width * 100); };
+  handle.addEventListener('pointerdown', e => { e.preventDefault(); handle.setPointerCapture(e.pointerId); dh.classList.add('dragging'); handle.focus({ preventScroll: true }); });
+  handle.addEventListener('pointermove', e => {
+    if (!handle.hasPointerCapture(e.pointerId)) return;
+    nextX = e.clientX;
+    if (!raf) raf = requestAnimationFrame(() => { raf = 0; fromX(nextX); });
+  });
+  const stop = () => dh.classList.remove('dragging');
+  handle.addEventListener('pointerup', stop); handle.addEventListener('pointercancel', stop); handle.addEventListener('lostpointercapture', stop);
+  handle.addEventListener('dblclick', () => setSplit(50));
+  handle.addEventListener('keydown', e => {
+    const cur = +handle.getAttribute('aria-valuenow');
+    const step = { ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5, PageDown: -10, PageUp: 10 }[e.key];
+    if (step) { e.preventDefault(); setSplit(cur + step); }
+    else if (e.key === 'Home') { e.preventDefault(); setSplit(MIN); }
+    else if (e.key === 'End') { e.preventDefault(); setSplit(MAX); }
+  });
+  $$('[data-mood-btn]', dh).forEach(b => b.onclick = () => {
+    dh.dataset.mood = b.dataset.moodBtn;
+    $$('[data-mood-btn]', dh).forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  cleanup.push(() => { if (raf) cancelAnimationFrame(raf); });
+}
 
 function viewImageStatus(){
   const rows = [];
