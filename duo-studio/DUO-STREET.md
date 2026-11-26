@@ -4,6 +4,31 @@
 > Ny retning: **vasket vintage-streetwear à la Scuffers + DUO's egne signaturer** – Noirs blonde, Hollys sløjfer,
 > Pennys striber, vinrød/butter yellow og DUO STUDIO-logoet. Street-attitude, men tydeligt samme brand.
 
+## V3 — DUO DENIM (tre jeans, én kollektion)
+*Ejerens brief: mere streetwear (baggy, oversized, afslappet), feminin DUO-identitet, egne designs via syninger, asymmetri, lommer, pasform og materialer. Blonde kun hvor det giver mening – ikke på alt.*
+
+**Fælles DNA – "DUO-sømmen":** en blød, buet søm, der deler benet i to dele (to sider af dig). Den bruges forskelligt i hvert design og er det, der gør dem genkendelige som én kollektion. Plus samme lille DUO-label bag på linningen.
+
+| | 1 · LACE LINE | 2 · TILT | 3 · ASH |
+|---|---|---|---|
+| Pasform | Baggy, lav–medium talje, bredt lige ben | Ekstra oversized, lav talje, ben der samler sig over skoen | Afslappet baggy, ben der kan rynkes ved anklen |
+| Farve / vask | Vintage mid-blue | Mørk rinse indigo + cream kontraststikninger | Washed faded grey |
+| DUO-sømmen | Buet fra hoften mod knæet med **4 cm sort blonde syet ind i sømmen** (den mængde ejeren foretrak) | **Asymmetrisk**: krydser skråt over det ene ben | Vender **udad** med flossede, rå sømrum |
+| Lommer | Dybe buede forlommer, der følger sømmen; lavere baglommer | Én stor skrå lomme på venstre lår; kun én stor baglomme (højre) + lille paspoleret (venstre) | Enkle baglommer; indsnit bag i taljen for form |
+| Feminin detalje | Blonden | Proportion og skæv knap (5 cm fra midten) | Snøre i benkanten, der rynker ved anklen; rå linningskant |
+| Blonde | Ja | Nej | Nej |
+| Koncept | `references/street-koncepter/denim-1-lace-line.jpg` | `denim-2-tilt.jpg` | `denim-3-ash.jpg` |
+
+**Hvad AI-billederne ikke ramte (skal med i tech pack, ikke i billedet):**
+- LACE LINE: blonden blev lige i stedet for buet, og forlommerne blev standard.
+- TILT: sømmen blev symmetrisk på begge ben; den skrå lårlomme og den skæve knap mangler.
+- ASH: sømmene vender ikke tydeligt udad; billedet viste tre visninger i stedet for to.
+Billederne viser stemning og pasform – konstruktionen beskrives præcist i tech pack til producenten.
+
+**Princip fremover:** DUO's genkendelighed kommer fra DUO-sømmen, proportionerne og farverne – ikke fra at alle produkter har blonde. Blonde højst på ét produkt pr. linje.
+
+---
+
 ## V2 — styles med DUO-DNA
 | Style | DNA | Design |
 |---|---|---|
