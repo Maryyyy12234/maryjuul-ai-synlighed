@@ -52,9 +52,13 @@ const BASE = process.env.BASE || 'http://localhost:8765/';
   await p.close();
 
   // Mobil: menu åbner/lukker med tastatur og fokus vender tilbage
-  for (const w of [320, 390]) {
-    const m = await b.newPage({ viewport: { width: w, height: 800 } });
+  for (const [w, vh] of [[320, 640], [390, 844]]) {
+    const m = await b.newPage({ viewport: { width: w, height: vh } });
     await m.goto(BASE + '#forside'); await m.waitForTimeout(400);
+    const fold = await m.evaluate(() => ['.h-cap', '#hH1', '.h-hero .btn-p'].map(q => document.querySelector(q).getBoundingClientRect().bottom <= innerHeight));
+    check(fold.every(Boolean), `${w}px: label, H1 og CTA synlige uden scroll (${fold})`);
+    const im = await m.evaluate(() => { const i = document.querySelector('.h-hero-img img'); return getComputedStyle(i).objectFit + ' ' + Math.abs(i.getBoundingClientRect().width / i.getBoundingClientRect().height - 2 / 3).toFixed(3); });
+    check(im.startsWith('contain') && parseFloat(im.split(' ')[1]) < 0.01, `${w}px: hero-billede bevarer proportioner (${im})`);
     check(await m.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${w}px: intet vandret overløb`);
     const box = await m.locator('#menuBtn').boundingBox(); check(box.width >= 44 && box.height >= 44, `${w}px: menu-knap ≥ 44×44`);
     await m.focus('#menuBtn'); await m.keyboard.press('Enter'); await m.waitForTimeout(300);

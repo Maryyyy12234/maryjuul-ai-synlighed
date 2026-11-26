@@ -938,7 +938,7 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
 
 
 /* ================= Forside (kampagne) ================= */
-.h-h1{font-family:var(--ui);font-weight:400;font-stretch:92%;font-size:clamp(40px,7.6vw,150px);line-height:.95;letter-spacing:-.035em;color:var(--ink);margin:0}
+.h-h1{font-family:var(--ui);font-weight:400;font-stretch:92%;font-size:clamp(36px,min(7vw,13svh),140px);line-height:.95;letter-spacing:-.035em;color:var(--ink);margin:0}
 .h-h2{font-family:var(--ui);font-weight:400;font-stretch:95%;font-size:clamp(30px,3.6vw,52px);line-height:1.05;letter-spacing:-.025em;color:var(--ink);margin:0}
 .h-cap{font-size:12px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin:0}
 .h-link{display:inline-flex;align-items:center;min-height:44px;font-size:15px;font-weight:500;color:var(--ink);text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
@@ -947,20 +947,25 @@ body.no-ai-tags .review,body.no-ai-tags .fx-ai{display:none!important}
 .h-head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s3);flex-wrap:wrap;margin-bottom:var(--s5)}
 .h-sec > .h-h2{margin-bottom:var(--s5)}
 
+/* Hero: hele looket bevares (object-fit: contain). Billedfladen har fotoets egen baggrundsgradient,
+   og billedets kanter tones blødt ind i den, så fladen kan være bredere end fotoet uden beskæring. */
 .h-hero{display:grid;background:var(--ivory)}
-.h-hero-img{margin:0;background:var(--taupe);overflow:hidden}
-.h-hero-img img{width:100%;height:auto;aspect-ratio:2/3;object-fit:cover;object-position:50% 0%}
-.h-hero-txt{display:grid;gap:var(--s4);justify-items:start;padding:var(--s5) var(--gr) var(--s6) var(--gl)}
+.h-hero-img{margin:0;display:flex;justify-content:center;overflow:hidden;
+  background:linear-gradient(180deg,#5D4236 0%,#6E5043 35%,#76564A 55%,#80604E 82%,#86654F 100%)}
+.h-hero-img img{display:block;height:max(200px,min(50svh,calc(100svh - 360px),150vw));width:auto;max-width:100%;aspect-ratio:2/3;object-fit:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%)}
+.h-hero-txt{display:grid;gap:var(--s3);justify-items:start;padding:var(--s4) var(--gr) var(--s5) var(--gl)}
+.h-hero-txt .btn-p{margin-top:var(--s1)}
 .h-note{margin:0;font-size:14px;color:var(--mute);max-width:36ch}
 @media (min-width:700px){
-  .h-hero{grid-template-columns:minmax(0,1fr) auto;align-items:end;padding-left:var(--gl);column-gap:clamp(24px,4vw,72px)}
-  .h-hero-img{grid-column:2;grid-row:1;width:min(52vw,calc((100svh - 112px) * 2 / 3),760px);aspect-ratio:2/3}
-  .h-hero-img img{height:100%;width:100%}
-  .h-hero-txt{grid-column:1;grid-row:1;padding:0 0 var(--s6);gap:var(--s5);max-width:720px}
+  .h-hero{grid-template-columns:minmax(0,45fr) minmax(0,55fr);align-items:center;padding-left:var(--gl)}
+  .h-hero-img{grid-column:2;grid-row:1;height:min(calc(100svh - 112px),82.5vw,1100px);min-height:520px}
+  .h-hero-img img{height:100%}
+  .h-hero-txt{grid-column:1;grid-row:1;align-self:start;padding:clamp(40px,9svh,112px) clamp(24px,4vw,72px) var(--s6) 0;gap:var(--s4);max-width:720px}
 }
 @media (prefers-reduced-motion:no-preference){
   .h-hero-img img{animation:hSettle 1.6s var(--ease) both}
-  @keyframes hSettle{from{transform:scale(1.04)}to{transform:none}}
+  @keyframes hSettle{from{transform:scale(1.03)}to{transform:none}}
 }
 
 .h-entries{display:grid;gap:var(--s5)}
@@ -1561,13 +1566,13 @@ function viewHome(){
   /* Forside: kampagne → tre kollektioner → udvalgte styles → detalje → lancering */
   const picks = ['alma', 'freja', 'cleo', 'everywhere-tee', 'soft-fit-wide-pants', 'bow-hoodie'].map(byId).filter(Boolean);
   const entries = [
-    ['noir-edit', 'Noir', 'Skarp tailoring og blonde.', 'noir-m2', 'Model i Alma vest, Freja bukser og Cleo slingbacks', 'Kollektion 01'],
+    ['noir-edit', 'Noir', 'Skarp tailoring og blonde.', 'noir-m1', 'Model i Alma vest, Freja bukser og Cleo slingbacks', 'Kollektion 01'],
     ['in-out', 'Penny', 'Afslappede silhuetter til hverdag.', 'penny-l1-model', 'Model i Penny Everywhere-sættet: gul T-shirt og stribede bukser', 'Under udvikling'],
     ['holly', 'Holly', 'Sløjfer og blødere former.', 'holly-wine', 'Model i Holly Bow Hoodie og Wide Pants i Cherry Wine', 'Under udvikling']];
   return `
   <section class="h-hero" aria-labelledby="hH1">
     <figure class="h-hero-img">
-      <img src="${img('noir-m1')}" width="1024" height="1536" fetchpriority="high" decoding="async"
+      <img src="${img('noir-m2')}" width="1024" height="1536" fetchpriority="high" decoding="async"
         alt="Model i Noir: sort Alma vest med blonde i siderne, vide Freja bukser med blonde langs ydersømmen og Cleo slingbacks">
     </figure>
     <div class="h-hero-txt">
