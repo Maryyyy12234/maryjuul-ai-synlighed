@@ -18,6 +18,7 @@ const BASE = process.env.BASE || 'http://localhost:8765/';
   const picks = await p.locator('.h-picks .fx-card').count(); check(picks >= 4 && picks <= 6, 'forside: 4–6 udvalgte styles');
   check(await p.locator('input[type="email"]').count() === 0, 'ingen e-mail-formular uden backend');
   check(await p.locator('#bagBtn').count() === 0, 'kurv er ikke i hovedmenuen');
+  check(await p.locator('[data-live], [data-car], #dealTrack').count() === 0, 'ingen autoplay-karrusel på forsiden');
   check(await p.locator('text=/læg i kurv|til kassen|shop nu/i').count() === 0, 'ingen købs-handlinger på forsiden');
 
   // Alle ruter: én H1, ingen ødelagte billeder
@@ -63,6 +64,6 @@ const BASE = process.env.BASE || 'http://localhost:8765/';
     check(await m.evaluate(() => document.activeElement && document.activeElement.id === 'menuBtn'), `${w}px: fokus tilbage på Menu`);
     await m.close();
   }
-  console.log('OK:', ok.length); if (bad.length) { console.log('FEJL:\n - ' + bad.join('\n - ')); process.exitCode = 1; } else console.log('INGEN PROBLEMER');
+  console.log('[redesign] OK:', ok.length); if (bad.length) { console.log('FEJL:\n - ' + bad.join('\n - ')); process.exitCode = 1; } else console.log('INGEN PROBLEMER');
   await b.close();
 })();
