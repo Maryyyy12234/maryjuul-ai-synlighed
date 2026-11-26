@@ -1,4 +1,5 @@
 // Pakker index.html (Artifact-format uden <html>/<head>) til en selvstændig side i dist/.
+// Titel, description og robots (noindex) står i index.html – én kilde, ingen dubletter.
 // Opdaterer også listen over billedfiler i index.html, så nye produktbilleder vises automatisk.
 const fs = require('node:fs');
 const path = require('node:path');
@@ -13,10 +14,8 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="DUO STUDIO – dansk womenswear. Tre kollektioner: Noir, Penny og Holly. Privat forhåndsvisning.">
-<meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="assets/logo.png">
-<link rel="preload" as="image" href="assets/holly-wine.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="assets/noir-m1.jpg" fetchpriority="high">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
 </head>
 <body>

@@ -39,3 +39,14 @@ Disse beslutninger er låst. Ændr dem ikke uden ejerens godkendelse.
 ## Produktbilleder
 - 3:2, forside venstre / bagside højre, taupe baggrund #B8A798, ingen model/tekst/logo.
 - Deles med `tools/split_packshot.py` (kun beskæring). Filnavne: se `references/PROMPTS-OVERSIGT.md` eller siden `#billeder`.
+
+## Redesign nov. 2026 – ét visuelt system (erstatter FASCO-skabelonens look)
+- **Farver:** varm off-white `--ivory #F7F4EF`, flade `--paper #EFEAE3`, næsten-sort `--ink #171413`, kirsebærvin `--wine #651626` kun som sparsom accent. Alle tokens står i ét `:root` øverst.
+- **Skrift:** kun Archivo. Overskrifter vægt 400, let smal (92 %), stram spacing. Brødtekst 17 px / 1.6. Ingen konturtekst, ingen fede versal-overskrifter.
+- **Afstand:** skala `--s1…--s7` (4–104 px) og `--section-gap`.
+- **Produkter:** flade billeder i 3:4, ingen kort-flader eller skygger, 2 kolonner på mobil.
+- **CTA:** én stil (`.btn-p` / `.fx-btn`): næsten-sort, 2 px hjørner, versaler med spacing.
+- **Forside:** kampagne-hero (Noir-model) → tre kollektioner → 4–6 styles → én detalje → lanceringsinfo → footer. Ingen automatiske karruseller.
+- **Før lancering:** ingen kurv i menuen, ingen antal/kurv-knapper, ingen nyhedsbrev-formular uden backend. Udviklingsstatus vises som neutral notits (`.fx-notice`). Kurvkoden er bevaret og slås til med `OPEN_FOR_SALE`.
+- **Indhold er altid synligt:** ingen scroll-animationer, der skjuler tekst eller billeder.
+- **Ubrugt CSS:** kør `python3 tools/prune_css.py index.html` (tilføj `--write` for at fjerne). Test: `node tests/redesign.test.js`.
