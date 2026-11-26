@@ -8,6 +8,7 @@
     "render:nobgm": "remotion render src/index.ts DuoKampagne out/duo-kampagne-uden-musik.mp4 --props='{\"bgm\":false}'"
   },
   "dependencies": {
+    "@fontsource/archivo": "^5.3.0",
     "@fontsource/instrument-serif": "5.2.8",
     "@fontsource/poppins": "5.2.7",
     "@remotion/cli": "4.0.484",
